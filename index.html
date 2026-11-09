@@ -1,0 +1,2261 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Сказка о Дарье</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Lora:ital,wght@0,400;0,600;1,400;1,600&family=Playfair+Display:ital,wght@0,500;0,700;1,400;1,600;1,700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ==========================================================================
+           1. БАЗОВАЯ СИСТЕМА И ТЕМАТИЧЕСКИЕ ПЕРЕМЕННЫЕ
+           ========================================================================== */
+        :root {
+            --gold-light: #FFF0A8;
+            --gold-base: #D4AF37;
+            --gold-dark: #876214;
+            --velvet-deep: #1e0205;
+            --paper-bg: #f5eedc;
+            --paper-edge: #d8c49d;
+            --ink: #201309;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            height: 100dvh;
+            overflow: hidden;
+            font-family: 'Lora', Georgia, serif;
+            background-color: #030408;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .book-wrapper {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            perspective: 2600px;
+            overflow: hidden;
+            background: #030408;
+        }
+
+        /* ==========================================================================
+           2. ОБЛОЖКА
+           ========================================================================== */
+        .cover-screen {
+            position: absolute;
+            inset: 0;
+            z-index: 100;
+            transform-origin: left center;
+            transform-style: preserve-3d;
+            transition: transform 1.6s cubic-bezier(0.65, 0.05, 0.36, 1), opacity 1.3s ease, filter 1.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cover-screen.turned-cover {
+            transform: rotateY(-180deg) scale(1.1);
+            opacity: 0;
+            pointer-events: none;
+            filter: blur(10px) brightness(1.5);
+        }
+
+        .cover-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cover-bg-velvet {
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(ellipse at 50% 45%, rgba(168, 12, 33, 0.35) 0%, rgba(15, 1, 3, 0.98) 85%),
+                repeating-linear-gradient(45deg, #380208 0%, #380208 2px, #2a0105 2px, #2a0105 5px);
+            z-index: 1;
+            box-shadow: inset 0 0 160px rgba(0,0,0,0.95), inset 0 0 50px rgba(0,0,0,0.8);
+        }
+
+        #canvas-effects {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .cover-svg-layer {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 3;
+            color: var(--gold-base);
+        }
+
+        .cover-svg-layer path,
+        .cover-svg-layer use,
+        .cover-svg-layer circle {
+            stroke-dasharray: 1;
+            stroke-dashoffset: 1;
+            animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes drawSmooth { to { stroke-dashoffset: 0; } }
+
+        .cover-svg-layer.animate #stage1-seed path, .cover-svg-layer.animate #stage1-seed use { animation: drawSmooth 3s forwards; }
+        .cover-svg-layer.animate #stage2-sprout path, .cover-svg-layer.animate #stage2-sprout use { animation: drawSmooth 4s forwards; animation-delay: 2s; }
+        .cover-svg-layer.animate #stage3-bush path, .cover-svg-layer.animate #stage3-bush use { animation: drawSmooth 6s forwards; animation-delay: 4.5s; }
+        .cover-svg-layer.animate #stage3-bouquet path, .cover-svg-layer.animate #stage3-bouquet circle { animation: drawSmooth 5s forwards; animation-delay: 7s; }
+        .cover-svg-layer.animate #stage4-berries path, .cover-svg-layer.animate #stage4-berries use, .cover-svg-layer.animate #stage4-berries circle { animation: drawSmooth 4s forwards; animation-delay: 10s; }
+        .cover-svg-layer.animate #stage5-flourishes path, .cover-svg-layer.animate #stage5-flourishes use, .cover-svg-layer.animate #stage5-flourishes circle { animation: drawSmooth 6s forwards; animation-delay: 11.5s; }
+
+        .cover-text-svg {
+            position: absolute;
+            top: 12%;
+            width: 88%;
+            max-width: 620px;
+            z-index: 4;
+            pointer-events: none;
+            color: var(--gold-base);
+            filter: drop-shadow(0 4px 15px rgba(0,0,0,0.85));
+        }
+
+        .cover-text-svg path {
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.4;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke-dasharray: 1;
+            stroke-dashoffset: 1;
+            transition: stroke-dashoffset 0.55s ease, stroke 0.4s ease, filter 0.4s ease;
+        }
+
+        .cover-text-svg path.show {
+            stroke-dashoffset: 0;
+            stroke: var(--gold-light);
+            filter: drop-shadow(0 0 12px rgba(255, 232, 161, 0.85));
+        }
+
+        .cover-bottom {
+            position: absolute;
+            bottom: 9%;
+            z-index: 5;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: none;
+        }
+
+        .cover-bottom.show {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        /* ==========================================================================
+           ДИСНЕЕВСКИЙ СТИЛЬ КНОПОК (МЯГКИЙ БЛЕСК, ЗОЛОТО, ВЕНЗЕЛЯ, СКАЗОЧНЫЙ БЛИК)
+           ========================================================================== */
+        .disney-btn {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-family: 'Cinzel Decorative', 'Playfair Display', serif;
+            font-weight: 700;
+            color: #381a02;
+            background: linear-gradient(180deg, #fff7de 0%, #fbd87b 18%, #e29f1d 52%, #ad6406 82%, #7a3a02 100%);
+            border: 2px solid #5a2e02;
+            border-radius: 30px;
+            cursor: pointer;
+            text-transform: uppercase;
+            box-shadow: 
+                0 0 0 1px rgba(255, 235, 150, 0.8),
+                inset 0 1.5px 2px #ffffff,
+                inset 0 -2.5px 6px rgba(70, 30, 0, 0.65),
+                0 8px 20px rgba(0, 0, 0, 0.35);
+            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75), 0 -1px 0 rgba(90, 40, 0, 0.4);
+            transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.22s ease;
+            overflow: hidden;
+            outline: none;
+        }
+
+        .disney-btn:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 
+                0 0 0 1px rgba(255, 245, 180, 0.95),
+                0 0 20px rgba(245, 180, 35, 0.6),
+                inset 0 1.5px 3px #ffffff,
+                inset 0 -2.5px 6px rgba(70, 30, 0, 0.6),
+                0 10px 25px rgba(0, 0, 0, 0.45);
+        }
+
+        .disney-btn:active {
+            transform: translateY(1px) scale(0.98);
+            box-shadow: 
+                0 0 0 1px rgba(255, 215, 100, 0.8),
+                inset 0 2px 5px rgba(50, 20, 0, 0.8),
+                0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Сказочный пробегающий блик */
+        .disney-btn::after {
+            content: '';
+            position: absolute;
+            top: -30%;
+            left: -130%;
+            width: 60%;
+            height: 160%;
+            background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.65) 50%, transparent 100%);
+            transform: skewX(-25deg);
+            animation: fairySheen 4.5s infinite ease-in-out;
+            pointer-events: none;
+        }
+
+        @keyframes fairySheen {
+            0%, 65% { left: -130%; }
+            100% { left: 160%; }
+        }
+
+        /* Кнопка на обложке */
+        .start-btn {
+            padding: 16px 44px;
+            font-size: 15px;
+            letter-spacing: 2.5px;
+        }
+
+        /* Кнопки испытаний внутри страниц */
+        .action-btn {
+            align-self: center;
+            margin-top: 10px;
+            padding: 13px 26px;
+            font-size: 13.5px;
+            letter-spacing: 1.2px;
+            width: 90%;
+            max-width: 330px;
+        }
+
+        /* Кнопка «Далее» внизу экрана */
+        .next-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 22px;
+            z-index: 120;
+            padding: 11px 26px;
+            font-size: 13px;
+            letter-spacing: 2px;
+        }
+
+        .next-btn.hidden {
+            opacity: 0;
+            pointer-events: none;
+            visibility: hidden;
+        }
+
+        .flash-overlay {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle, #fffdf2 0%, #ecd698 100%);
+            z-index: 999;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.6s ease;
+        }
+        .flash-overlay.active { opacity: 1; }
+
+        /* ==========================================================================
+           3. КНИГА И СТРАНИЦЫ
+           ========================================================================== */
+        .page-screen {
+            position: absolute;
+            inset: 0;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+
+        .book-container {
+            position: relative;
+            width: 100%;
+            max-width: 100%;
+            height: 100%;
+            max-height: 100%;
+            transform-style: preserve-3d;
+            box-shadow: none;
+            border-radius: 0;
+        }
+
+        .page {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            transform-origin: left center;
+            transform: rotateY(0deg);
+            transform-style: preserve-3d;
+            transition: transform 1.5s cubic-bezier(0.645, 0.045, 0.355, 1), box-shadow 1.5s ease;
+            border-radius: 0;
+        }
+
+        .page.turned {
+            transform: rotateY(-180deg);
+        }
+
+        .page.is-turning {
+            box-shadow: 20px 20px 50px rgba(0, 0, 0, 0.55);
+        }
+
+        .page-front, .page-back {
+            position: absolute;
+            inset: 0;
+            border-radius: 0;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            background: 
+                radial-gradient(circle at 10% 50%, rgba(68, 43, 19, 0.08) 0%, transparent 60%),
+                radial-gradient(ellipse at center, #fbf7ee 0%, var(--paper-bg) 70%, var(--paper-edge) 100%);
+            overflow-y: auto;
+            overflow-x: hidden;
+            scrollbar-width: none;
+        }
+
+        .page-front::-webkit-scrollbar, .page-back::-webkit-scrollbar {
+            display: none;
+        }
+
+        .page-front::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 35px;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(20, 10, 3, 0.28) 0%, rgba(20, 10, 3, 0.08) 40%, transparent 100%);
+            pointer-events: none;
+            z-index: 15;
+        }
+
+        .page-back {
+            transform: rotateY(180deg);
+            background: var(--paper-edge);
+        }
+
+        .dust {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 4;
+            background-image: radial-gradient(#d4af37 1px, transparent 1px);
+            background-size: 70px 70px;
+            opacity: 0.12;
+            animation: dustMove 40s linear infinite;
+        }
+
+        @keyframes dustMove { to { background-position: 70px 70px; } }
+
+        .page-content {
+            position: relative;
+            z-index: 5;
+            width: 100%;
+            max-width: 580px;
+            margin: 0 auto;
+            min-height: 100%;
+            padding: 24px 22px 85px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .chapter-tag {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 11px;
+            letter-spacing: 4px;
+            color: var(--gold-dark);
+            text-transform: uppercase;
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        .story-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 21px;
+            color: var(--ink);
+            text-align: center;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        /* ==========================================================================
+           СТРОГО ЕДИНЫЙ РАЗМЕР РАМОК ДЛЯ ВСЕХ ФОТОГРАФИЙ (280px)
+           ========================================================================== */
+        .image-wrapper {
+            flex: 0 0 auto;
+            height: 280px !important;
+            min-height: 280px !important;
+            max-height: 280px !important;
+            width: 100%;
+            margin-bottom: 14px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2.5px solid var(--gold-base);
+            box-shadow: 0 8px 25px rgba(45, 29, 12, 0.25);
+            background: #e2d7c0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .image-wrapper::before {
+            content: 'Иллюстрация сказки';
+            position: absolute;
+            color: #8c7b64;
+            font-style: italic;
+            font-size: 13px;
+        }
+
+        /* ПОЛНОЕ УДАЛЕНИЕ ВОДЯНОГО ЗНАКА ДЛЯ ПОРТРЕТА */
+        .image-wrapper.portrait-frame::before {
+            display: none !important;
+            content: none !important;
+        }
+
+        .image-wrapper.portrait-frame {
+            background: #faf3e6;
+            border: 2.5px solid var(--gold-base);
+            box-shadow: inset 0 0 25px rgba(212, 175, 55, 0.25), 0 10px 30px rgba(45, 29, 12, 0.25);
+        }
+
+        /* КАРТИНКА СТРОГО 100% ШИРИНЫ И ВЫСОТЫ РАМКИ */
+        .scene-image {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover !important;
+            display: block !important;
+            position: relative;
+            z-index: 2;
+        }
+
+        .text-wrapper {
+            flex: 1 1 auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .story-text {
+            font-size: 15.5px;
+            line-height: 1.6;
+            color: var(--ink);
+            text-align: justify;
+            hyphens: auto;
+        }
+
+        .dropcap::first-letter {
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 3.5em;
+            float: left;
+            line-height: 0.8;
+            margin-right: 10px;
+            margin-top: 4px;
+            color: #b38318;
+            text-shadow: 2px 2px 0px rgba(255, 255, 255, 0.8), 3px 3px 6px rgba(0,0,0,0.2);
+        }
+
+        .divider {
+            text-align: center;
+            color: var(--gold-base);
+            margin: 8px 0;
+            font-size: 18px;
+            opacity: 0.8;
+        }
+
+        /* SVG ПОРТРЕТ */
+        .sketch-svg-wrapper {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .sketch-svg-wrapper svg {
+            width: 100%;
+            height: 100%;
+            padding: 10px;
+        }
+
+        .sketch-svg-wrapper path,
+        .sketch-svg-wrapper circle,
+        .sketch-svg-wrapper ellipse {
+            fill: none;
+            stroke: #4a2d19;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke-dasharray: 1;
+            stroke-dashoffset: 1;
+            animation: drawSmooth 4s forwards cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .sketch-svg-wrapper .sketch-dandelion {
+            stroke: #d49a15;
+            stroke-width: 1.8;
+        }
+
+        /* ==========================================================================
+           ОФОРМЛЕНИЕ ПИСЬМА ВОЛШЕБНИЦЫ (СТРАНИЦА 11)
+           ========================================================================== */
+        .fairy-letter-box {
+            position: relative;
+            background: linear-gradient(145deg, rgba(255, 253, 248, 0.98) 0%, rgba(248, 239, 222, 0.98) 100%);
+            border: 2px solid #caa34d;
+            border-radius: 12px;
+            padding: 22px 18px 18px;
+            margin: auto 0;
+            box-shadow: 
+                0 0 25px rgba(212, 175, 55, 0.2),
+                inset 0 0 35px rgba(180, 138, 40, 0.12),
+                0 14px 40px rgba(45, 29, 12, 0.2);
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .fairy-letter-box::before {
+            content: '';
+            position: absolute;
+            inset: 5px;
+            border: 1px solid rgba(212, 175, 55, 0.45);
+            border-radius: 8px;
+            pointer-events: none;
+        }
+
+        .letter-wax-seal {
+            position: absolute;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 32px;
+            height: 32px;
+            background: radial-gradient(circle at 35% 35%, #e52d43 0%, #8c0a1a 85%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: #ffd700;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), inset 0 0 5px rgba(255, 255, 255, 0.4);
+            border: 1px solid #ffd700;
+            z-index: 10;
+        }
+
+        .letter-vines-top {
+            font-size: 14px;
+            color: #b8860b;
+            letter-spacing: 5px;
+            margin-bottom: 8px;
+            user-select: none;
+        }
+
+        .poem-dynamic-container {
+            font-family: 'Playfair Display', serif;
+            font-size: 14.8px;
+            line-height: 1.6;
+            color: #241408;
+            font-style: italic;
+            min-height: 250px;
+        }
+
+        .poem-stanza-block {
+            margin-bottom: 12px;
+        }
+        .poem-stanza-block:last-child {
+            margin-bottom: 0;
+        }
+
+        .poem-leaf-sep {
+            color: #caa34d;
+            font-size: 16px;
+            margin: 6px 0;
+            opacity: 0.85;
+            user-select: none;
+        }
+
+        .fade-char {
+            display: inline-block;
+            opacity: 0;
+            filter: blur(5px);
+            transform: translateY(2px) scale(0.92);
+            color: #d4af37;
+            text-shadow: 0 0 12px rgba(255, 225, 100, 0.9);
+            transition: 
+                opacity 0.45s ease-out, 
+                filter 0.45s ease-out, 
+                transform 0.45s ease-out, 
+                color 0.5s ease-out, 
+                text-shadow 0.5s ease-out;
+            white-space: pre-wrap;
+        }
+
+        .fade-char.revealed {
+            opacity: 1;
+            filter: blur(0);
+            transform: translateY(0) scale(1);
+            color: #241408;
+            text-shadow: none;
+        }
+
+        .fade-char.name-glow {
+            color: #a81c2e !important;
+            font-weight: 700;
+            text-shadow: 0 0 8px rgba(168, 28, 46, 0.35) !important;
+        }
+
+        .letter-signature {
+            font-family: 'Lora', serif;
+            font-size: 12px;
+            color: #8c6832;
+            margin-top: 10px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            font-style: normal;
+        }
+
+        .letter-hint {
+            font-size: 11px;
+            color: #aa8649;
+            margin-top: 8px;
+            font-style: normal;
+            opacity: 0.65;
+            user-select: none;
+        }
+
+        /* ==========================================================================
+           4. ПОЛНОЭКРАННЫЕ МИНИ-ИГРЫ
+           ========================================================================== */
+        .fullscreen-game-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #020509;
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        .game-canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .game-hud {
+            position: absolute;
+            top: 25px;
+            width: 90%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 1010;
+            pointer-events: none;
+        }
+
+        .game-title-hud {
+            font-family: 'Cinzel Decorative', serif;
+            color: var(--gold-light);
+            font-size: 20px;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.8), 0 2px 4px #000;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 14px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1.5px solid var(--gold-base);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0,0,0,0.9);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #d44d18, #f5a623, #ffdf79);
+            box-shadow: 0 0 15px #f5a623;
+            transition: width 0.3s ease-out;
+        }
+
+        .berry-counter-box {
+            font-family: 'Lora', serif;
+            color: #fff;
+            font-size: 17px;
+            background: rgba(90, 20, 20, 0.85);
+            border: 1.5px solid var(--gold-base);
+            padding: 8px 22px;
+            border-radius: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+        }
+
+        .game-instruction {
+            position: absolute;
+            bottom: 30px;
+            color: #d7e0ea;
+            font-family: 'Lora', serif;
+            font-size: 15px;
+            font-style: italic;
+            pointer-events: none;
+            z-index: 1010;
+            text-shadow: 0 2px 6px #000;
+            animation: pulseHint 2s infinite ease-in-out;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        @keyframes pulseHint {
+            0%, 100% { opacity: 0.6; transform: scale(0.98); }
+            50% { opacity: 1; transform: scale(1.02); }
+        }
+
+        /* ИГРА №3: ПЕКАРНЯ */
+        .pie-kitchen-box {
+            position: relative;
+            z-index: 1010;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 480px;
+            padding: 20px;
+        }
+
+        .kitchen-surface {
+            width: 310px;
+            height: 310px;
+            background: radial-gradient(circle, #e2cca6 0%, #aa8454 100%);
+            border: 6px solid #5a3c1e;
+            border-radius: 50%;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.5), 0 15px 35px rgba(0,0,0,0.8);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        .pie-dough {
+            width: 140px;
+            height: 140px;
+            background: radial-gradient(circle, #fff3cf 0%, #eed599 100%);
+            border-radius: 50%;
+            box-shadow: 0 8px 18px rgba(0,0,0,0.3);
+            transition: width 0.15s ease, height 0.15s ease, transform 0.1s ease;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .bellows-btn {
+            margin-top: 22px;
+            padding: 13px 30px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="flash-overlay" id="flashOverlay"></div>
+
+    <div class="book-wrapper">
+        
+        <!-- ================= ОБЛОЖКА ================= -->
+        <div class="cover-screen" id="coverScreen">
+            <div class="cover-container">
+                <div class="cover-bg-velvet"></div>
+                <canvas id="canvas-effects"></canvas>
+
+                <!-- СЛОЙ С ДРЕВОМ И 3 СОЛНЫШКАМИ -->
+                <svg class="cover-svg-layer" id="coverSvgLayer" viewBox="0 0 100 200" preserveAspectRatio="none">
+                    <defs> 
+                        <g id="leaf" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"> 
+                            <path pathLength="1" d="M0 0 C3.5 -0.8 5.6 -3.8 7.5 -8.5 L9.2 -6.2 C11.2 -12.4 16 -15 20.6 -13.1 L20.8 -9.2 C26 -10.1 30.1 -6.6 31.2 -2.6 L27.5 -0.4 L30.8 1.8 C28.1 6.8 24 8.6 19.8 7 L18.2 10.5 C13.1 11.4 9.2 8.2 7.2 4.3 L4.3 6.1 C2.3 4.4 1.1 2.4 0 0 Z" fill="none" stroke="currentColor" stroke-width="0.2"/> 
+                            <path pathLength="1" d="M1 0 C10 -0.5 20 -0.8 29.6 -0.2 M8 -0.5 C8 -3.2 7.8 -5.5 7.6 -7.8 M13 -0.8 C13.5 -4.3 15 -8.1 17 -12 M19 -0.8 C21 -4 23 -6.5 26 -8.5 M8 0 C8 1.5 7.8 2.8 7.4 3.8 M14 -0.4 C14 2.4 15.3 5.3 17.5 7.8 M21 -0.5 C22 2.3 24 4.5 27.6 5.5" fill="none" stroke="currentColor" stroke-width="0.1"/> 
+                        </g>
+                        <g id="raspberryCluster" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                            <circle pathLength="1" cx="0" cy="3.6" r="1.35" stroke-width="0.2"/>
+                            <circle pathLength="1" cx="-1.35" cy="5.3" r="1.35" stroke-width="0.2"/>
+                            <circle pathLength="1" cx="1.35" cy="5.3" r="1.35" stroke-width="0.2"/>
+                            <circle pathLength="1" cx="0" cy="7.2" r="1.35" stroke-width="0.2"/>
+                            <circle pathLength="1" cx="-1.35" cy="9.1" r="1.2" stroke-width="0.2"/>
+                            <circle pathLength="1" cx="1.35" cy="9.1" r="1.2" stroke-width="0.2"/>
+                            <circle pathLength="1" cx="0" cy="10.8" r="1" stroke-width="0.2"/>
+                        </g>
+                        <g id="cornerScroll" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                            <path pathLength="1" d="M4 22 C7 21.4 8.8 19.3 7.2 16.5 C5.4 13.5 2.9 12 3.5 8.2 C4.2 4 8.4 2.7 12.2 4.3 C16.5 6.1 18 10.6 15.4 13.7 C13 16.5 9 15 9 12.2" stroke-width="0.3"/>
+                            <use href="#leaf" transform="translate(5.5 7.5) rotate(155) scale(0.15)"/>
+                        </g>
+                    </defs> 
+                    
+                    <g id="stage1-seed" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"> 
+                        <path pathLength="1" d="M50 191 C46.3 189.4 46.4 185.6 50 182.7 C53.6 185.6 53.7 189.4 50 191 Z" stroke-width="0.3"/> 
+                    </g> 
+                    <g id="stage2-sprout" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"> 
+                        <path pathLength="1" d="M50 184 C47.5 180 52.1 177.2 49.3 173.5 C46.7 170 50.8 167 50 165" stroke-width="0.3"/> 
+                        <use href="#leaf" transform="translate(49.2 174.5) rotate(195) scale(0.19)"/> 
+                        <use href="#leaf" transform="translate(50.4 171.7) rotate(-20) scale(0.19)"/> 
+                    </g> 
+                    <g id="stage3-bush" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"> 
+                        <path pathLength="1" d="M50 165 C47 154 52.5 146 50 136 C47.2 126 52 116 50 106 C48.5 98 50.5 91 52 85" stroke-width="0.3"/> 
+                        <use href="#leaf" transform="translate(31 102) rotate(215) scale(0.3)"/>
+                        <use href="#leaf" transform="translate(25 115) rotate(175) scale(0.3)"/>
+                        <use href="#leaf" transform="translate(75 115) rotate(5) scale(0.3)"/>
+                        <use href="#leaf" transform="translate(69 102) rotate(-35) scale(0.3)"/>
+                    </g>
+
+                    <g id="stage3-bouquet" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                        <!-- Стебли букета -->
+                        <path pathLength="1" d="M52 85 L51 72 M50 85 L44 70 M54 85 L59 70" stroke-width="0.22" />
+                        <path pathLength="1" d="M49 84 C46 80 46 87 51 84 C56 87 56 80 53 84 Z" stroke-width="0.22" />
+                        <path pathLength="1" d="M49 85 L46 90 M53 85 L56 90" stroke-width="0.18" />
+
+                        <!-- Центральное солнышко -->
+                        <circle pathLength="1" cx="51" cy="67" r="1.6" stroke-width="0.22" />
+                        <path pathLength="1" d="M51 65.4 L51 61.5 M52.2 65.8 L55.2 63.2 M52.6 67 L56.5 67 M52.2 68.2 L55.2 70.8 M51 68.6 L51 72.5 M49.8 68.2 L46.8 70.8 M49.4 67 L45.5 67 M49.8 65.8 L46.8 63.2" stroke-width="0.2" />
+
+                        <!-- Левое солнышко -->
+                        <circle pathLength="1" cx="43" cy="66" r="1.1" stroke-width="0.2" />
+                        <path pathLength="1" d="M43 65 L43 61 M42 65.2 L39 63 M43.8 65.2 L47 63 M42 66 L38.5 66 M44 66 L47.5 66 M42.2 66.8 L39.2 68.8 M43.8 66.8 L46.8 68.8" stroke-width="0.18" />
+
+                        <!-- Правое солнышко (симметричное левому) -->
+                        <circle pathLength="1" cx="59" cy="66" r="1.1" stroke-width="0.2" />
+                        <path pathLength="1" d="M59 65 L59 61 M58 65.2 L55 63 M59.8 65.2 L63 63 M58 66 L54.5 66 M60 66 L63.5 66 M58.2 66.8 L55.2 68.8 M59.8 66.8 L62.8 68.8" stroke-width="0.18" />
+
+                        <path pathLength="1" d="M50 83 Q40 80 33 73 M37 77 L35 74 M41 80 L39 76" stroke-width="0.18" />
+                        <path pathLength="1" d="M54 83 Q64 80 71 73 M67 77 L69 74 M63 80 L65 76" stroke-width="0.18" />
+                    </g>
+
+                    <g id="stage4-berries" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"> 
+                        <use href="#raspberryCluster" transform="translate(27 110) scale(0.85)"/> 
+                        <use href="#raspberryCluster" transform="translate(73 110) scale(0.85)"/> 
+                    </g> 
+                    <g id="stage5-flourishes" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"> 
+                        <path pathLength="1" d="M5 24 V176 C5 187 13 195 24 195 H76 C87 195 95 187 95 176 V24 C95 13 87 5 76 5 H24 C13 5 5 13 5 24 Z" stroke-width="0.2"/> 
+                        <use href="#cornerScroll" transform="translate(2 2)"/>
+                        <use href="#cornerScroll" transform="translate(98 2) scale(-1 1)"/>
+                        <use href="#cornerScroll" transform="translate(2 198) scale(1 -1)"/>
+                        <use href="#cornerScroll" transform="translate(98 198) scale(-1 -1)"/>
+                    </g> 
+                </svg>
+
+                <!-- КАЛЛИГРАФИЧЕСКИЙ ТЕКСТ «Сказка о Дарье» -->
+                <svg class="cover-text-svg" id="coverTextSvg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 200">
+                    <path id="letter-Cyrillic-S" pathLength="1" d="M126 54 C118 49 109 47 100 49 C82 53 67 68 61 85 C55 103 63 122 79 131 C96 140 115 132 128 117 C136 107 139 96 134 89 C131 84 125 84 122 89 C119 93 121 97 125 98"/>
+                    <path id="letter-Cyrillic-k-1" pathLength="1" d="M124 128 C130 114 133 96 134 82 C135 75 132 73 129 79 C125 89 124 108 126 120 C127 127 131 130 136 126 C142 121 148 112 155 106 C159 103 163 102 167 103 M147 114 C153 120 160 126 167 129"/>
+                    <path id="letter-Cyrillic-a-1" pathLength="1" d="M168 119 C175 107 184 99 191 99 C198 99 199 105 195 113 C191 121 184 127 178 127 C172 127 171 121 176 113 C181 105 188 101 194 102 C200 103 200 111 198 119 C196 126 200 130 205 127 C209 125 212 121 215 118"/>
+                    <path id="letter-Cyrillic-z" pathLength="1" d="M208 103 C215 97 224 96 230 99 C237 102 235 108 229 112 C224 115 218 113 215 110 C220 114 228 114 234 118 C241 123 238 130 231 133 C223 136 215 131 211 125 C216 130 223 134 231 133"/>
+                    <path id="letter-Cyrillic-k-2" pathLength="1" d="M245 129 C251 115 255 97 256 83 C257 75 254 73 251 79 C247 89 246 108 248 120 C249 127 253 130 258 126 C264 121 270 112 277 106 C281 103 285 102 289 103 M269 114 C275 120 282 126 289 129"/>
+                    <path id="letter-Cyrillic-a-2" pathLength="1" d="M289 119 C296 107 305 99 312 99 C319 99 320 105 316 113 C312 121 305 127 299 127 C293 127 292 121 297 113 C302 105 309 101 315 102 C321 103 321 111 319 119 C317 126 321 130 326 127 C330 125 333 121 336 118"/>
+                    <path id="letter-Cyrillic-o" pathLength="1" d="M372 117 C379 107 388 99 395 99 C402 99 403 105 399 113 C395 121 388 127 382 127 C376 127 375 121 380 113 C385 105 392 101 398 102 C404 103 404 111 402 119 C400 126 404 130 409 127 C413 125 416 121 419 118"/>
+                    <path id="letter-Cyrillic-D" pathLength="1" d="M513 125 C505 112 501 94 497 78 C494 67 492 61 489 57 C485 68 480 85 475 103 C470 120 466 128 459 132 C473 135 492 135 510 131 M459 132 C457 140 453 145 447 149 C454 145 461 139 466 133 M510 131 C517 135 521 141 522 147 C524 140 521 133 517 128"/>
+                    <path id="letter-Cyrillic-a-3" pathLength="1" d="M516 119 C523 107 532 99 539 99 C546 99 547 105 543 113 C539 121 532 127 526 127 C520 127 519 121 524 113 C529 105 536 101 542 102 C548 103 548 111 546 119 C544 126 548 130 553 127 C557 125 560 121 563 118"/>
+                    <path id="letter-Cyrillic-r" pathLength="1" d="M556 128 C563 114 568 96 569 81 C570 74 567 72 564 78 C559 89 559 109 561 123 C562 130 567 131 575 127 C585 122 592 112 592 105 C592 99 586 97 581 99 C573 102 568 111 567 121 C565 135 568 147 563 155 C561 159 558 161 554 162"/>
+                    <path id="letter-Cyrillic-soft-sign" pathLength="1" d="M600 128 C607 114 611 96 612 81 C613 74 610 72 607 78 C603 88 603 108 605 121 C606 129 612 131 620 128 C629 125 636 117 636 110 C636 103 630 101 625 103 C619 105 615 113 615 120"/>
+                    <path id="letter-Cyrillic-e" pathLength="1" d="M642 117 C649 107 658 99 665 99 C672 99 673 105 669 110 C665 115 657 117 650 115 C646 114 645 119 647 123 C650 130 658 131 665 127 C673 123 679 116 684 113 C689 110 694 111 695 115 C696 119 691 123 686 125 M650 115 C657 112 664 111 670 112"/>
+                </svg>
+
+                <div class="cover-bottom" id="coverBottom">
+                    <button class="disney-btn start-btn" id="startBtn">
+                        <span>❦</span>
+                        <span>ОТКРЫТЬ СКАЗКУ</span>
+                        <span>❧</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= СТРАНИЦЫ КНИГИ ================= -->
+        <div class="page-screen">
+            <div class="book-container" id="bookContainer">
+                
+                <!-- Стр. 1: Рождение Дарьи (Кроватка) -->
+                <div class="page" id="page1">
+                    <div class="page-front">
+                        <div class="dust"></div>
+                        <div class="page-content">
+                            <div>
+                                <div class="chapter-tag">Глава I</div>
+                                <div class="story-title">Рождение Золотого Луча</div>
+                            </div>
+                            <div class="image-wrapper">
+                                <img src="1793897978030-6000f442-fdbb-4e6b-8234-6ca84f9b0c23-01a1aca5-1e99-78d9-b6d5-8f91e3b883f2.jpeg" alt="Детская кроватка" class="scene-image" onerror="this.style.display='none'">
+                            </div>
+                            <div class="text-wrapper">
+                                <p class="story-text dropcap">Однажды на реке Волге, в городе Астрахань родилась девочка. Её сердце было соткано из искренней доброты, а улыбка могла растопить даже самый холодный северный лёд. Родители нарекли её прекрасным именем — Дарья.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-back"></div>
+                </div>
+
+                <!-- Стр. 2: Утро Дня Рождения (Календарь) -->
+                <div class="page" id="page2">
+                    <div class="page-front">
+                        <div class="dust"></div>
+                        <div class="page-content">
+                            <div>
+                                <div class="chapter-tag">Глава II</div>
+                                <div class="story-title">Праздничное Утро</div>
+                            </div>
+                            <div class="image-wrapper">
+                                <img src="1794217722705-b6d530a0-c223-474b-b7a5-27dc7ff3eebe-01a1bfb3-7f2b-7adc-a713-3ce2fe789ff6.jpeg" alt="Проснулась с календарём" class="scene-image" onerror="this.style.display='none'">
+                            </div>
+                            <div class="text-wrapper">
+                                <p class="story-text dropcap">Шло время, и настал самый долгожданный и чудесный день в году — День Рождения Дарьи! Едва открыв глаза, она взглянула на календарь: сегодня весь мир словно светился по-особенному. Но какой же праздник без именинного пирога со сладкой малиной?</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-back"></div>
+                </div>
+
+                <!-- Стр. 3: Поход в лес + Игра №1 (Терновник) -->
+                <div class="page" id="page3">
+                    <div class="page-front">
+                        <div class="dust"></div>
+                        <div class="page-content">
+                            <div>
+                                <div class="chapter-tag">Глава III • Испытание</div>
+                                <div class="story-title">Непроходимая Чаща</div>
+                            </div>
+                            <div class="image-wrapper">
+                                <img src="1794218094104-0c221d50-73ac-4055-b0d8-5f01216a5742-01a1bfb9-5d90-77e4-9482-8480ab4093bf.jpeg" alt="Пошла в лес за ягодами" class="scene-image" onerror="this.style.display='none'">
+                            </div>
+                            <div class="text-wrapper" style="align-items: center;">
+                                <p class="story-text">Взяв корзинку, Даша смело отправилась в глубь Зачарованного Леса. Но древняя чаща ощетинилась мощными слоями терновника, закрывая путь к заветной поляне!</p>
+                                <button class="disney-btn action-btn" id="openGameBtn">
+                                    <span>✂️</span>
+                                    <span>ПРОРУБИТЬ ТРОПУ</span>
+                                    <span>✂️</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-back"></div>
+                </div>
+
+                <!-- Стр. 4: Поляна + Игра №2 (Гномики и малина) -->
+                <div class="page" id="page4">
+                    <div class="page-front">
+                        <div class="dust"></div>
+                        <div class="page-content">
+                            <div>
+                                <div class="chapter-tag">Глава IV • Испытание</div>
+                                <div class="story-title">Малиновый Дозор</div>
+                            </div>
+                            <div class="image-wrapper">
+                                <img src="1794218486696-1298c010-f9a5-4893-b33a-9be8ee49f6f7-01a1bfbe-f33d-766e-9cb7-b804371b3bf9.jpeg" alt="Гномики крадут малинку" class="scene-image" onerror="this.style.display='none'">
+                            </div>
+                            <div class="text-wrapper" style="align-items: center;">
+                                <p class="story-text">Тропа свободна! Но спелых ягод на полянке совсем немного, а лесные воришки-гномики несутся со всех ног, пытаясь утащить каждую малинку в свои норки!</p>
+                                <button class="disney-btn action-btn" id="openBerryGameBtn">
+                                    <span>🧺</span>
+                                    <span>СОБРАТЬ МАЛИНКУ</span>
+                                    <span>🍓</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-back"></div>
+                </div>
+
+                <!-- Стр. 5: Встреча со злым кустом -->
+                <div class="page" id="page5">
+                    <div class="page-front">
+                        <div class="dust"></div>
+                        <div class="page-content">
+                            <div>
+                                <div class="chapter-tag">Глава V</div>
+                                <div class="story-title">Хранитель Сумрака</div>
+                            </div>
+                            <div class="image-wrapper">
+                                <img src="1794219157874-1765d05f-e310-47eb-b7b6-f86f9687aff2-01a1bfc9-c2f9-762e-9959-867852a02266.jpeg" alt="Встреча со злым кустом" class="scene-image" onerror="this.style.display='none'">
+                            </div>
+                            <div class="text-wrapper">
+                                <p class="story-text dropcap">Сберегая полную корзинку, Даша поспешила в обратный путь. Но лесная чаща угрожающе зашумела, и прямо перед ней вырос Ужасный Злой Куст — хранитель сумрака. Он грозно раскинул свои острые шипы, не желая отпускать гостью с добычей.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-back"></div>
+                </div>
+
+                <!-- Стр. 6: Победа над кустом -->
+                <div class="page" id="page6">
+                    <div class="page-front">
+                        <div class="dust"></div>
+                        <div class="page-content">
+                            <div>
+                                <div class="chapter-tag">Глава VI</div>
+                                <div class="story-title">Торжество Добра</div>
+                            </div>
+                            <div class="image-wrapper">
+                                <img src="1794219491488-730853ea-0701-40ce-aa20-0fc3d608db19-01a1bfce-83bb-7d08-ace3-b3ad52a2e43d.jpeg" alt="Победа над кустом" class="scene-image" onerror="this.style.display='none'">
+                            </div>
+                            <div class="text-wrapper">
+                                <p class="story-text dropcap">Но разве испугать нашу храбрую Дашу? Вместо страха она одарила его своей лучезарной и ласковой улыбкой: <i>«Не сердись, я несу эти ягоды моим любимым!»</i> От её чистоты грозные шипы осыпались золотистой пыльцой и обернулись нежными чайными розами.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-back"></div>
+                </div>
+
+                <!-- Стр. 7: Пришла домой с ягодами -->
+                <div class="page" id="page7">
+                    <div class="page-front">
+                        <div class="dust"></div>
+                        <div class="page-content">
+                            <div>
+                                <div class="chapter-tag">Глава VII</div>
+                                <div class="story-title">Дорога к Теплу</div>
+                            </div>
+                            <div class="image-wrapper">
+                                <img src="1794220616299-60d217e4-baaf-4a25-a4f3-ed31c4cb747f-01a1bfdf-f83e-7b97-9ea4-46e41d6a72be.jpeg" alt="Пришла домой с ягодами" class="scene-image" onerror="this.style.display='none'">
+                            </div>
+                            <div class="text-wrapper">
+                                <p class="story-text dropcap">Оставив зачарованный лес позади, именинница вернулась на родное крыльцо. В уютных окнах горел приветливый свет, а из кухни доносились знакомые голоса. Все испытания пройдены — пора готовить именинный шедевр!</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-back"></div>
+                </div>
+
+                <!-- Стр. 8: ИГРА №3 (ГОТОВИМ ПИРОГ) -->
+                <div class="page" id="page8">
+                    <div class="page-front">
+                        <div class="dust"></div>
+                        <div class="page-content" style="justify-content: center; align-items: center; text-align: center;">
+                            <div class="text-wrapper" style="align-items: center;">
+                                <div class="chapter-tag">Именинная Пекарня</div>
+                                <h2 style="font-family:'Cinzel Decorative'; color: #b38318; font-size: 22px; margin-bottom: 12px;">Время Чудес</h2>
+                                <p class="story-text" style="text-align: center;">Мука просеяна, сладкая малина блестит рубинами, а печь уже разогрета жаркими искрами!</p>
+                                <p class="story-text" style="text-align: center; font-style: italic; margin-top: 14px; color: #735932;">
+                                    Раскатай пышное тесто, укрась его лесными ягодами и доведи выпечку до золотистой корочки!
+                                </p>
+                                <button class="disney-btn action-btn" id="openPieGameBtn" style="margin-top: 24px;">
+                                    <span>🥧</span>
+                                    <span>ИСПЕЧЬ ПИРОГ</span>
+                                    <span>✨</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-back"></div>
+                </div>
+
+                <!-- Стр. 9: Именинный пирог готов! -->
+                <div class="page" id="page9">
+                    <div class="page-front">
+                        <div class="dust"></div>
+                        <div class="page-content">
+                            <div>
+                                <div class="chapter-tag">Глава VIII</div>
+                                <div class="story-title">Именинный Пирог</div>
+                            </div>
+                            <div class="image-wrapper">
+                                <img src="1794220962558-57a34b25-554f-43ec-b5ed-a363b887d13c-01a1bfe5-1c0c-78c1-9beb-9ae7fc82775b.jpeg" alt="Прекрасный малиновый пирог" class="scene-image" onerror="this.style.display='none'">
+                            </div>
+                            <div class="text-wrapper">
+                                <p class="story-text dropcap">И началось настоящее домашнее чудо! Вся семья дружно и с любовью испекла праздничный пирог: румяная золотистая корочка, нежный крем, спелые ягоды и мерцающие свечи. В этот вечер дом наполнился душевным теплом и бесконечным уютом.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-back"></div>
+                </div>
+
+                <!-- Стр. 10: Подарок Волшебницы (ТОЛЬКО ЧИСТЫЙ SVG-ПОРТРЕТ) -->
+                <div class="page" id="page10">
+                    <div class="page-front">
+                        <div class="dust"></div>
+                        <div class="page-content">
+                            <div>
+                                <div class="chapter-tag">Подарок Волшебницы</div>
+                                <div class="story-title">Маленькая Художница</div>
+                            </div>
+
+                            <p style="font-size: 14.5px; font-style: italic; color: #5c381c; text-align: center; margin-bottom: 12px; line-height: 1.6;">
+                                Маленькая девочка из сказки тоже поздравляет тебя с днём рождения, и в подарок нарисовала тебе твой портрет, по нашей фотографии ✨
+                            </p>
+
+                            <!-- Векторный Disney SVG портрет Даши (БЕЗ надписи "Иллюстрация сказки") -->
+                            <div class="image-wrapper portrait-frame">
+                                <div class="sketch-svg-wrapper">
+                                    <svg viewBox="0 0 220 220">
+                                        <path pathLength="1" d="M 180 10 Q 168 110 176 215 M 202 10 Q 192 120 196 215" />
+                                        <path pathLength="1" d="M 85 86 Q 85 116 105 120 Q 126 116 128 86" />
+                                        <path pathLength="1" d="M 94 92 Q 99 89 104 92 M 111 92 Q 116 89 121 92" />
+                                        <circle cx="99" cy="93" r="1.6" fill="#4a2d19" />
+                                        <circle cx="116" cy="93" r="1.6" fill="#4a2d19" />
+                                        <path pathLength="1" d="M 108 97 Q 110 102 106 103" />
+                                        <path pathLength="1" d="M 100 108 Q 107 113 115 108" />
+                                        <path pathLength="1" d="M 84 84 Q 106 80 128 82" />
+                                        <path pathLength="1" d="M 85 86 Q 78 72 95 60 Q 115 54 126 64 Q 132 76 128 86" />
+                                        <path pathLength="1" d="M 116 56 Q 134 36 148 45 Q 155 53 144 70 Q 134 78 126 72" />
+                                        <circle class="sketch-dandelion" cx="116" cy="52" r="3" fill="#FFE8A1" />
+                                        <path class="sketch-dandelion" pathLength="1" d="M 116 48 L 116 44 M 119 50 L 123 47 M 120 54 L 124 57 M 112 54 L 108 57 M 112 50 L 108 47" />
+                                        <path pathLength="1" d="M 88 135 L 80 166 L 92 168 L 98 138 Z" />
+                                        <path pathLength="1" d="M 122 138 L 118 168 L 130 166 L 131 135 Z" />
+                                        <circle cx="85" cy="163" r="1.8" fill="#4a2d19" />
+                                        <circle cx="124" cy="163" r="1.8" fill="#4a2d19" />
+                                        <path pathLength="1" d="M 80 166 L 130 166 L 133 205 L 77 205 Z" />
+                                        <path pathLength="1" d="M 94 175 L 116 175 L 113 190 L 97 190 Z" />
+                                        <path pathLength="1" d="M 132 142 Q 152 152 172 148" />
+                                        <path pathLength="1" d="M 78 144 Q 63 162 68 190" />
+                                        <circle class="sketch-dandelion" cx="70" cy="184" r="2.8" fill="#FFE8A1" />
+                                        <circle class="sketch-dandelion" cx="66" cy="180" r="1.8" fill="#FFE8A1" />
+                                        <circle class="sketch-dandelion" cx="73" cy="179" r="1.8" fill="#FFE8A1" />
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <p style="font-size: 13.5px; font-style: italic; color: #7f6848; text-align: center; margin-top: 10px;">
+                                Она очень старалась передать твои добрые глаза и улыбку...<br>Переверни страницу, чтобы прочесть её послание для тебя ✨
+                            </p>
+                        </div>
+                    </div>
+                    <div class="page-back"></div>
+                </div>
+
+                <!-- Стр. 11: СТИХ ВОЛШЕБНИЦЫ (ПОБУКВЕННОЕ ПРОЯВЛЕНИЕ) -->
+                <div class="page" id="page11">
+                    <div class="page-front">
+                        <div class="dust"></div>
+                        <div class="page-content" style="justify-content: center;">
+                            <div>
+                                <div class="chapter-tag">Искренние строки</div>
+                                <div class="story-title" style="margin-bottom: 16px;">Письмо Маленькой Волшебницы</div>
+                            </div>
+
+                            <div class="fairy-letter-box" id="fairyLetterBox" title="Нажми, чтобы показать весь текст">
+                                <div class="letter-wax-seal">🍓</div>
+                                <div class="letter-vines-top">❦ ❖ ❦</div>
+
+                                <div class="poem-dynamic-container" id="poemDynamicContainer">
+                                    <!-- Буквы рождаются с перезвоном -->
+                                </div>
+
+                                <div class="letter-signature">
+                                    ✦ С любовью от лесной подружки 🍓 ✦
+                                </div>
+                                <div class="letter-hint">(коснись письма, чтобы проявить всё сразу ✨)</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-back"></div>
+                </div>
+
+                <!-- Стр. 12 (Финал) -->
+                <div class="page" id="page12">
+                    <div class="page-front">
+                        <div class="dust"></div>
+                        <div class="page-content" style="justify-content: center; text-align: center;">
+                            <div class="text-wrapper" style="justify-content: center;">
+                                <p class="story-text" style="text-align: center; font-size: 17.5px;">И помни: настоящая магия — это не зачарованный лес.</p>
+                                <p class="story-text" style="text-align: center; font-size: 17.5px; margin-top: 10px;">Настоящее волшебство — это когда после любых дорог тебя встречают с искренней любовью.</p>
+                                <div class="divider">❦</div>
+                                <p style="font-family:'Cinzel Decorative'; font-size: 22px; color: #b38318; line-height: 1.5; margin: 15px 0;">
+                                    С Днём Рождения, Дарья!<br>
+                                    Твой праздник только начинается.
+                                </p>
+                                <p style="font-style: italic; color: #7f6848; font-size: 14.5px;">(Подними глаза от экрана... ✨)</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page-back"></div>
+                </div>
+
+            </div>
+        </div>
+
+        <button class="disney-btn next-btn hidden" id="nextBtn">
+            <span>Далее</span>
+            <span>›</span>
+        </button>
+    </div>
+
+    <!-- ================= МИНИ-ИГРА №1: МНОГОСЛОЙНЫЙ ТЕРНОВНИК ================= -->
+    <div class="fullscreen-game-overlay" id="thornGameOverlay">
+        <canvas class="game-canvas" id="thornCanvas"></canvas>
+        <div class="game-hud">
+            <div class="game-title-hud">Чаща терновника</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="thornProgress"></div>
+            </div>
+        </div>
+        <div class="game-instruction">Руби переднюю светящуюся лиану! Задние заблокированы, пока не срежешь эту!</div>
+    </div>
+
+    <!-- ================= МИНИ-ИГРА №2: МАЛИНА И БЫСТРЫЕ ГНОМИКИ ================= -->
+    <div class="fullscreen-game-overlay" id="berryGameOverlay">
+        <canvas class="game-canvas" id="berryCanvas"></canvas>
+        <div class="game-hud">
+            <div class="game-title-hud">Малиновый Дозор</div>
+            <div class="berry-counter-box" id="berryCounter">Корзинка: 0 / 8 🍓</div>
+        </div>
+        <div class="game-instruction">Ягодки созревают редко! Шлёпай гномов, чтобы они не утащили урожай!</div>
+    </div>
+
+    <!-- ================= МИНИ-ИГРА №3: ВОЛШЕБНАЯ ПЕКАРНЯ ================= -->
+    <div class="fullscreen-game-overlay" id="pieGameOverlay">
+        <canvas class="game-canvas" id="pieCanvasFx"></canvas>
+        <div class="game-hud">
+            <div class="game-title-hud" id="pieStepTitle">Шаг 1: Раскатай тесто</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="pieProgress"></div>
+            </div>
+        </div>
+        
+        <div class="pie-kitchen-box">
+            <div class="kitchen-surface" id="kitchenSurface">
+                <div class="pie-dough" id="pieDough"></div>
+            </div>
+            <button class="disney-btn bellows-btn" id="bellowsBtn" style="display: none;">
+                <span>💨</span>
+                <span>Раздуть пламя печи</span>
+                <span>🔥</span>
+            </button>
+        </div>
+
+        <div class="game-instruction" id="pieInstruction">Проводи пальцем по тесту, чтобы раскатать круглую форму!</div>
+    </div>
+
+    <script>
+        /* ==========================================================================
+           СИСТЕМА ГОЛОСОВОЙ ОЗВУЧКИ СТРАНИЦ (page1.mp3 ... page12.mp3)
+           ========================================================================== */
+        let currentVoiceAudio = null;
+        const voiceAudioCache = {};
+
+        function playPageVoice(pageNumber) {
+            // Останавливаем предыдущую дорожку при перелистывании
+            if (currentVoiceAudio) {
+                currentVoiceAudio.pause();
+                currentVoiceAudio.currentTime = 0;
+            }
+
+            const fileName = `page${pageNumber}.mp3`;
+            if (!voiceAudioCache[fileName]) {
+                voiceAudioCache[fileName] = new Audio(fileName);
+            }
+
+            currentVoiceAudio = voiceAudioCache[fileName];
+            currentVoiceAudio.play().catch(e => {
+                // Если файл ещё не добавлен в папку, браузер просто продолжит работу без ошибок
+                console.log(`Ожидается аудиофайл: ${fileName}`);
+            });
+        }
+
+        /* ==========================================================================
+           ЗВУКОВОЙ ДВИЖОК ЭФФЕКТОВ (СИНТЕЗАТОР)
+           ========================================================================== */
+        class SoundFX {
+            constructor() { this.ctx = null; }
+            init() {
+                if (!this.ctx) {
+                    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                    this.ctx = new AudioCtx();
+                }
+                if (this.ctx.state === 'suspended') this.ctx.resume();
+            }
+            playSlash() {
+                if (!this.ctx) return;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                const filter = this.ctx.createBiquadFilter();
+                osc.type = 'sawtooth';
+                const st = this.ctx.currentTime;
+                osc.frequency.setValueAtTime(340, st);
+                osc.frequency.exponentialRampToValueAtTime(60, st + 0.12);
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(2800, st);
+                filter.frequency.exponentialRampToValueAtTime(180, st + 0.12);
+                gain.gain.setValueAtTime(0.4, st);
+                gain.gain.linearRampToValueAtTime(0.01, st + 0.12);
+                osc.connect(filter); filter.connect(gain); gain.connect(this.ctx.destination);
+                osc.start(); osc.stop(st + 0.13);
+            }
+            playWoodCrack() {
+                if (!this.ctx) return;
+                const buf = this.ctx.createBuffer(1, this.ctx.sampleRate * 0.12, this.ctx.sampleRate);
+                const data = buf.getChannelData(0);
+                for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (data.length * 0.22));
+                const noise = this.ctx.createBufferSource();
+                noise.buffer = buf;
+                const filter = this.ctx.createBiquadFilter();
+                filter.type = 'bandpass'; filter.frequency.value = 520; filter.Q.value = 2.2;
+                const gain = this.ctx.createGain();
+                gain.gain.setValueAtTime(0.85, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.12);
+                noise.connect(filter); filter.connect(gain); gain.connect(this.ctx.destination);
+                noise.start();
+            }
+            playPageTurn() {
+                if (!this.ctx) return;
+                const buf = this.ctx.createBuffer(1, this.ctx.sampleRate * 0.3, this.ctx.sampleRate);
+                const data = buf.getChannelData(0);
+                for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1);
+                const noise = this.ctx.createBufferSource();
+                noise.buffer = buf;
+                const filter = this.ctx.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(1100, this.ctx.currentTime);
+                filter.frequency.linearRampToValueAtTime(200, this.ctx.currentTime + 0.3);
+                const gain = this.ctx.createGain();
+                gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.3);
+                noise.connect(filter); filter.connect(gain); gain.connect(this.ctx.destination);
+                noise.start();
+            }
+            playPop() {
+                if (!this.ctx) return;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(500, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1100, this.ctx.currentTime + 0.11);
+                gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.11);
+                osc.connect(gain); gain.connect(this.ctx.destination);
+                osc.start(); osc.stop(this.ctx.currentTime + 0.11);
+            }
+            playGnomeBoing() {
+                if (!this.ctx) return;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(140, this.ctx.currentTime);
+                osc.frequency.linearRampToValueAtTime(540, this.ctx.currentTime + 0.08);
+                osc.frequency.linearRampToValueAtTime(110, this.ctx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.25, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.2);
+                osc.connect(gain); gain.connect(this.ctx.destination);
+                osc.start(); osc.stop(this.ctx.currentTime + 0.2);
+            }
+            playChime(note = 600) {
+                if (!this.ctx) return;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(note, this.ctx.currentTime);
+                gain.gain.setValueAtTime(0.25, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.6);
+                osc.connect(gain); gain.connect(this.ctx.destination);
+                osc.start(); osc.stop(this.ctx.currentTime + 0.6);
+            }
+            playLetterChime(note = 800) {
+                if (!this.ctx) return;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(note, this.ctx.currentTime);
+                gain.gain.setValueAtTime(0.035, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.2);
+                osc.connect(gain); gain.connect(this.ctx.destination);
+                osc.start(); osc.stop(this.ctx.currentTime + 0.22);
+            }
+            playFlamePuff() {
+                if (!this.ctx) return;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(110, this.ctx.currentTime);
+                osc.frequency.linearRampToValueAtTime(260, this.ctx.currentTime + 0.15);
+                gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.2);
+                osc.connect(gain); gain.connect(this.ctx.destination);
+                osc.start(); osc.stop(this.ctx.currentTime + 0.2);
+            }
+            playVictoryChime() {
+                if (!this.ctx) return;
+                const notes = [523.25, 659.25, 783.99, 1046.50];
+                notes.forEach((freq, idx) => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    const start = this.ctx.currentTime + idx * 0.12;
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, start);
+                    gain.gain.setValueAtTime(0.3, start);
+                    gain.gain.exponentialRampToValueAtTime(0.001, start + 1.2);
+                    osc.connect(gain); gain.connect(this.ctx.destination);
+                    osc.start(start); osc.stop(start + 1.3);
+                });
+            }
+        }
+        const sfx = new SoundFX();
+
+        /* ==========================================================================
+           ОБЛОЖКА И КНИЖНЫЙ БЛОК
+           ========================================================================== */
+        const coverScreen = document.getElementById('coverScreen');
+        const coverSvgLayer = document.getElementById('coverSvgLayer');
+        const coverTextSvg = document.getElementById('coverTextSvg');
+        const coverPaths = coverTextSvg.querySelectorAll('path');
+        const btnContainer = document.getElementById('coverBottom');
+        const startBtn = document.getElementById('startBtn');
+
+        setTimeout(() => coverSvgLayer.classList.add('animate'), 400);
+
+        setTimeout(() => {
+            let i = 0;
+            function showNextLetter() {
+                if (i < coverPaths.length) {
+                    coverPaths[i].classList.add('show');
+                    i++;
+                    setTimeout(showNextLetter, 120);
+                } else {
+                    setTimeout(() => btnContainer.classList.add('show'), 600);
+                }
+            }
+            showNextLetter();
+        }, 13500);
+
+        const canvasFx = document.getElementById('canvas-effects');
+        const ctxFx = canvasFx.getContext('2d');
+        let widthFx, heightFx;
+
+        function resizeFx() {
+            widthFx = canvasFx.width = window.innerWidth;
+            heightFx = canvasFx.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeFx);
+        resizeFx();
+
+        class Spark {
+            constructor() { this.reset(); this.y = Math.random() * heightFx; }
+            reset() {
+                this.x = Math.random() * widthFx;
+                this.y = heightFx + 10;
+                this.size = Math.random() * 2.5 + 1;
+                this.color = Math.random() > 0.4 ? 'rgba(255, 232, 161,' : 'rgba(212, 175, 55,';
+                this.vy = -(Math.random() * 0.9 + 0.4);
+                this.vx = (Math.random() - 0.5) * 0.6;
+                this.alpha = 0;
+                this.maxAlpha = Math.random() * 0.6 + 0.3;
+            }
+            update() {
+                this.x += this.vx; this.y += this.vy;
+                if (this.y < heightFx * 0.8 && this.alpha < this.maxAlpha) this.alpha += 0.02;
+                if (this.y < heightFx * 0.2) this.alpha -= 0.01;
+                if (this.y < -10 || this.alpha <= 0) this.reset();
+            }
+            draw() {
+                ctxFx.fillStyle = `${this.color}${this.alpha})`;
+                ctxFx.beginPath(); ctxFx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctxFx.fill();
+            }
+        }
+        const sparks = Array.from({ length: 30 }, () => new Spark());
+        function loopFx() {
+            ctxFx.clearRect(0, 0, widthFx, heightFx);
+            sparks.forEach(s => { s.update(); s.draw(); });
+            requestAnimationFrame(loopFx);
+        }
+        loopFx();
+
+        /* ==========================================================================
+           СТИХ ВОЛШЕБНИЦЫ (АНИМАЦИЯ ПО БУКВАМ)
+           ========================================================================== */
+        const poemStanzas = [
+            [
+                { text: "Ты прочла историю мою,", isName: false },
+                { text: "И с пирогом мне помогла.", isName: false },
+                { text: "Как же, как же тебя зовут...?", isName: false },
+                { text: "Дарья? Спасительница моя!", isName: true }
+            ],
+            [
+                { text: "Одну в лес меня ты не пустила,", isName: false },
+                { text: "Помогала что есть сил —", isName: false },
+                { text: "И лозы острые рубила,", isName: false },
+                { text: "А вместе с ними малинку мне клала!", isName: false }
+            ],
+            [
+                { text: "Мне сегодня рассказали,", isName: false },
+                { text: "Что сегодня волшебный день:", isName: false },
+                { text: "Сегодня в нашем мире", isName: false },
+                { text: "Появилась ты на свет!", isName: false }
+            ]
+        ];
+
+        let poemCharElements = [];
+        let poemIntervalTimer = null;
+        let isPoemRevealed = false;
+
+        function buildPoemLetterElements() {
+            const container = document.getElementById('poemDynamicContainer');
+            container.innerHTML = '';
+            poemCharElements = [];
+
+            poemStanzas.forEach((stanza, sIdx) => {
+                const sBlock = document.createElement('div');
+                sBlock.className = 'poem-stanza-block';
+
+                stanza.forEach((lineObj) => {
+                    const lineDiv = document.createElement('div');
+                    for (let char of lineObj.text) {
+                        const span = document.createElement('span');
+                        span.className = 'fade-char';
+                        if (lineObj.isName) span.classList.add('name-glow');
+                        span.textContent = char;
+                        lineDiv.appendChild(span);
+                        poemCharElements.push(span);
+                    }
+                    sBlock.appendChild(lineDiv);
+                });
+
+                container.appendChild(sBlock);
+
+                if (sIdx < poemStanzas.length - 1) {
+                    const sep = document.createElement('div');
+                    sep.className = 'poem-leaf-sep';
+                    sep.textContent = '❦';
+                    container.appendChild(sep);
+                }
+            });
+        }
+        buildPoemLetterElements();
+
+        function startPoemAnimation() {
+            if (isPoemRevealed) return;
+            buildPoemLetterElements();
+            let charIndex = 0;
+            const totalChars = poemCharElements.length;
+
+            if (poemIntervalTimer) clearInterval(poemIntervalTimer);
+
+            poemIntervalTimer = setInterval(() => {
+                if (charIndex >= totalChars) {
+                    clearInterval(poemIntervalTimer);
+                    isPoemRevealed = true;
+                    sfx.playVictoryChime();
+                    return;
+                }
+
+                poemCharElements[charIndex].classList.add('revealed');
+
+                if (charIndex % 6 === 0) {
+                    const notes = [659, 784, 880, 988, 1046, 1175];
+                    sfx.playLetterChime(notes[Math.floor(Math.random() * notes.length)]);
+                }
+
+                charIndex++;
+            }, 28);
+        }
+
+        function revealEntirePoem() {
+            if (poemIntervalTimer) clearInterval(poemIntervalTimer);
+            poemCharElements.forEach(span => span.classList.add('revealed'));
+            isPoemRevealed = true;
+            sfx.playVictoryChime();
+        }
+
+        document.getElementById('fairyLetterBox').addEventListener('click', revealEntirePoem);
+
+        /* НАВИГАЦИЯ КНИГИ */
+        const flashOverlay = document.getElementById("flashOverlay");
+        const pages = Array.from(document.querySelectorAll(".page"));
+        const nextBtn = document.getElementById("nextBtn");
+        let currentPageIndex = 0;
+        let isFlipping = false;
+
+        pages.forEach((page, index) => { page.style.zIndex = String(pages.length - index); });
+
+        startBtn.addEventListener("click", () => {
+            sfx.init();
+            sfx.playPageTurn();
+            flashOverlay.classList.add("active");
+            setTimeout(() => {
+                coverScreen.classList.add("turned-cover");
+                flashOverlay.classList.remove("active");
+                nextBtn.classList.remove("hidden");
+                updateNav();
+                // Автоматический запуск озвучки страницы 1
+                playPageVoice(1);
+            }, 500);
+        });
+
+        function updateNav() {
+            const hasNext = currentPageIndex < pages.length - 1;
+            nextBtn.disabled = !hasNext || isFlipping;
+
+            if (currentPageIndex === 2 || currentPageIndex === 3 || currentPageIndex === 7) {
+                nextBtn.classList.add('hidden');
+            } else {
+                nextBtn.classList.remove('hidden');
+            }
+        }
+
+        function flipPage() {
+            if (isFlipping || currentPageIndex >= pages.length - 1) return;
+            isFlipping = true;
+            sfx.init();
+            sfx.playPageTurn();
+
+            const cur = pages[currentPageIndex];
+            cur.classList.add("is-turning");
+
+            setTimeout(() => {
+                cur.style.zIndex = "1";
+                cur.classList.remove("is-turning");
+                currentPageIndex++;
+                isFlipping = false;
+                updateNav();
+
+                // Автоматический запуск озвучки открытой страницы (1..12)
+                playPageVoice(currentPageIndex + 1);
+
+                if (currentPageIndex === 10) {
+                    startPoemAnimation();
+                }
+            }, 1450);
+
+            cur.classList.add("turned");
+        }
+        nextBtn.addEventListener("click", flipPage);
+
+        /* ==========================================================================
+           МИНИ-ИГРА №1: ТЕРНОВНИК (ПОСЛОЙНЫЙ СЛЕШЕР)
+           ========================================================================== */
+        const thornOverlay = document.getElementById('thornGameOverlay');
+        const thornCanvas = document.getElementById('thornCanvas');
+        const ctxThorn = thornCanvas.getContext('2d');
+        const thornProgressEl = document.getElementById('thornProgress');
+        const openGameBtn = document.getElementById('openGameBtn');
+
+        let tWidth, tHeight;
+        let isThornRunning = false;
+        let isCutting = false;
+        let cutTrail = [];
+        let woodChips = [];
+        let vineLayers = [];
+        let currentVineIdx = 0;
+        let screenShake = 0;
+
+        function resizeThornGame() {
+            tWidth = thornCanvas.width = window.innerWidth;
+            tHeight = thornCanvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeThornGame);
+
+        class LayeredVine {
+            constructor(p1, p2, thickness, angleOffset) {
+                this.p1 = p1;
+                this.p2 = p2;
+                this.thickness = thickness;
+                this.angleOffset = angleOffset;
+                this.cuts = [];
+                this.totalDamage = 0;
+                this.maxHealth = 100;
+                this.broken = false;
+                this.brokenParts = [];
+            }
+
+            draw(isActive, layerDepth) {
+                ctxThorn.save();
+                
+                if (this.broken) {
+                    this.brokenParts.forEach(bp => {
+                        ctxThorn.save();
+                        ctxThorn.translate(bp.x, bp.y);
+                        ctxThorn.rotate(bp.rot);
+                        ctxThorn.globalAlpha = bp.opacity;
+                        ctxThorn.fillStyle = '#221208';
+                        ctxThorn.fillRect(-bp.len / 2, -this.thickness / 2, bp.len, this.thickness);
+                        ctxThorn.restore();
+                    });
+                    ctxThorn.restore();
+                    return;
+                }
+
+                if (!isActive) {
+                    ctxThorn.globalAlpha = Math.max(0.25, 0.6 - layerDepth * 0.12);
+                    ctxThorn.strokeStyle = '#120b06';
+                } else {
+                    ctxThorn.globalAlpha = 1.0;
+                    ctxThorn.strokeStyle = '#3d2212';
+                    ctxThorn.shadowColor = '#d4af37';
+                    ctxThorn.shadowBlur = 12;
+                }
+
+                ctxThorn.lineWidth = this.thickness;
+                ctxThorn.lineCap = 'round';
+                ctxThorn.beginPath();
+                ctxThorn.moveTo(this.p1.x, this.p1.y);
+                const midX = (this.p1.x + this.p2.x) / 2 + Math.cos(this.angleOffset) * 45;
+                const midY = (this.p1.y + this.p2.y) / 2 + Math.sin(this.angleOffset) * 45;
+                ctxThorn.quadraticCurveTo(midX, midY, this.p2.x, this.p2.y);
+                ctxThorn.stroke();
+
+                ctxThorn.fillStyle = isActive ? '#a81c2e' : '#22110b';
+                for (let i = 0.2; i <= 0.8; i += 0.2) {
+                    const tx = this.p1.x + (this.p2.x - this.p1.x) * i;
+                    const ty = this.p1.y + (this.p2.y - this.p1.y) * i;
+                    ctxThorn.beginPath();
+                    ctxThorn.arc(tx + 8, ty - 8, 4, 0, Math.PI * 2);
+                    ctxThorn.fill();
+                }
+
+                if (isActive) {
+                    this.cuts.forEach(cut => {
+                        ctxThorn.save();
+                        ctxThorn.fillStyle = '#ffe8a1';
+                        ctxThorn.shadowColor = '#ffaa00';
+                        ctxThorn.shadowBlur = 10;
+                        ctxThorn.beginPath();
+                        ctxThorn.arc(cut.x, cut.y, cut.depth * 3.5, 0, Math.PI * 2);
+                        ctxThorn.fill();
+                        ctxThorn.restore();
+                    });
+                } else {
+                    ctxThorn.fillStyle = 'rgba(212, 175, 55, 0.4)';
+                    ctxThorn.font = '16px serif';
+                    ctxThorn.fillText('🔒', (this.p1.x + this.p2.x)/2 - 8, (this.p1.y + this.p2.y)/2);
+                }
+
+                ctxThorn.restore();
+            }
+
+            snapBreak() {
+                this.broken = true;
+                const midX = (this.p1.x + this.p2.x) / 2;
+                const midY = (this.p1.y + this.p2.y) / 2;
+                this.brokenParts = [
+                    { x: this.p1.x, y: this.p1.y, vx: -3, vy: -2, rot: 0, vRot: -0.05, len: 150, opacity: 1 },
+                    { x: midX, y: midY, vx: 3, vy: 2, rot: 0, vRot: 0.06, len: 150, opacity: 1 }
+                ];
+            }
+
+            update() {
+                if (this.broken) {
+                    this.brokenParts.forEach(bp => {
+                        bp.x += bp.vx;
+                        bp.y += bp.vy;
+                        bp.vy += 0.8;
+                        bp.rot += bp.vRot;
+                        bp.opacity -= 0.02;
+                    });
+                }
+            }
+        }
+
+        function createVineLayers() {
+            vineLayers = [];
+            currentVineIdx = 0;
+            const numLayers = 5;
+            for (let i = 0; i < numLayers; i++) {
+                const isDiagonal = i % 2 === 0;
+                let p1, p2;
+                if (isDiagonal) {
+                    p1 = { x: -40, y: (tHeight / numLayers) * i + 80 };
+                    p2 = { x: tWidth + 40, y: tHeight - (tHeight / numLayers) * i - 80 };
+                } else {
+                    p1 = { x: (tWidth / numLayers) * i + 60, y: -40 };
+                    p2 = { x: tWidth - (tWidth / numLayers) * i - 60, y: tHeight + 40 };
+                }
+                vineLayers.push(new LayeredVine(p1, p2, 28 - i * 2, i * 1.5));
+            }
+        }
+
+        function distToSegment(p, v, w) {
+            const l2 = (w.x - v.x) ** 2 + (w.y - v.y) ** 2;
+            if (l2 === 0) return Math.hypot(p.x - v.x, p.y - v.y);
+            let t = ((p.x - v.x) * (w.x - v.x) + (p.y - v.y) * (w.y - v.y)) / l2;
+            t = Math.max(0, Math.min(1, t));
+            return Math.hypot(p.x - (v.x + t * (w.x - v.x)), p.y - (v.y + t * (w.y - v.y)));
+        }
+
+        function thornGameLoop() {
+            if (!isThornRunning) return;
+
+            ctxThorn.save();
+            if (screenShake > 0) {
+                const sx = (Math.random() - 0.5) * screenShake;
+                const sy = (Math.random() - 0.5) * screenShake;
+                ctxThorn.translate(sx, sy);
+                screenShake *= 0.85;
+            }
+
+            ctxThorn.fillStyle = '#080d0a';
+            ctxThorn.fillRect(0, 0, tWidth, tHeight);
+
+            for (let i = vineLayers.length - 1; i >= 0; i--) {
+                const vine = vineLayers[i];
+                vine.update();
+                vine.draw(i === currentVineIdx, i - currentVineIdx);
+            }
+
+            for (let i = woodChips.length - 1; i >= 0; i--) {
+                const chip = woodChips[i];
+                chip.x += chip.vx; chip.y += chip.vy; chip.vy += 0.5; chip.life -= 0.03;
+                ctxThorn.fillStyle = chip.color;
+                ctxThorn.fillRect(chip.x, chip.y, chip.size, chip.size);
+                if (chip.life <= 0) woodChips.splice(i, 1);
+            }
+
+            if (cutTrail.length > 1) {
+                ctxThorn.beginPath();
+                ctxThorn.moveTo(cutTrail[0].x, cutTrail[0].y);
+                for (let i = 1; i < cutTrail.length; i++) ctxThorn.lineTo(cutTrail[i].x, cutTrail[i].y);
+                ctxThorn.strokeStyle = '#FFE8A1';
+                ctxThorn.lineWidth = 6;
+                ctxThorn.shadowColor = '#FFA500';
+                ctxThorn.shadowBlur = 15;
+                ctxThorn.stroke();
+            }
+
+            ctxThorn.restore();
+            requestAnimationFrame(thornGameLoop);
+        }
+
+        function handleSlashPoint(p) {
+            if (currentVineIdx >= vineLayers.length) return;
+            const targetVine = vineLayers[currentVineIdx];
+            if (targetVine.broken) return;
+
+            const dist = distToSegment(p, targetVine.p1, targetVine.p2);
+            if (dist < targetVine.thickness + 12) {
+                sfx.playSlash();
+                screenShake = 12;
+
+                targetVine.cuts.push({ x: p.x, y: p.y, depth: Math.min(6, targetVine.cuts.length + 1) });
+                targetVine.totalDamage += 18;
+
+                for (let i = 0; i < 9; i++) {
+                    woodChips.push({
+                        x: p.x, y: p.y,
+                        vx: (Math.random() - 0.5) * 10,
+                        vy: (Math.random() - 0.5) * 10 - 3,
+                        size: Math.random() * 6 + 3,
+                        color: Math.random() > 0.4 ? '#8B4513' : '#d4af37',
+                        life: 1
+                    });
+                }
+
+                if (targetVine.totalDamage >= targetVine.maxHealth) {
+                    targetVine.snapBreak();
+                    sfx.playWoodCrack();
+                    screenShake = 22;
+                    currentVineIdx++;
+                    const progress = (currentVineIdx / vineLayers.length) * 100;
+                    thornProgressEl.style.width = `${progress}%`;
+
+                    if (currentVineIdx >= vineLayers.length) {
+                        isThornRunning = false;
+                        sfx.playVictoryChime();
+                        setTimeout(() => {
+                            thornOverlay.style.display = 'none';
+                            flipPage();
+                        }, 900);
+                    }
+                }
+            }
+        }
+
+        function getCanvasCoord(e, canvas) {
+            const r = canvas.getBoundingClientRect();
+            const cx = e.touches ? e.touches[0].clientX : e.clientX;
+            const cy = e.touches ? e.touches[0].clientY : e.clientY;
+            return { x: cx - r.left, y: cy - r.top };
+        }
+
+        thornCanvas.addEventListener('mousedown', e => {
+            if (!isThornRunning) return;
+            isCutting = true; cutTrail = [getCanvasCoord(e, thornCanvas)];
+        });
+        thornCanvas.addEventListener('mousemove', e => {
+            if (!isThornRunning || !isCutting) return;
+            const pt = getCanvasCoord(e, thornCanvas);
+            cutTrail.push(pt);
+            if (cutTrail.length > 5) cutTrail.shift();
+            handleSlashPoint(pt);
+        });
+        window.addEventListener('mouseup', () => { isCutting = false; cutTrail = []; });
+
+        thornCanvas.addEventListener('touchstart', e => {
+            if (!isThornRunning) return;
+            isCutting = true; cutTrail = [getCanvasCoord(e, thornCanvas)];
+        }, { passive: true });
+        thornCanvas.addEventListener('touchmove', e => {
+            if (!isThornRunning || !isCutting) return;
+            const pt = getCanvasCoord(e, thornCanvas);
+            cutTrail.push(pt);
+            if (cutTrail.length > 5) cutTrail.shift();
+            handleSlashPoint(pt);
+        }, { passive: true });
+        window.addEventListener('touchend', () => { isCutting = false; cutTrail = []; });
+
+        openGameBtn.addEventListener('click', () => {
+            sfx.init();
+            thornOverlay.style.display = 'flex';
+            resizeThornGame();
+            thornProgressEl.style.width = '0%';
+            createVineLayers();
+            isThornRunning = true;
+            thornGameLoop();
+        });
+
+        /* ==========================================================================
+           МИНИ-ИГРА №2: МАЛИНА И СВЕРХБЫСТРЫЕ ГНОМИКИ
+           ========================================================================== */
+        const berryOverlay = document.getElementById('berryGameOverlay');
+        const berryCanvas = document.getElementById('berryCanvas');
+        const ctxBerry = berryCanvas.getContext('2d');
+        const berryCounterEl = document.getElementById('berryCounter');
+        const openBerryGameBtn = document.getElementById('openBerryGameBtn');
+
+        let bWidth, bHeight;
+        let isBerryRunning = false;
+        let berriesCollected = 0;
+        let rareBerries = [];
+        let speedyGnomes = [];
+        let lastBerrySpawn = 0;
+        let lastGnomeSpawn = 0;
+
+        function resizeBerryGame() {
+            bWidth = berryCanvas.width = window.innerWidth;
+            bHeight = berryCanvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeBerryGame);
+
+        class RareBerry {
+            constructor(x, y) {
+                this.x = x; this.y = y;
+                this.collected = false;
+                this.holder = null;
+            }
+            draw() {
+                if (this.collected && !this.holder) return;
+                ctxBerry.save();
+                const rx = this.holder ? this.holder.x : this.x;
+                const ry = this.holder ? this.holder.y - 30 : this.y;
+                ctxBerry.translate(rx, ry);
+
+                const clusters = [[-5,-5],[5,-5],[-7,2],[0,2],[7,2],[-4,9],[4,9],[0,13]];
+                clusters.forEach(([dx, dy]) => {
+                    ctxBerry.beginPath();
+                    ctxBerry.arc(dx, dy, 5.5, 0, Math.PI * 2);
+                    ctxBerry.fillStyle = '#b8142c'; ctxBerry.fill();
+                    ctxBerry.beginPath();
+                    ctxBerry.arc(dx-1.5, dy-1.5, 1.8, 0, Math.PI * 2);
+                    ctxBerry.fillStyle = 'rgba(255,200,210,0.8)'; ctxBerry.fill();
+                });
+                ctxBerry.restore();
+            }
+        }
+
+        class SpeedyGnome {
+            constructor() {
+                this.x = Math.random() < 0.5 ? -40 : bWidth + 40;
+                this.y = Math.random() * (bHeight - 260) + 130;
+                this.speed = Math.random() * 1.8 + 2.8;
+                this.scared = false;
+                this.loot = null;
+                this.wobble = Math.random() * 5;
+            }
+
+            update() {
+                this.wobble += 0.35;
+
+                if (this.scared) {
+                    this.x += (this.x > bWidth / 2 ? 1 : -1) * 9;
+                    return;
+                }
+
+                if (this.loot) {
+                    this.x += (this.x > bWidth / 2 ? 1 : -1) * (this.speed * 1.5);
+                    return;
+                }
+
+                let target = null;
+                let minDist = Infinity;
+                rareBerries.forEach(b => {
+                    if (!b.collected && !b.holder) {
+                        const d = Math.hypot(b.x - this.x, b.y - this.y);
+                        if (d < minDist) { minDist = d; target = b; }
+                    }
+                });
+
+                if (target) {
+                    const dx = target.x - this.x;
+                    const dy = target.y - this.y;
+                    const dist = Math.hypot(dx, dy);
+                    if (dist > 18) {
+                        this.x += (dx / dist) * this.speed;
+                        this.y += (dy / dist) * this.speed;
+                    } else {
+                        this.loot = target;
+                        target.holder = this;
+                    }
+                }
+            }
+
+            draw() {
+                ctxBerry.save();
+                ctxBerry.translate(this.x, this.y);
+                const stepBob = Math.sin(this.wobble) * 6;
+                ctxBerry.translate(0, stepBob);
+
+                ctxBerry.fillStyle = this.scared ? '#e65100' : '#283593';
+                ctxBerry.beginPath();
+                ctxBerry.moveTo(-14, 0); ctxBerry.lineTo(14, 0); ctxBerry.lineTo(-4, -36); ctxBerry.fill();
+
+                ctxBerry.fillStyle = '#f5f5f5';
+                ctxBerry.beginPath(); ctxBerry.arc(0, 8, 10, 0, Math.PI); ctxBerry.fill();
+
+                ctxBerry.fillStyle = '#ffab91';
+                ctxBerry.beginPath(); ctxBerry.arc(0, 2, 5, 0, Math.PI * 2); ctxBerry.fill();
+
+                ctxBerry.fillStyle = '#4e342e';
+                const footOffset = Math.sin(this.wobble) * 4;
+                ctxBerry.fillRect(-10, 12 + footOffset, 6, 5);
+                ctxBerry.fillRect(4, 12 - footOffset, 6, 5);
+
+                ctxBerry.restore();
+            }
+        }
+
+        function berryGameLoop(now) {
+            if (!isBerryRunning) return;
+            ctxBerry.clearRect(0, 0, bWidth, bHeight);
+            ctxBerry.fillStyle = 'rgba(10, 20, 12, 0.6)';
+            ctxBerry.fillRect(0, 0, bWidth, bHeight);
+
+            if (now - lastBerrySpawn > 3500 && rareBerries.filter(b => !b.collected).length < 3) {
+                lastBerrySpawn = now;
+                rareBerries.push(new RareBerry(
+                    Math.random() * (bWidth - 140) + 70,
+                    Math.random() * (bHeight - 260) + 130
+                ));
+            }
+
+            if (now - lastGnomeSpawn > 1200 && speedyGnomes.length < 5) {
+                lastGnomeSpawn = now;
+                speedyGnomes.push(new SpeedyGnome());
+            }
+
+            rareBerries.forEach(b => b.draw());
+            speedyGnomes.forEach(g => { g.update(); g.draw(); });
+
+            speedyGnomes = speedyGnomes.filter(g => g.x > -80 && g.x < bWidth + 80);
+            requestAnimationFrame(berryGameLoop);
+        }
+
+        berryCanvas.addEventListener('pointerdown', e => {
+            if (!isBerryRunning) return;
+            const pt = getCanvasCoord(e, berryCanvas);
+
+            let slapped = false;
+            speedyGnomes.forEach(g => {
+                if (Math.hypot(g.x - pt.x, g.y - pt.y) < 42 && !g.scared) {
+                    slapped = true;
+                    g.scared = true;
+                    sfx.playGnomeBoing();
+                    if (g.loot) {
+                        g.loot.holder = null;
+                        g.loot = null;
+                    }
+                }
+            });
+
+            if (slapped) return;
+
+            rareBerries.forEach(b => {
+                if (!b.collected && !b.holder) {
+                    if (Math.hypot(b.x - pt.x, b.y - pt.y) < 35) {
+                        b.collected = true;
+                        sfx.playPop();
+                        berriesCollected++;
+                        berryCounterEl.textContent = `Корзинка: ${berriesCollected} / 8 🍓`;
+
+                        if (berriesCollected >= 8) {
+                            setTimeout(() => {
+                                isBerryRunning = false;
+                                sfx.playVictoryChime();
+                                berryOverlay.style.display = 'none';
+                                flipPage();
+                            }, 500);
+                        }
+                    }
+                }
+            });
+        });
+
+        openBerryGameBtn.addEventListener('click', () => {
+            sfx.init();
+            berryOverlay.style.display = 'flex';
+            resizeBerryGame();
+            berriesCollected = 0;
+            berryCounterEl.textContent = `Корзинка: 0 / 8 🍓`;
+            rareBerries = [new RareBerry(bWidth * 0.4, bHeight * 0.5), new RareBerry(bWidth * 0.6, bHeight * 0.5)];
+            speedyGnomes = [];
+            lastBerrySpawn = performance.now();
+            lastGnomeSpawn = performance.now();
+            isBerryRunning = true;
+            requestAnimationFrame(berryGameLoop);
+        });
+
+        /* ==========================================================================
+           МИНИ-ИГРА №3: ПЕКАРНЯ (3 ЭТАПА)
+           ========================================================================== */
+        const pieOverlay = document.getElementById('pieGameOverlay');
+        const openPieGameBtn = document.getElementById('openPieGameBtn');
+        const pieStepTitle = document.getElementById('pieStepTitle');
+        const pieInstruction = document.getElementById('pieInstruction');
+        const pieProgress = document.getElementById('pieProgress');
+        const kitchenSurface = document.getElementById('kitchenSurface');
+        const pieDough = document.getElementById('pieDough');
+        const bellowsBtn = document.getElementById('bellowsBtn');
+
+        let pieStage = 1;
+        let rollAmount = 0;
+        let berriesPlaced = 0;
+        let ovenHeat = 0;
+        let ovenInterval = null;
+
+        function updatePieUI() {
+            if (pieStage === 1) {
+                pieStepTitle.textContent = 'Шаг 1: Раскатай тесто';
+                pieInstruction.textContent = 'Води пальцем по тесту, чтобы раскатать круглую форму!';
+                pieProgress.style.width = `${rollAmount}%`;
+                bellowsBtn.style.display = 'none';
+            } else if (pieStage === 2) {
+                pieStepTitle.textContent = 'Шаг 2: Выложи начинку';
+                pieInstruction.textContent = 'Нажимай на тесто, чтобы аккуратно разложить спелые ягоды!';
+                pieProgress.style.width = `${(berriesPlaced / 8) * 100}%`;
+                bellowsBtn.style.display = 'none';
+            } else if (pieStage === 3) {
+                pieStepTitle.textContent = 'Шаг 3: Золотая корочка';
+                pieInstruction.textContent = 'Нажимай на кнопку, чтобы поддерживать жар в печи!';
+                pieProgress.style.width = `${ovenHeat}%`;
+                bellowsBtn.style.display = 'inline-flex';
+            }
+        }
+
+        kitchenSurface.addEventListener('pointermove', e => {
+            if (pieStage !== 1) return;
+            rollAmount += 1.8;
+            sfx.playChime(300 + rollAmount * 2);
+            const size = 140 + (rollAmount / 100) * 120;
+            pieDough.style.width = `${size}px`;
+            pieDough.style.height = `${size}px`;
+            pieProgress.style.width = `${Math.min(100, rollAmount)}%`;
+
+            if (rollAmount >= 100) {
+                pieStage = 2;
+                sfx.playVictoryChime();
+                updatePieUI();
+            }
+        });
+
+        kitchenSurface.addEventListener('click', e => {
+            if (pieStage !== 2) return;
+            const rect = kitchenSurface.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            const berry = document.createElement('div');
+            berry.style.position = 'absolute';
+            berry.style.left = `${x - 12}px`;
+            berry.style.top = `${y - 12}px`;
+            berry.style.width = '24px';
+            berry.style.height = '24px';
+            berry.style.borderRadius = '50%';
+            berry.style.background = 'radial-gradient(circle, #ff2a4b, #93081e)';
+            berry.style.boxShadow = '0 3px 6px rgba(0,0,0,0.4)';
+            berry.style.pointerEvents = 'none';
+            kitchenSurface.appendChild(berry);
+
+            berriesPlaced++;
+            sfx.playPop();
+            updatePieUI();
+
+            if (berriesPlaced >= 8) {
+                pieStage = 3;
+                sfx.playVictoryChime();
+                updatePieUI();
+
+                ovenInterval = setInterval(() => {
+                    if (pieStage === 3 && ovenHeat > 0) {
+                        ovenHeat = Math.max(0, ovenHeat - 1.2);
+                        pieProgress.style.width = `${ovenHeat}%`;
+                    }
+                }, 100);
+            }
+        });
+
+        bellowsBtn.addEventListener('click', () => {
+            if (pieStage !== 3) return;
+            sfx.playFlamePuff();
+            ovenHeat = Math.min(100, ovenHeat + 14);
+            pieProgress.style.width = `${ovenHeat}%`;
+
+            pieDough.style.background = `radial-gradient(circle, #f3c272 0%, #aa6423 ${ovenHeat}%)`;
+
+            if (ovenHeat >= 100) {
+                clearInterval(ovenInterval);
+                sfx.playVictoryChime();
+                pieStepTitle.textContent = 'Шедевр готов!';
+                pieInstruction.textContent = 'Именинный пирог испёкся идеально!';
+                setTimeout(() => {
+                    pieOverlay.style.display = 'none';
+                    flipPage();
+                }, 1200);
+            }
+        });
+
+        openPieGameBtn.addEventListener('click', () => {
+            sfx.init();
+            pieOverlay.style.display = 'flex';
+            pieStage = 1;
+            rollAmount = 0;
+            berriesPlaced = 0;
+            ovenHeat = 0;
+            pieDough.style.width = '140px';
+            pieDough.style.height = '140px';
+            pieDough.style.background = 'radial-gradient(circle, #fff3cf 0%, #eed599 100%)';
+            kitchenSurface.querySelectorAll('div:not(.pie-dough)').forEach(b => b.remove());
+            updatePieUI();
+        });
+    </script>
+</body>
+</html>
