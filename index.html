@@ -136,7 +136,7 @@
         }
 
         /* ==========================================================================
-           3. ОБЛОЖКА (ОПТИМИЗИРОВАННАЯ)
+           3. ОБЛОЖКА
            ========================================================================== */
         .cover-screen {
             position: absolute;
@@ -266,7 +266,7 @@
         .flash-overlay.active { opacity: 0.95; }
 
         /* ==========================================================================
-           4. КНИЖНЫЙ БЛОК (ВЫСОКОПРОИЗВОДИТЕЛЬНЫЙ)
+           4. КНИЖНЫЙ БЛОК
            ========================================================================== */
         .page-screen {
             position: absolute;
@@ -367,9 +367,7 @@
             font-weight: 600;
         }
 
-        /* ==========================================================================
-           СТРОГО ЕДИНЫЙ РАЗМЕР РАМОК ДЛЯ ВСЕХ ФОТОГРАФИЙ (280px)
-           ========================================================================== */
+        /* ЕДИНЫЙ РАЗМЕР РАМОК ДЛЯ ВСЕХ ФОТОГРАФИЙ (280px) */
         .image-wrapper {
             flex: 0 0 auto;
             height: 280px !important;
@@ -396,16 +394,18 @@
             font-size: 13px;
         }
 
-        /* ЧИСТЫЙ ПОРТРЕТ БЕЗ ВОДЯНОГО ЗНАКА */
         .image-wrapper.portrait-frame::before {
             display: none !important;
             content: none !important;
         }
 
         .image-wrapper.portrait-frame {
-            background: #faf4e8;
-            border: 2px solid #5a3416;
-            box-shadow: inset 0 0 20px rgba(180, 140, 50, 0.15), 0 6px 18px rgba(45, 25, 10, 0.2);
+            background: #f9f1df;
+            border: 2.5px solid #4a2810;
+            box-shadow: 
+                inset 0 0 35px rgba(105, 60, 20, 0.28),
+                0 6px 18px rgba(45, 25, 10, 0.22);
+            cursor: pointer;
         }
 
         .scene-image {
@@ -449,7 +449,9 @@
             font-size: 16px;
         }
 
-        /* SVG ПОРТРЕТ */
+        /* ==========================================================================
+           СТРАНИЦА 10: ПОРТРЕТ ДЕВОЧКИ В СТИЛЕ КАРТЫ МАРОДЁРОВ (АККУРАТНАЯ ГРАВЮРА ТУШЬЮ)
+           ========================================================================== */
         .sketch-svg-wrapper {
             width: 100%;
             height: 100%;
@@ -458,40 +460,84 @@
             justify-content: center;
             position: relative;
             z-index: 2;
+            background: 
+                radial-gradient(circle at 50% 45%, #fffdf7 0%, #f5ebd6 68%, #e2cfa9 100%);
         }
 
         .sketch-svg-wrapper svg {
             width: 100%;
             height: 100%;
-            padding: 8px;
+            max-width: 280px;
+            max-height: 280px;
+            display: block;
         }
 
-        .sketch-svg-wrapper path,
-        .sketch-svg-wrapper circle {
-            fill: none;
-            stroke: #452410;
-            stroke-width: 1.8;
-            stroke-linecap: round;
-            stroke-linejoin: round;
+        /* Все рисуемые элементы изначально скрыты через stroke-dashoffset: 1 */
+        .sketch-svg-wrapper .hp-draw path,
+        .sketch-svg-wrapper .hp-draw circle,
+        .sketch-svg-wrapper .hp-draw ellipse,
+        .sketch-svg-wrapper .hp-draw rect,
+        .sketch-svg-wrapper .hp-draw line,
+        .sketch-svg-wrapper .hp-draw polyline {
             stroke-dasharray: 1;
             stroke-dashoffset: 1;
-            animation: drawSmooth 3.5s forwards cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .sketch-svg-wrapper .sketch-dandelion {
-            stroke: #c98e10;
-            stroke-width: 1.8;
+        /* Поэтапная магическая прорисовка слоёв пером */
+        .sketch-svg-wrapper.animate .hp-map-bg path,
+        .sketch-svg-wrapper.animate .hp-map-bg circle,
+        .sketch-svg-wrapper.animate .hp-map-bg rect,
+        .sketch-svg-wrapper.animate .hp-map-bg line {
+            animation: drawSmooth 2.0s cubic-bezier(0.4, 0, 0.2, 1) 0.1s forwards;
+        }
+
+        .sketch-svg-wrapper.animate .hp-tree path,
+        .sketch-svg-wrapper.animate .hp-tree circle {
+            animation: drawSmooth 2.3s cubic-bezier(0.4, 0, 0.2, 1) 0.4s forwards;
+        }
+
+        .sketch-svg-wrapper.animate .hp-girl path,
+        .sketch-svg-wrapper.animate .hp-girl circle {
+            animation: drawSmooth 2.7s cubic-bezier(0.4, 0, 0.2, 1) 0.8s forwards;
+        }
+
+        .sketch-svg-wrapper.animate .hp-clothes path,
+        .sketch-svg-wrapper.animate .hp-clothes circle {
+            animation: drawSmooth 2.8s cubic-bezier(0.4, 0, 0.2, 1) 1.4s forwards;
+        }
+
+        .sketch-svg-wrapper.animate .hp-hatch path,
+        .sketch-svg-wrapper.animate .hp-hatch circle {
+            animation: drawSmooth 2.2s cubic-bezier(0.4, 0, 0.2, 1) 2.1s forwards;
+        }
+
+        /* Мягкое проявление надписи на свитке */
+        .hp-scroll-text {
+            opacity: 0;
+            transition: opacity 1.5s ease 2.4s;
+        }
+        .sketch-svg-wrapper.animate .hp-scroll-text {
+            opacity: 1;
+        }
+
+        /* Аккуратные нарисованные тушью глазки с бликами */
+        .hp-ink-eyes {
+            opacity: 0;
+            transition: opacity 1.2s ease 1.7s;
+        }
+        .sketch-svg-wrapper.animate .hp-ink-eyes {
+            opacity: 1;
         }
 
         /* ==========================================================================
-           ПИСЬМО ВОЛШЕБНИЦЫ (СТРАНИЦА 11)
+           СТРАНИЦА 11: СТИХ ВОЛШЕБНИЦЫ (БЕЗ ФОНОВОГО ЗВУКА)
            ========================================================================== */
         .fairy-letter-box {
             position: relative;
             background: #fffcf5;
             border: 2px solid #5a3416;
             border-radius: 10px;
-            padding: 20px 16px 16px;
+            padding: 16px 14px 14px;
             margin: auto 0;
             box-shadow: 
                 0 6px 20px rgba(45, 20, 8, 0.16),
@@ -524,25 +570,25 @@
             font-size: 13px;
             color: #a67c33;
             letter-spacing: 4px;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
 
         .poem-dynamic-container {
             font-family: 'Playfair Display', serif;
-            font-size: 14.5px;
-            line-height: 1.55;
+            font-size: 13.5px;
+            line-height: 1.48;
             color: #261407;
             font-style: italic;
-            min-height: 240px;
+            min-height: 250px;
         }
 
-        .poem-stanza-block { margin-bottom: 10px; }
+        .poem-stanza-block { margin-bottom: 7px; }
         .poem-stanza-block:last-child { margin-bottom: 0; }
 
         .poem-leaf-sep {
             color: #bfa05d;
-            font-size: 15px;
-            margin: 4px 0;
+            font-size: 13px;
+            margin: 2px 0;
         }
 
         .fade-char {
@@ -565,24 +611,24 @@
 
         .letter-signature {
             font-family: 'Lora', serif;
-            font-size: 11.5px;
+            font-size: 11px;
             color: #855f28;
-            margin-top: 10px;
+            margin-top: 8px;
             letter-spacing: 1.2px;
             text-transform: uppercase;
             font-style: normal;
         }
 
         .letter-hint {
-            font-size: 11px;
+            font-size: 10.5px;
             color: #9e793e;
-            margin-top: 6px;
+            margin-top: 4px;
             font-style: normal;
             opacity: 0.7;
         }
 
         /* ==========================================================================
-           5. ПОЛНОЭКРАННЫЕ МИНИ-ИГРЫ
+           5. ПОЛНОЭКРАННЫЕ МИНИ-ИГРЫ С АРТ-ФОНАМИ
            ========================================================================== */
         .fullscreen-game-overlay {
             position: fixed;
@@ -592,9 +638,34 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: #060907;
             overflow: hidden;
             touch-action: none;
+            background-color: #060907;
+            background-position: center;
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+
+        /* ФОНЫ ИГР */
+        #thornGameOverlay {
+            background-color: #080d0a;
+            background-image: 
+                radial-gradient(circle, rgba(10, 18, 12, 0.4) 0%, rgba(4, 7, 5, 0.88) 100%),
+                url('game1_bg.jpeg');
+        }
+
+        #berryGameOverlay {
+            background-color: #09130a;
+            background-image: 
+                radial-gradient(circle, rgba(12, 24, 14, 0.25) 0%, rgba(4, 10, 6, 0.8) 100%),
+                url('game2_bg.jpeg');
+        }
+
+        #pieGameOverlay {
+            background-color: #1a0d05;
+            background-image: 
+                radial-gradient(circle, rgba(20, 10, 5, 0.3) 0%, rgba(10, 5, 2, 0.85) 100%),
+                url('game3_bg.jpeg');
         }
 
         .game-canvas {
@@ -622,7 +693,7 @@
             font-size: 19px;
             letter-spacing: 2px;
             margin-bottom: 8px;
-            text-shadow: 0 2px 4px #000;
+            text-shadow: 0 2px 6px #000;
         }
 
         .progress-bar-container {
@@ -632,13 +703,14 @@
             border: 1.5px solid #a87933;
             border-radius: 8px;
             overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
         }
 
         .progress-bar-fill {
             height: 100%;
             width: 0%;
             background: linear-gradient(90deg, #d44d18, #f5a623, #ffdf79);
-            transition: width 0.25s ease-out;
+            transition: width 0.15s ease-out;
         }
 
         .berry-counter-box {
@@ -649,6 +721,7 @@
             border: 1.5px solid #c89c52;
             padding: 7px 20px;
             border-radius: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.6);
         }
 
         .game-instruction {
@@ -684,7 +757,7 @@
             background: radial-gradient(circle, #e8d5b5 0%, #a47e4c 100%);
             border: 5px solid #4a2d12;
             border-radius: 50%;
-            box-shadow: 0 12px 30px rgba(0,0,0,0.8);
+            box-shadow: 0 14px 35px rgba(0,0,0,0.85);
             position: relative;
             display: flex;
             align-items: center;
@@ -694,20 +767,70 @@
             touch-action: none;
         }
 
-        .pie-dough {
-            width: 130px;
-            height: 130px;
-            background: radial-gradient(circle, #fff3d4 0%, #ecd497 100%);
-            border-radius: 50%;
-            box-shadow: 0 6px 14px rgba(0,0,0,0.25);
-            transition: width 0.12s ease, height 0.12s ease;
-            position: relative;
+        .bellows-btn {
+            margin-top: 14px;
+            padding: 12px 28px;
+            font-size: 14px;
+            touch-action: manipulation;
         }
 
-        .bellows-btn {
-            margin-top: 18px;
-            padding: 12px 26px;
-            font-size: 13.5px;
+        /* ТЕМПЕРАТУРА И ПОДГОРАНИЕ В ПЕЧИ */
+        .oven-control-box {
+            width: 100%;
+            max-width: 320px;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 10px;
+            gap: 6px;
+        }
+
+        .temp-gauge-wrap {
+            position: relative;
+            width: 100%;
+            height: 18px;
+            background: rgba(18, 9, 4, 0.85);
+            border: 1.5px solid #a87933;
+            border-radius: 9px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.8);
+        }
+
+        .temp-sweet-spot {
+            position: absolute;
+            left: 48%;
+            width: 28%;
+            height: 100%;
+            background: rgba(76, 217, 100, 0.38);
+            border-left: 2px dashed #4cd964;
+            border-right: 2px dashed #4cd964;
+        }
+
+        .temp-needle {
+            position: absolute;
+            top: 0; bottom: 0;
+            left: 55%;
+            width: 6px;
+            background: #ffffff;
+            box-shadow: 0 0 8px #fff, 0 0 12px #ffcc00;
+            transform: translateX(-50%);
+            transition: left 0.08s linear;
+        }
+
+        .danger-burn-wrap {
+            width: 100%;
+            height: 7px;
+            background: #2a0b0e;
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid #5a1e23;
+        }
+
+        .danger-burn-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #ff9900, #ff1e00);
+            transition: width 0.1s linear;
         }
     </style>
 </head>
@@ -761,19 +884,15 @@
                     </g>
 
                     <g id="stage3-bouquet" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-                        <!-- Стебли букета -->
                         <path pathLength="1" d="M52 85 L51 72 M50 85 L44 70 M54 85 L59 70" stroke-width="0.22" />
                         <path pathLength="1" d="M49 84 C46 80 46 87 51 84 C56 87 56 80 53 84 Z" stroke-width="0.22" />
 
-                        <!-- Центральное солнышко -->
                         <circle pathLength="1" cx="51" cy="67" r="1.6" stroke-width="0.22" />
                         <path pathLength="1" d="M51 65.4 L51 61.5 M52.2 65.8 L55.2 63.2 M52.6 67 L56.5 67 M52.2 68.2 L55.2 70.8 M51 68.6 L51 72.5 M49.8 68.2 L46.8 70.8 M49.4 67 L45.5 67 M49.8 65.8 L46.8 63.2" stroke-width="0.2" />
 
-                        <!-- Левое солнышко -->
                         <circle pathLength="1" cx="43" cy="66" r="1.1" stroke-width="0.2" />
                         <path pathLength="1" d="M43 65 L43 61 M42 65.2 L39 63 M43.8 65.2 L47 63 M42 66 L38.5 66 M44 66 L47.5 66 M42.2 66.8 L39.2 68.8 M43.8 66.8 L46.8 68.8" stroke-width="0.18" />
 
-                        <!-- Правое солнышко -->
                         <circle pathLength="1" cx="59" cy="66" r="1.1" stroke-width="0.2" />
                         <path pathLength="1" d="M59 65 L59 61 M58 65.2 L55 63 M59.8 65.2 L63 63 M58 66 L54.5 66 M60 66 L63.5 66 M58.2 66.8 L55.2 68.8 M59.8 66.8 L62.8 68.8" stroke-width="0.18" />
                     </g>
@@ -801,7 +920,7 @@
                     <path id="letter-Cyrillic-a-2" pathLength="1" d="M289 119 C296 107 305 99 312 99 C319 99 320 105 316 113 C312 121 305 127 299 127 C293 127 292 121 297 113 C302 105 309 101 315 102 C321 103 321 111 319 119 C317 126 321 130 326 127 C330 125 333 121 336 118"/>
                     <path id="letter-Cyrillic-o" pathLength="1" d="M372 117 C379 107 388 99 395 99 C402 99 403 105 399 113 C395 121 388 127 382 127 C376 127 375 121 380 113 C385 105 392 101 398 102 C404 103 404 111 402 119 C400 126 404 130 409 127 C413 125 416 121 419 118"/>
                     <path id="letter-Cyrillic-D" pathLength="1" d="M513 125 C505 112 501 94 497 78 C494 67 492 61 489 57 C485 68 480 85 475 103 C470 120 466 128 459 132 C473 135 492 135 510 131 M459 132 C457 140 453 145 447 149 C454 145 461 139 466 133 M510 131 C517 135 521 141 522 147 C524 140 521 133 517 128"/>
-                    <path id="letter-Cyrillic-a-3" pathLength="1" d="M516 119 C523 107 532 99 539 99 C546 99 547 105 543 113 C539 121 532 127 526 127 C520 127 519 121 524 113 C529 105 536 101 542 102 C548 103 548 111 546 119 C544 126 548 130 553 127 C557 125 560 121 563 118"/>
+                    <path id="letter-Cyrillic-a-3" pathLength="1" d="M516 119 C523 107 532 99 539 99 C546 99 547 105 543 113 C539 121 532 127 526 127 C520 127 519 121 524 113 C529 105 336 101 542 102 C548 103 548 111 546 119 C544 126 548 130 553 127 C557 125 560 121 563 118"/>
                     <path id="letter-Cyrillic-r" pathLength="1" d="M556 128 C563 114 568 96 569 81 C570 74 567 72 564 78 C559 89 559 109 561 123 C562 130 567 131 575 127 C585 122 592 112 592 105 C592 99 586 97 581 99 C573 102 568 111 567 121 C565 135 568 147 563 155 C561 159 558 161 554 162"/>
                     <path id="letter-Cyrillic-soft-sign" pathLength="1" d="M600 128 C607 114 611 96 612 81 C613 74 610 72 607 78 C603 88 603 108 605 121 C606 129 612 131 620 128 C629 125 636 117 636 110 C636 103 630 101 625 103 C619 105 615 113 615 120"/>
                     <path id="letter-Cyrillic-e" pathLength="1" d="M642 117 C649 107 658 99 665 99 C672 99 673 105 669 110 C665 115 657 117 650 115 C646 114 645 119 647 123 C650 130 658 131 665 127 C673 123 679 116 684 113 C689 110 694 111 695 115 C696 119 691 123 686 125 M650 115 C657 112 664 111 670 112"/>
@@ -973,7 +1092,7 @@
                                 <h2 style="font-family:'Cinzel Decorative'; color: #9c6c10; font-size: 22px; margin-bottom: 12px;">Время Чудес</h2>
                                 <p class="story-text" style="text-align: center;">Мука просеяна, сладкая малина блестит рубинами, а печь уже разогрета жаркими искрами!</p>
                                 <p class="story-text" style="text-align: center; font-style: italic; margin-top: 14px; color: #6a4a26;">
-                                    Раскатай пышное тесто, укрась его лесными ягодами и доведи выпечку до золотистой корочки!
+                                    Раскатай пышное тесто во все стороны, укрась его ягодами и испеки в печи при идеальной температуре!
                                 </p>
                                 <button class="drawn-btn action-btn" id="openPieGameBtn" style="margin-top: 24px;">
                                     <span>🥧</span>
@@ -1005,7 +1124,7 @@
                     <div class="page-back"></div>
                 </div>
 
-                <!-- Стр. 10: Подарок Волшебницы (ЧИСТЫЙ SVG-ПОРТРЕТ) -->
+                <!-- Стр. 10: Подарок Волшебницы (ПОРТРЕТ ДЕВОЧКИ В СТИЛЕ КАРТЫ МАРОДЁРОВ) -->
                 <div class="page" id="page10">
                     <div class="page-front">
                         <div class="page-content">
@@ -1015,35 +1134,206 @@
                             </div>
 
                             <p style="font-size: 14px; font-style: italic; color: #523014; text-align: center; margin-bottom: 10px; line-height: 1.5;">
-                                Маленькая девочка из сказки тоже поздравляет тебя с днём рождения, и в подарок нарисовала тебе твой портрет, по нашей фотографии ✨
+                                Маленькая девочка из сказки тоже поздравляет тебя с днём рождения, и в подарок нарисовала тебе твой портрет.
                             </p>
 
-                            <div class="image-wrapper portrait-frame">
-                                <div class="sketch-svg-wrapper">
-                                    <svg viewBox="0 0 220 220">
-                                        <path pathLength="1" d="M 180 10 Q 168 110 176 215 M 202 10 Q 192 120 196 215" />
-                                        <path pathLength="1" d="M 85 86 Q 85 116 105 120 Q 126 116 128 86" />
-                                        <path pathLength="1" d="M 94 92 Q 99 89 104 92 M 111 92 Q 116 89 121 92" />
-                                        <circle cx="99" cy="93" r="1.6" fill="#452410" />
-                                        <circle cx="116" cy="93" r="1.6" fill="#452410" />
-                                        <path pathLength="1" d="M 108 97 Q 110 102 106 103" />
-                                        <path pathLength="1" d="M 100 108 Q 107 113 115 108" />
-                                        <path pathLength="1" d="M 84 84 Q 106 80 128 82" />
-                                        <path pathLength="1" d="M 85 86 Q 78 72 95 60 Q 115 54 126 64 Q 132 76 128 86" />
-                                        <path pathLength="1" d="M 116 56 Q 134 36 148 45 Q 155 53 144 70 Q 134 78 126 72" />
-                                        <circle class="sketch-dandelion" cx="116" cy="52" r="3" fill="#FFE8A1" />
-                                        <path class="sketch-dandelion" pathLength="1" d="M 116 48 L 116 44 M 119 50 L 123 47 M 120 54 L 124 57 M 112 54 L 108 57 M 112 50 L 108 47" />
-                                        <path pathLength="1" d="M 88 135 L 80 166 L 92 168 L 98 138 Z" />
-                                        <path pathLength="1" d="M 122 138 L 118 168 L 130 166 L 131 135 Z" />
-                                        <circle cx="85" cy="163" r="1.8" fill="#452410" />
-                                        <circle cx="124" cy="163" r="1.8" fill="#452410" />
-                                        <path pathLength="1" d="M 80 166 L 130 166 L 133 205 L 77 205 Z" />
-                                        <path pathLength="1" d="M 94 175 L 116 175 L 113 190 L 97 190 Z" />
-                                        <path pathLength="1" d="M 132 142 Q 152 152 172 148" />
-                                        <path pathLength="1" d="M 78 144 Q 63 162 68 190" />
-                                        <circle class="sketch-dandelion" cx="70" cy="184" r="2.8" fill="#FFE8A1" />
-                                        <circle class="sketch-dandelion" cx="66" cy="180" r="1.8" fill="#FFE8A1" />
-                                        <circle class="sketch-dandelion" cx="73" cy="179" r="1.8" fill="#FFE8A1" />
+                            <div class="image-wrapper portrait-frame" id="portraitFrame" title="Нажми, чтобы оживить рисунок пером">
+                                <div class="sketch-svg-wrapper" id="sketchSvgWrapper">
+                                    <svg viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+
+                                        <!-- ГРУППА ПРОРИСОВКИ ПЕРОМ -->
+                                        <g class="hp-draw">
+
+                                            <!-- 1. ФОН ДОМИКА, ДВОРА И РАМКА КАРТЫ МАРОДЁРОВ -->
+                                            <g class="hp-map-bg" fill="none" stroke="#5c381e" stroke-linecap="round" stroke-linejoin="round">
+                                                <!-- Винтажная двойная рамка пергамента -->
+                                                <rect pathLength="1" x="10" y="10" width="480" height="480" rx="6" stroke-width="2.2"/>
+                                                <rect pathLength="1" x="16" y="16" width="468" height="468" rx="4" stroke-width="1.1"/>
+                                                <!-- Угловые завитки карты -->
+                                                <path pathLength="1" d="M 16 42 C 28 42 42 28 42 16 M 458 16 C 458 28 472 42 484 42 M 16 458 C 28 458 42 472 42 484 M 458 484 C 458 472 472 458 484 458" stroke-width="1.5"/>
+
+                                                <!-- Крыша дома и столб слева -->
+                                                <path pathLength="1" d="M 16 84 L 105 44 L 156 76" stroke-width="2.4"/>
+                                                <path pathLength="1" d="M 16 92 L 105 52 L 154 83" stroke-width="1.6"/>
+                                                <path pathLength="1" d="M 96 18 L 91 190 M 103 18 L 98 190" stroke-width="2.2"/>
+
+                                                <!-- Арочное окошко слева -->
+                                                <path pathLength="1" d="M 48 156 L 48 118 C 48 92 108 92 108 118 L 108 156 Z" stroke-width="2.5"/>
+                                                <path pathLength="1" d="M 78 99 L 78 156 M 48 122 L 108 122 M 48 148 L 108 148" stroke-width="2"/>
+
+                                                <!-- Горизонтальная труба и заборчик позади девочки -->
+                                                <path pathLength="1" d="M 16 188 L 160 198 M 16 212 L 155 222" stroke-width="2.2"/>
+                                                <path pathLength="1" d="M 32 189 L 30 213 M 64 191 L 62 215 M 95 193 L 93 217 M 128 196 L 126 220" stroke-width="1.8"/>
+                                                <path pathLength="1" d="M 358 206 L 452 214 M 368 224 L 450 232" stroke-width="2.2"/>
+                                                <path pathLength="1" d="M 392 209 L 390 226 M 422 211 L 420 229" stroke-width="1.8"/>
+
+                                                <!-- Заборчик, кустик и линия двора слева -->
+                                                <path pathLength="1" d="M 16 252 L 122 258 L 120 322 M 58 254 L 56 306 M 92 256 L 90 315" stroke-width="1.8"/>
+                                                <path pathLength="1" d="M 16 305 Q 68 298 124 326" stroke-width="2.4"/>
+                                                <path pathLength="1" d="M 22 302 L 18 286 L 28 298 L 30 282 L 36 298 L 44 284 L 42 300 L 52 290 L 46 302" stroke-width="1.6"/>
+                                            </g>
+
+                                            <!-- 2. ДЕРЕВО СПРАВА, ВЕТВИ И ЛИСТЬЯ СВЕРХУ -->
+                                            <g class="hp-tree" fill="none" stroke="#361d0d" stroke-linecap="round" stroke-linejoin="round">
+                                                <!-- Ствол дерева позади хвостика -->
+                                                <path pathLength="1" d="M 140 16 C 145 62 152 108 158 148 M 226 16 C 229 32 232 45 235 56" stroke-width="2.4"/>
+                                                <!-- Большой ствол дерева справа -->
+                                                <path pathLength="1" d="M 478 16 C 468 95 462 175 452 250 C 446 320 436 400 420 484" stroke-width="3.2"/>
+                                                <path pathLength="1" d="M 465 95 C 460 140 462 190 456 235 M 474 210 C 468 255 470 300 462 345" stroke-width="1.8"/>
+                                                <!-- Сучок и узоры коры -->
+                                                <circle pathLength="1" cx="476" cy="285" r="7" stroke-width="2"/>
+                                                <path pathLength="1" d="M 462 465 C 452 462 450 476 460 478 C 468 479 468 465 458 455" stroke-width="1.8"/>
+                                                <path pathLength="1" d="M 445 360 C 440 385 438 415 432 440 M 468 380 C 464 405 462 430 458 450" stroke-width="1.5"/>
+
+                                                <!-- Ветви и резные листья над головой -->
+                                                <path pathLength="1" d="M 278 16 L 335 62 M 295 34 L 358 24" stroke-width="2.2"/>
+                                                <path pathLength="1" d="M 325 48 C 335 38 352 42 346 56 C 360 54 364 68 350 72 C 348 84 332 82 330 70 C 318 68 318 54 325 48 Z" stroke-width="1.9"/>
+                                                <path pathLength="1" d="M 366 64 C 376 54 392 58 386 72 C 400 70 404 84 390 88 C 388 98 372 96 370 86 C 358 84 358 70 366 64 Z" stroke-width="1.9"/>
+                                                <path pathLength="1" d="M 332 88 C 340 80 354 84 350 96 C 360 96 362 108 350 110 C 346 118 334 116 334 106 C 324 104 324 92 332 88 Z" stroke-width="1.8"/>
+                                                <path pathLength="1" d="M 426 42 C 438 68 448 98 456 128 M 398 112 L 368 235" stroke-width="1.8"/>
+                                            </g>
+
+                                            <!-- 3. ДЕВОЧКА: ЛИЦО, ЧЁЛКА, БОКОВОЙ ХВОСТИК С ПУШИСТОЙ РЕЗИНКОЙ -->
+                                            <g class="hp-girl" fill="none" stroke="#231107" stroke-linecap="round" stroke-linejoin="round">
+                                                <!-- Овал лица и щёчки -->
+                                                <path pathLength="1" d="M 216 135 C 216 178 236 214 268 216 C 300 214 318 178 318 130" stroke-width="3.2"/>
+
+                                                <!-- Ушки и маленькие серёжки-гвоздики -->
+                                                <path pathLength="1" d="M 216 135 C 204 128 200 152 208 168 C 213 176 218 175 222 170" stroke-width="2.6"/>
+                                                <path pathLength="1" d="M 209 144 C 212 150 212 158 215 162" stroke-width="1.8"/>
+                                                <circle pathLength="1" cx="217" cy="171" r="1.8" stroke-width="1.8"/>
+
+                                                <path pathLength="1" d="M 318 128 C 328 122 334 146 326 162 C 322 170 316 168 313 163" stroke-width="2.6"/>
+                                                <path pathLength="1" d="M 325 138 C 321 145 321 153 318 157" stroke-width="1.8"/>
+                                                <circle pathLength="1" cx="317" cy="164" r="1.8" stroke-width="1.8"/>
+
+                                                <!-- Макушка и пряди чёлки -->
+                                                <path pathLength="1" d="M 212 125 C 206 78 242 52 280 54 C 314 56 332 85 332 128" stroke-width="3.2"/>
+                                                <path pathLength="1" d="M 216 132 C 218 106 230 88 244 78" stroke-width="2.4"/>
+                                                <path pathLength="1" d="M 224 134 C 228 112 238 96 248 86 C 240 106 236 122 236 134" stroke-width="2.5"/>
+                                                <path pathLength="1" d="M 244 130 C 248 110 256 92 266 80 C 260 100 256 116 254 128" stroke-width="2.5"/>
+                                                <path pathLength="1" d="M 274 78 C 274 98 282 116 292 128" stroke-width="2.5"/>
+                                                <path pathLength="1" d="M 284 82 C 292 102 302 118 314 128" stroke-width="2.5"/>
+                                                <path pathLength="1" d="M 298 76 C 310 94 318 112 320 128" stroke-width="2.3"/>
+
+                                                <!-- Изящные пряди справа у лица -->
+                                                <path pathLength="1" d="M 330 112 C 348 135 352 172 342 208" stroke-width="2.8"/>
+                                                <path pathLength="1" d="M 326 128 C 340 152 342 182 334 212" stroke-width="2.4"/>
+
+                                                <!-- Пушистая резинка на хвостике (слева сверху) -->
+                                                <path pathLength="1" d="M 208 68 C 209 61 216 61 218 65 C 223 60 229 64 227 70 C 232 73 229 80 224 80 C 223 86 215 86 213 81 C 207 81 205 73 208 68 Z" stroke-width="2.6"/>
+
+                                                <!-- Пышный боковой хвостик слева, ниспадающий на плечо -->
+                                                <path pathLength="1" d="M 212 64 C 195 36 170 28 152 32 C 168 44 176 54 182 62 C 165 56 150 60 138 68 C 156 72 172 74 186 78" stroke-width="2.8"/>
+                                                <path pathLength="1" d="M 208 76 C 182 95 168 145 158 195 C 148 240 132 268 118 290 C 135 280 148 262 156 244 C 150 268 144 290 140 306 C 156 286 168 258 176 232 C 174 260 174 285 178 302 C 188 272 196 235 202 198 C 206 180 208 170 210 165" stroke-width="3"/>
+
+                                                <!-- Бровки -->
+                                                <path pathLength="1" d="M 228 138 C 236 131 248 131 256 136" stroke-width="2.8"/>
+                                                <path pathLength="1" d="M 282 134 C 290 128 304 129 310 136" stroke-width="2.8"/>
+
+                                                <!-- Контуры глаз и пушистые реснички -->
+                                                <path pathLength="1" d="M 230 152 C 236 143 250 143 256 151 C 250 157 236 157 230 152 Z" stroke-width="2.6"/>
+                                                <path pathLength="1" d="M 226 149 C 234 141 250 141 258 150 M 231 146 L 227 143 M 238 143 L 236 139" stroke-width="2.2"/>
+
+                                                <path pathLength="1" d="M 282 149 C 287 140 301 140 307 148 C 301 154 287 154 282 149 Z" stroke-width="2.6"/>
+                                                <path pathLength="1" d="M 280 148 C 287 139 302 139 311 146 M 302 141 L 306 137 M 307 144 L 312 141" stroke-width="2.2"/>
+
+                                                <!-- Аккуратный носик -->
+                                                <path pathLength="1" d="M 262 174 C 260 178 263 181 266 180 M 271 179 C 274 180 276 179 276 177 M 281 171 C 285 175 284 180 279 180" stroke-width="2.2"/>
+
+                                                <!-- Нежная добрая улыбка и губы -->
+                                                <path pathLength="1" d="M 247 195 C 258 199 278 199 291 193" stroke-width="2.8"/>
+                                                <path pathLength="1" d="M 255 194 C 264 191 274 191 283 193" stroke-width="1.8"/>
+                                                <path pathLength="1" d="M 254 197 C 264 205 276 205 285 196" stroke-width="2"/>
+                                                <path pathLength="1" d="M 244 193 C 246 196 248 197 250 196 M 293 191 C 292 194 290 195 288 195" stroke-width="2"/>
+
+                                                <!-- Шейка -->
+                                                <path pathLength="1" d="M 240 208 C 240 218 238 226 234 232 M 298 206 C 298 218 300 226 304 232" stroke-width="2.6"/>
+                                            </g>
+
+                                            <!-- 4. ОДЕЖДА: КАРДИГАН С ЦВЕТОЧКАМИ, КОМБИНЕЗОН С КАРМАШКОМ И РУКА НА ПОЯСЕ -->
+                                            <g class="hp-clothes" fill="none" stroke="#231107" stroke-linecap="round" stroke-linejoin="round">
+                                                <!-- Воротник футболки -->
+                                                <path pathLength="1" d="M 224 214 C 245 244 292 244 312 218" stroke-width="2.8"/>
+                                                <path pathLength="1" d="M 218 224 C 242 256 296 256 318 228" stroke-width="2.6"/>
+
+                                                <!-- Нагрудник комбинезона и лямка с пряжкой справа -->
+                                                <path pathLength="1" d="M 245 262 L 326 270 M 245 268 L 325 276" stroke-width="2.6"/>
+                                                <path pathLength="1" d="M 330 282 L 320 385" stroke-width="2.8"/>
+                                                <path pathLength="1" d="M 316 226 L 326 268 M 332 246 L 342 262 L 330 274 L 320 258 Z" stroke-width="2.5"/>
+                                                <circle pathLength="1" cx="324" cy="276" r="7" stroke-width="2.5"/>
+
+                                                <!-- Центральный кармашек на комбинезоне -->
+                                                <path pathLength="1" d="M 242 304 L 310 310 L 309 324 L 241 318 Z" stroke-width="2.6"/>
+                                                <path pathLength="1" d="M 243 318 L 241 348 C 240 378 306 382 308 352 L 309 324" stroke-width="2.8"/>
+                                                <path pathLength="1" d="M 249 322 L 247 346 C 246 370 299 374 301 350 L 302 326" stroke-width="1.8"/>
+
+                                                <!-- Пояс и брючки комбинезона -->
+                                                <path pathLength="1" d="M 212 388 L 292 406 M 210 396 L 298 415" stroke-width="2.6"/>
+                                                <path pathLength="1" d="M 278 412 L 274 484 M 283 413 L 281 484" stroke-width="2.2"/>
+                                                <path pathLength="1" d="M 230 402 C 226 428 216 446 202 456 M 222 400 C 218 424 210 440 198 448" stroke-width="2.2"/>
+                                                <path pathLength="1" d="M 206 396 C 196 435 188 464 184 484 M 315 422 C 322 450 325 468 327 484" stroke-width="2.8"/>
+
+                                                <!-- Волнистая пушистая оторочка кардигана (слева) -->
+                                                <path pathLength="1" d="M 222 214 Q 232 228 226 242 Q 238 256 232 270 Q 246 282 238 298 Q 246 312 236 324 Q 242 338 230 350 Q 234 362 222 374 Q 226 388 214 400 Q 218 415 206 428 Q 210 442 198 456 Q 202 470 190 484" stroke-width="2.8"/>
+                                                <path pathLength="1" d="M 212 218 C 222 265 232 300 220 345 C 208 390 192 442 175 484" stroke-width="2.4"/>
+
+                                                <!-- 3 цветочка-аппликации на кардигане слева -->
+                                                <path pathLength="1" d="M 168 308 C 170 300 180 300 182 306 C 190 306 192 316 184 320 C 186 328 176 330 172 324 C 164 326 162 314 168 308 Z" stroke-width="2.2"/>
+                                                <circle pathLength="1" cx="176" cy="315" r="2.2" stroke-width="1.8"/>
+                                                <path pathLength="1" d="M 173 336 C 175 330 183 330 185 335 C 191 335 193 343 187 347 C 188 353 180 355 177 350 C 170 351 168 342 173 336 Z" stroke-width="2.2"/>
+                                                <circle pathLength="1" cx="180" cy="342" r="2" stroke-width="1.8"/>
+                                                <path pathLength="1" d="M 149 456 C 151 450 159 450 161 455 C 167 455 169 463 163 467 C 164 473 156 475 153 470 C 146 471 144 462 149 456 Z" stroke-width="2.2"/>
+                                                <circle pathLength="1" cx="156" cy="462" r="2" stroke-width="1.8"/>
+
+                                                <!-- Левый рукав кофточки -->
+                                                <path pathLength="1" d="M 142 268 C 122 315 118 365 112 415 C 102 448 104 470 106 484" stroke-width="3"/>
+                                                <path pathLength="1" d="M 146 325 C 138 385 132 438 128 484" stroke-width="2.6"/>
+
+                                                <!-- Правая сторона кардигана и рука, поставленная на пояс -->
+                                                <path pathLength="1" d="M 326 226 Q 338 240 334 256 Q 350 268 346 286 Q 362 300 358 318 Q 372 334 366 350 Q 378 358 372 368" stroke-width="2.6"/>
+                                                <path pathLength="1" d="M 345 206 C 378 220 402 248 418 282 C 425 298 446 308 452 328 C 458 352 442 385 426 408 C 412 428 395 432 376 428" stroke-width="3"/>
+                                                <path pathLength="1" d="M 365 280 C 378 296 392 312 405 322 C 392 335 385 352 378 368" stroke-width="2.6"/>
+
+                                                <!-- Пушистый манжет на правом запястье -->
+                                                <path pathLength="1" d="M 332 372 Q 338 360 350 366 Q 362 362 366 374 Q 378 380 374 392 Q 384 402 376 414 Q 382 426 372 436 Q 368 448 356 442 Q 346 436 348 424" stroke-width="2.8"/>
+
+                                                <!-- Изящная кисть руки и пальчики на талии -->
+                                                <path pathLength="1" d="M 334 382 C 312 378 292 380 278 385 C 276 390 282 394 294 393 L 322 392" stroke-width="2.5"/>
+                                                <path pathLength="1" d="M 322 392 C 304 398 288 404 276 410 C 274 415 282 418 294 414 L 322 402" stroke-width="2.5"/>
+                                                <path pathLength="1" d="M 322 402 C 316 414 312 426 312 435 C 316 438 322 434 326 422 L 334 408" stroke-width="2.5"/>
+                                                <path pathLength="1" d="M 334 408 C 336 418 340 426 346 430 C 350 428 348 418 344 406" stroke-width="2.4"/>
+                                            </g>
+
+                                            <!-- 5. ТОНКАЯ ГРАВЮРНАЯ ШТРИХОВКА И МАГИЧЕСКИЕ ИСКРЫ -->
+                                            <g class="hp-hatch" fill="none" stroke="#5a361b" stroke-linecap="round">
+                                                <path pathLength="1" d="M 184 95 C 174 135 166 175 158 215 M 196 105 C 188 145 182 185 176 220" stroke-width="1.4"/>
+                                                <path pathLength="1" d="M 248 64 C 266 58 286 58 302 68" stroke-width="1.3"/>
+                                                <path pathLength="1" d="M 118 355 L 132 362 M 114 405 L 128 410 M 388 305 L 404 298 M 395 348 L 415 352" stroke-width="1.4"/>
+                                                <path pathLength="1" d="M 122 145 L 126 155 L 136 159 L 126 163 L 122 173 L 118 163 L 108 159 L 118 155 Z" stroke-width="1.4"/>
+                                                <path pathLength="1" d="M 382 142 L 385 150 L 393 153 L 385 156 L 382 164 L 379 156 L 371 153 L 379 150 Z" stroke-width="1.4"/>
+                                            </g>
+
+                                        </g>
+
+                                        <!-- 6. АККУРАТНЫЕ НАРИСОВАННЫЕ ТУШЬЮ ГЛАЗКИ С ЕСТЕСТВЕННЫМ БЛИКОМ -->
+                                        <g class="hp-ink-eyes">
+                                            <!-- Тёмно-кофейные зрачки и радужки в цвет рисунка -->
+                                            <circle cx="243.5" cy="150.5" r="5.5" fill="#231107"/>
+                                            <circle cx="294.5" cy="147.5" r="5.5" fill="#231107"/>
+                                            <!-- Аккуратные живые блики -->
+                                            <circle cx="241.8" cy="148.5" r="1.8" fill="#fffdf7"/>
+                                            <circle cx="292.8" cy="145.5" r="1.8" fill="#fffdf7"/>
+                                            <circle cx="245.2" cy="152.0" r="0.8" fill="#fffdf7"/>
+                                            <circle cx="296.2" cy="149.0" r="0.8" fill="#fffdf7"/>
+                                        </g>
+
+                                        <!-- 7. ПОДПИСЬ В СТИЛЕ СВИТКА ГАРРИ ПОТТЕРА -->
+                                        <g class="hp-scroll-text">
+                                            <text x="250" y="476" text-anchor="middle" font-family="'Playfair Display', serif" font-size="13" fill="#4a2810" font-style="italic" font-weight="600" letter-spacing="1.2">
+                                                ✦ Mischief Managed • Прекрасная Дарья ✦
+                                            </text>
+                                        </g>
                                     </svg>
                                 </div>
                             </div>
@@ -1056,13 +1346,13 @@
                     <div class="page-back"></div>
                 </div>
 
-                <!-- Стр. 11: СТИХ ВОЛШЕБНИЦЫ -->
+                <!-- Стр. 11: СТИХ ВОЛШЕБНИЦЫ С 4 КУПЛЕТАМИ (БЕЗ ФОНОВОГО ЗВУКА) -->
                 <div class="page" id="page11">
                     <div class="page-front">
                         <div class="page-content" style="justify-content: center;">
                             <div>
                                 <div class="chapter-tag">Искренние строки</div>
-                                <div class="story-title" style="margin-bottom: 14px;">Письмо Маленькой Волшебницы</div>
+                                <div class="story-title" style="margin-bottom: 12px;">Письмо Маленькой Волшебницы</div>
                             </div>
 
                             <div class="fairy-letter-box" id="fairyLetterBox" title="Нажми, чтобы показать весь текст">
@@ -1109,29 +1399,29 @@
         </button>
     </div>
 
-    <!-- МИНИ-ИГРА №1 -->
+    <!-- МИНИ-ИГРА №1: ТЕРНОВНИК (ДИНАМИЧНЫЙ СВАЙП, УВЕЛИЧЕНО В 10 РАЗ) -->
     <div class="fullscreen-game-overlay" id="thornGameOverlay">
         <canvas class="game-canvas" id="thornCanvas"></canvas>
         <div class="game-hud">
-            <div class="game-title-hud">Чаща терновника</div>
+            <div class="game-title-hud">Чаща терновника (<span id="vinesCounter">0</span> / 50)</div>
             <div class="progress-bar-container">
                 <div class="progress-bar-fill" id="thornProgress"></div>
             </div>
         </div>
-        <div class="game-instruction">Руби переднюю светящуюся лиану!</div>
+        <div class="game-instruction">Води пальцем по экрану и весело руби наступающие колючие лозы!</div>
     </div>
 
-    <!-- МИНИ-ИГРА №2 -->
+    <!-- МИНИ-ИГРА №2: МАЛИНОВЫЙ ДОЗОР -->
     <div class="fullscreen-game-overlay" id="berryGameOverlay">
         <canvas class="game-canvas" id="berryCanvas"></canvas>
         <div class="game-hud">
             <div class="game-title-hud">Малиновый Дозор</div>
             <div class="berry-counter-box" id="berryCounter">Корзинка: 0 / 8 🍓</div>
         </div>
-        <div class="game-instruction">Шлёпай гномов, чтобы они не утащили спелые ягодки!</div>
+        <div class="game-instruction">Шлёпай гномов или собирай малину в корзину!</div>
     </div>
 
-    <!-- МИНИ-ИГРА №3 -->
+    <!-- МИНИ-ИГРА №3: ПЕКАРНЯ (РАСКАТКА ПО ВСЕМУ КРУГУ + БАЛАНС ТЕМПЕРАТУРЫ) -->
     <div class="fullscreen-game-overlay" id="pieGameOverlay">
         <canvas class="game-canvas" id="pieCanvasFx"></canvas>
         <div class="game-hud">
@@ -1143,8 +1433,28 @@
         
         <div class="pie-kitchen-box">
             <div class="kitchen-surface" id="kitchenSurface">
-                <div class="pie-dough" id="pieDough"></div>
+                <canvas id="doughCanvas" width="290" height="290" style="position: absolute; inset: 0; pointer-events: none;"></canvas>
             </div>
+
+            <!-- БЛОК ТЕМПЕРАТУРЫ И ПОДГОРАНИЯ ПЕЧИ -->
+            <div class="oven-control-box" id="ovenControlBox">
+                <div style="width: 100%; display: flex; justify-content: space-between; font-size: 13px; color: #FFF0A8; font-family: 'Playfair Display', serif;">
+                    <span id="tempStatus">Жар печи: Остывает...</span>
+                    <span id="tempValue">58°C</span>
+                </div>
+                <div class="temp-gauge-wrap">
+                    <div class="temp-sweet-spot" title="Зона идеального жара"></div>
+                    <div class="temp-needle" id="tempNeedle"></div>
+                </div>
+                <div style="width: 100%; display: flex; justify-content: space-between; font-size: 11.5px; color: #ff9999; margin-top: 3px;">
+                    <span>Опасность подгорания (макс 5 сек вне зоны):</span>
+                    <span id="burnTimerText">0.0 / 5.0 сек</span>
+                </div>
+                <div class="danger-burn-wrap">
+                    <div class="danger-burn-fill" id="burnDangerBar"></div>
+                </div>
+            </div>
+
             <button class="drawn-btn bellows-btn" id="bellowsBtn" style="display: none;">
                 <span>💨</span>
                 <span>Раздуть пламя печи</span>
@@ -1152,17 +1462,15 @@
             </button>
         </div>
 
-        <div class="game-instruction" id="pieInstruction">Проводи пальцем по тесту, чтобы раскатать круглую форму!</div>
+        <div class="game-instruction" id="pieInstruction">Раскатывай тесто пальцем из центра в разные стороны по всему кругу!</div>
     </div>
 
     <script>
         /* ==========================================================================
            НАСТРОЙКА СКОРОСТИ ЧТЕНИЯ ОЗВУЧКИ (VOICEOVER SPEED)
-           1.0  = Обычная скорость записи
-           1.15 = Чуть быстрее, звучит очень живо и естественно (рекомендуется)
-           1.25 = Бодрый, динамичный темп
+           Зафиксировано на комфортном значении 1.25!
            ========================================================================== */
-        const VOICE_PLAYBACK_SPEED = 1.4; // <--- МЕНЯЙТЕ ЭТО ЗНАЧЕНИЕ ДЛЯ ВСЕХ СТРАНИЦ!
+        const VOICE_PLAYBACK_SPEED = 1.25;
 
         /* ==========================================================================
            СИСТЕМА ГОЛОСОВОЙ ОЗВУЧКИ СТРАНИЦ
@@ -1185,7 +1493,6 @@
             }
 
             currentVoiceAudio = voiceAudioCache[fileName];
-            // Гарантированно применяем текущую скорость перед воспроизведением
             currentVoiceAudio.playbackRate = VOICE_PLAYBACK_SPEED;
             currentVoiceAudio.defaultPlaybackRate = VOICE_PLAYBACK_SPEED;
             currentVoiceAudio.play().catch(() => {});
@@ -1267,17 +1574,6 @@
                 osc.connect(gain); gain.connect(this.ctx.destination);
                 osc.start(); osc.stop(this.ctx.currentTime + 0.18);
             }
-            playLetterChime(note = 800) {
-                if (!this.ctx) return;
-                const osc = this.ctx.createOscillator();
-                const gain = this.ctx.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(note, this.ctx.currentTime);
-                gain.gain.setValueAtTime(0.03, this.ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.18);
-                osc.connect(gain); gain.connect(this.ctx.destination);
-                osc.start(); osc.stop(this.ctx.currentTime + 0.19);
-            }
             playFlamePuff() {
                 if (!this.ctx) return;
                 const osc = this.ctx.createOscillator();
@@ -1309,7 +1605,7 @@
         const sfx = new SoundFX();
 
         /* ==========================================================================
-           ОБЛОЖКА И ОПТИМИЗИРОВАННЫЙ ХОЛСТ
+           ОБЛОЖКА И ХОЛСТ С ИСКРАМИ
            ========================================================================== */
         const coverScreen = document.getElementById('coverScreen');
         const coverSvgLayer = document.getElementById('coverSvgLayer');
@@ -1378,7 +1674,7 @@
         loopFx();
 
         /* ==========================================================================
-           СТИХ ВОЛШЕБНИЦЫ (СТРАНИЦА 11)
+           СТИХ ВОЛШЕБНИЦЫ (СТРАНИЦА 11) - 4 КУПЛЕТА (БЕЗ ЗВУКА)
            ========================================================================== */
         const poemStanzas = [
             [
@@ -1391,13 +1687,19 @@
                 { text: "Одну в лес меня ты не пустила,", isName: false },
                 { text: "Помогала что есть сил —", isName: false },
                 { text: "И лозы острые рубила,", isName: false },
-                { text: "А вместе с ними малинку мне клала!", isName: false }
+                { text: "Со мною вместе зло в лесу ты погубила", isName: false }
             ],
             [
                 { text: "Мне сегодня рассказали,", isName: false },
                 { text: "Что сегодня волшебный день:", isName: false },
                 { text: "Сегодня в нашем мире", isName: false },
                 { text: "Появилась ты на свет!", isName: false }
+            ],
+            [
+                { text: "В день рождения твоё", isName: false },
+                { text: "Счастья я любви желаю", isName: false },
+                { text: "Чтобы с кем то в сие день", isName: false },
+                { text: "Тепло на кухне сохранялось", isName: false }
             ]
         ];
 
@@ -1451,29 +1753,36 @@
                 if (charIndex >= totalChars) {
                     clearInterval(poemIntervalTimer);
                     isPoemRevealed = true;
-                    sfx.playVictoryChime();
                     return;
                 }
 
                 poemCharElements[charIndex].classList.add('revealed');
-                if (charIndex % 7 === 0) {
-                    const notes = [659, 784, 880, 988, 1046];
-                    sfx.playLetterChime(notes[Math.floor(Math.random() * notes.length)]);
-                }
                 charIndex++;
-            }, 30);
+            }, 28);
         }
 
         function revealEntirePoem() {
             if (poemIntervalTimer) clearInterval(poemIntervalTimer);
             poemCharElements.forEach(span => span.classList.add('revealed'));
             isPoemRevealed = true;
-            sfx.playVictoryChime();
         }
         document.getElementById('fairyLetterBox').addEventListener('click', revealEntirePoem);
 
         /* ==========================================================================
-           НАВИГАЦИЯ КНИГИ С ПОЛНОЙ ОПТИМИЗАЦИЕЙ СЛОЕВ
+           ТРИГГЕР ЖИВОГО ПОРТРЕТА В СТИЛЕ КАРТЫ МАРОДЁРОВ (СТРАНИЦА 10)
+           ========================================================================== */
+        function triggerPortraitAnimation() {
+            const wrapper = document.getElementById('sketchSvgWrapper');
+            if (wrapper) {
+                wrapper.classList.remove('animate');
+                void wrapper.offsetWidth;
+                wrapper.classList.add('animate');
+            }
+        }
+        document.getElementById('portraitFrame').addEventListener('click', triggerPortraitAnimation);
+
+        /* ==========================================================================
+           НАВИГАЦИЯ КНИГИ
            ========================================================================== */
         const flashOverlay = document.getElementById("flashOverlay");
         const pages = Array.from(document.querySelectorAll(".page"));
@@ -1503,11 +1812,13 @@
             }, 400);
         });
 
-        function updateNav() {
+                function updateNav() {
             const hasNext = currentPageIndex < pages.length - 1;
+            const isLastPage = currentPageIndex === pages.length - 1; // Проверка на последнюю страницу
             nextBtn.disabled = !hasNext || isFlipping;
 
-            if (currentPageIndex === 2 || currentPageIndex === 3 || currentPageIndex === 7) {
+            // Скрываем кнопку на страницах с играми (2, 3, 7) И на самом последнем развороте
+            if (currentPageIndex === 2 || currentPageIndex === 3 || currentPageIndex === 7 || isLastPage) {
                 nextBtn.classList.add('hidden');
             } else {
                 nextBtn.classList.remove('hidden');
@@ -1526,7 +1837,6 @@
             setTimeout(() => {
                 cur.style.zIndex = "1";
                 cur.classList.remove("is-turning");
-                
                 cur.style.visibility = "hidden";
 
                 currentPageIndex++;
@@ -1534,6 +1844,10 @@
                 updateNav();
 
                 playPageVoice(currentPageIndex + 1);
+
+                if (currentPageIndex === 9) {
+                    triggerPortraitAnimation();
+                }
 
                 if (currentPageIndex === 10) {
                     startPoemAnimation();
@@ -1545,20 +1859,23 @@
         nextBtn.addEventListener("click", flipPage);
 
         /* ==========================================================================
-           МИНИ-ИГРА №1: ТЕРНОВНИК (ОПТИМИЗИРОВАННЫЙ РЕНДЕР)
+           МИНИ-ИГРА №1: ТЕРНОВНИК (ДИНАМИЧНАЯ РЕЗКА, x10 ЛОЗ, СВАЙП ПАЛЬЦЕМ)
            ========================================================================== */
         const thornOverlay = document.getElementById('thornGameOverlay');
         const thornCanvas = document.getElementById('thornCanvas');
         const ctxThorn = thornCanvas.getContext('2d');
         const thornProgressEl = document.getElementById('thornProgress');
+        const vinesCounterEl = document.getElementById('vinesCounter');
         const openGameBtn = document.getElementById('openGameBtn');
 
         let tWidth, tHeight;
         let isThornRunning = false;
         let isCutting = false;
         let cutTrail = [];
-        let vineLayers = [];
-        let currentVineIdx = 0;
+        let activeVines = [];
+        let vinesCutCount = 0;
+        const TARGET_VINES = 50;
+        let thornParticles = [];
         let thornAnimId = null;
 
         function resizeThornGame() {
@@ -1567,57 +1884,100 @@
         }
         window.addEventListener('resize', resizeThornGame);
 
-        class LayeredVine {
-            constructor(p1, p2, thickness, angleOffset) {
-                this.p1 = p1; this.p2 = p2;
-                this.thickness = thickness;
-                this.angleOffset = angleOffset;
-                this.totalDamage = 0;
-                this.maxHealth = 100;
-                this.broken = false;
+        class WildThornVine {
+            constructor() {
+                this.reset();
             }
 
-            draw(isActive, layerDepth) {
-                if (this.broken) return;
+            reset() {
+                const edge = Math.floor(Math.random() * 4);
+                if (edge === 0) {
+                    this.p1 = { x: Math.random() * tWidth, y: tHeight + 20 };
+                    this.p2 = { x: tWidth * 0.5 + (Math.random() - 0.5) * tWidth * 0.8, y: tHeight * 0.2 + Math.random() * tHeight * 0.4 };
+                } else if (edge === 1) {
+                    this.p1 = { x: -20, y: Math.random() * tHeight };
+                    this.p2 = { x: tWidth * 0.4 + Math.random() * tWidth * 0.5, y: tHeight * 0.5 + (Math.random() - 0.5) * tHeight * 0.6 };
+                } else if (edge === 2) {
+                    this.p1 = { x: tWidth + 20, y: Math.random() * tHeight };
+                    this.p2 = { x: tWidth * 0.1 + Math.random() * tWidth * 0.5, y: tHeight * 0.5 + (Math.random() - 0.5) * tHeight * 0.6 };
+                } else {
+                    this.p1 = { x: Math.random() * tWidth, y: -20 };
+                    this.p2 = { x: tWidth * 0.5 + (Math.random() - 0.5) * tWidth * 0.8, y: tHeight * 0.4 + Math.random() * tHeight * 0.4 };
+                }
+                this.curve = (Math.random() - 0.5) * 60;
+                this.thickness = 14 + Math.random() * 8;
+                this.grow = 0;
+                this.growSpeed = 0.03 + Math.random() * 0.025;
+                this.broken = false;
+                this.splitProgress = 0;
+            }
+
+            update() {
+                if (!this.broken) {
+                    if (this.grow < 1) this.grow += this.growSpeed;
+                } else {
+                    this.splitProgress += 0.08;
+                    if (this.splitProgress >= 1) {
+                        this.reset();
+                    }
+                }
+            }
+
+            draw() {
+                const curX = this.p1.x + (this.p2.x - this.p1.x) * this.grow;
+                const curY = this.p1.y + (this.p2.y - this.p1.y) * this.grow;
+                const midX = (this.p1.x + curX) / 2 + this.curve;
+                const midY = (this.p1.y + curY) / 2 - this.curve;
+
                 ctxThorn.save();
-                ctxThorn.globalAlpha = isActive ? 1.0 : Math.max(0.3, 0.6 - layerDepth * 0.12);
-                ctxThorn.strokeStyle = isActive ? '#4a2512' : '#140c07';
                 ctxThorn.lineWidth = this.thickness;
                 ctxThorn.lineCap = 'round';
-                ctxThorn.beginPath();
-                ctxThorn.moveTo(this.p1.x, this.p1.y);
-                const midX = (this.p1.x + this.p2.x) / 2 + Math.cos(this.angleOffset) * 35;
-                const midY = (this.p1.y + this.p2.y) / 2 + Math.sin(this.angleOffset) * 35;
-                ctxThorn.quadraticCurveTo(midX, midY, this.p2.x, this.p2.y);
-                ctxThorn.stroke();
 
-                if (isActive) {
-                    ctxThorn.fillStyle = '#a62428';
-                    for (let i = 0.2; i <= 0.8; i += 0.2) {
-                        const tx = this.p1.x + (this.p2.x - this.p1.x) * i;
-                        const ty = this.p1.y + (this.p2.y - this.p1.y) * i;
+                if (!this.broken) {
+                    ctxThorn.strokeStyle = '#2b4716';
+                    ctxThorn.beginPath();
+                    ctxThorn.moveTo(this.p1.x, this.p1.y);
+                    ctxThorn.quadraticCurveTo(midX, midY, curX, curY);
+                    ctxThorn.stroke();
+
+                    ctxThorn.fillStyle = '#65a331';
+                    for (let t = 0.25; t <= this.grow; t += 0.25) {
+                        const px = (1 - t) * (1 - t) * this.p1.x + 2 * (1 - t) * t * midX + t * t * curX;
+                        const py = (1 - t) * (1 - t) * this.p1.y + 2 * (1 - t) * t * midY + t * t * curY;
                         ctxThorn.beginPath();
-                        ctxThorn.arc(tx + 6, ty - 6, 3.5, 0, Math.PI * 2);
+                        ctxThorn.arc(px + 4, py - 4, 3.5, 0, Math.PI * 2);
                         ctxThorn.fill();
                     }
+                } else {
+                    ctxThorn.globalAlpha = Math.max(0, 1 - this.splitProgress);
+                    ctxThorn.strokeStyle = '#4e8524';
+                    ctxThorn.beginPath();
+                    ctxThorn.moveTo(this.p1.x - this.splitProgress * 20, this.p1.y + this.splitProgress * 20);
+                    ctxThorn.lineTo(midX - this.splitProgress * 15, midY + this.splitProgress * 15);
+                    ctxThorn.stroke();
+
+                    ctxThorn.strokeStyle = '#284617';
+                    ctxThorn.beginPath();
+                    ctxThorn.moveTo(midX + this.splitProgress * 15, midY - this.splitProgress * 15);
+                    ctxThorn.lineTo(curX + this.splitProgress * 25, curY - this.splitProgress * 25);
+                    ctxThorn.stroke();
                 }
                 ctxThorn.restore();
             }
-        }
 
-        function createVineLayers() {
-            vineLayers = [];
-            currentVineIdx = 0;
-            const numLayers = 5;
-            for (let i = 0; i < numLayers; i++) {
-                const isDiagonal = i % 2 === 0;
-                let p1 = isDiagonal 
-                    ? { x: -30, y: (tHeight / numLayers) * i + 80 }
-                    : { x: (tWidth / numLayers) * i + 60, y: -30 };
-                let p2 = isDiagonal 
-                    ? { x: tWidth + 30, y: tHeight - (tHeight / numLayers) * i - 80 }
-                    : { x: tWidth - (tWidth / numLayers) * i - 60, y: tHeight + 30 };
-                vineLayers.push(new LayeredVine(p1, p2, 26 - i * 2, i * 1.5));
+            checkSlash(p1, p2) {
+                if (this.broken || this.grow < 0.3) return false;
+                const curX = this.p1.x + (this.p2.x - this.p1.x) * this.grow;
+                const curY = this.p1.y + (this.p2.y - this.p1.y) * this.grow;
+                const midX = (this.p1.x + curX) / 2 + this.curve;
+                const midY = (this.p1.y + curY) / 2 - this.curve;
+
+                const d = distToSegment({ x: midX, y: midY }, p1, p2);
+                if (d < this.thickness + 18) {
+                    this.broken = true;
+                    return { x: midX, y: midY };
+                }
+                return false;
             }
         }
 
@@ -1630,41 +1990,71 @@
 
         function thornGameLoop() {
             if (!isThornRunning) return;
-            ctxThorn.fillStyle = '#080d0a';
-            ctxThorn.fillRect(0, 0, tWidth, tHeight);
+            ctxThorn.clearRect(0, 0, tWidth, tHeight);
 
-            for (let i = vineLayers.length - 1; i >= 0; i--) {
-                vineLayers[i].draw(i === currentVineIdx, i - currentVineIdx);
+            activeVines.forEach(v => {
+                v.update();
+                v.draw();
+            });
+
+            for (let i = thornParticles.length - 1; i >= 0; i--) {
+                const p = thornParticles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.life -= 0.04;
+                if (p.life <= 0) {
+                    thornParticles.splice(i, 1);
+                } else {
+                    ctxThorn.save();
+                    ctxThorn.globalAlpha = p.life;
+                    ctxThorn.fillStyle = p.color;
+                    ctxThorn.beginPath();
+                    ctxThorn.arc(p.x, p.y, 3, 0, Math.PI * 2);
+                    ctxThorn.fill();
+                    ctxThorn.restore();
+                }
             }
 
+            const now = performance.now();
+            cutTrail = cutTrail.filter(pt => now - pt.time < 160);
             if (cutTrail.length > 1) {
+                ctxThorn.save();
                 ctxThorn.beginPath();
                 ctxThorn.moveTo(cutTrail[0].x, cutTrail[0].y);
                 for (let i = 1; i < cutTrail.length; i++) ctxThorn.lineTo(cutTrail[i].x, cutTrail[i].y);
-                ctxThorn.strokeStyle = '#FFE8A1';
-                ctxThorn.lineWidth = 4;
+                ctxThorn.strokeStyle = '#d6ff79';
+                ctxThorn.shadowColor = '#9ee85d';
+                ctxThorn.shadowBlur = 10;
+                ctxThorn.lineWidth = 4.5;
+                ctxThorn.lineCap = 'round';
                 ctxThorn.stroke();
+                ctxThorn.restore();
             }
 
             thornAnimId = requestAnimationFrame(thornGameLoop);
         }
 
-        function handleSlashPoint(p) {
-            if (currentVineIdx >= vineLayers.length) return;
-            const targetVine = vineLayers[currentVineIdx];
-            if (targetVine.broken) return;
+        function handleSlash(p1, p2) {
+            activeVines.forEach(v => {
+                const hit = v.checkSlash(p1, p2);
+                if (hit) {
+                    sfx.playSlash();
+                    vinesCutCount++;
+                    vinesCounterEl.textContent = vinesCutCount;
+                    const pct = Math.min(100, Math.round((vinesCutCount / TARGET_VINES) * 100));
+                    thornProgressEl.style.width = pct + '%';
 
-            if (distToSegment(p, targetVine.p1, targetVine.p2) < targetVine.thickness + 15) {
-                sfx.playSlash();
-                targetVine.totalDamage += 25;
+                    for (let k = 0; k < 8; k++) {
+                        thornParticles.push({
+                            x: hit.x, y: hit.y,
+                            vx: (Math.random() - 0.5) * 8,
+                            vy: (Math.random() - 0.5) * 8,
+                            color: Math.random() > 0.5 ? '#77b03b' : '#d4af37',
+                            life: 1
+                        });
+                    }
 
-                if (targetVine.totalDamage >= targetVine.maxHealth) {
-                    targetVine.broken = true;
-                    sfx.playWoodCrack();
-                    currentVineIdx++;
-                    thornProgressEl.style.width = `${(currentVineIdx / vineLayers.length) * 100}%`;
-
-                    if (currentVineIdx >= vineLayers.length) {
+                    if (vinesCutCount >= TARGET_VINES) {
                         isThornRunning = false;
                         if (thornAnimId) cancelAnimationFrame(thornAnimId);
                         sfx.playVictoryChime();
@@ -1674,35 +2064,49 @@
                         }, 700);
                     }
                 }
-            }
+            });
         }
 
         function getCanvasCoord(e, canvas) {
             const r = canvas.getBoundingClientRect();
             const cx = e.touches ? e.touches[0].clientX : e.clientX;
             const cy = e.touches ? e.touches[0].clientY : e.clientY;
-            return { x: cx - r.left, y: cy - r.top };
+            return { x: cx - r.left, y: cy - r.top, time: performance.now() };
         }
 
         thornCanvas.addEventListener('pointerdown', e => {
             if (!isThornRunning) return;
-            isCutting = true; cutTrail = [getCanvasCoord(e, thornCanvas)];
+            isCutting = true;
+            const pt = getCanvasCoord(e, thornCanvas);
+            cutTrail = [pt];
         });
-        thornCanvas.addEventListener('pointermove', e => {
+
+        window.addEventListener('pointermove', e => {
             if (!isThornRunning || !isCutting) return;
             const pt = getCanvasCoord(e, thornCanvas);
+            if (cutTrail.length > 0) {
+                handleSlash(cutTrail[cutTrail.length - 1], pt);
+            }
             cutTrail.push(pt);
-            if (cutTrail.length > 4) cutTrail.shift();
-            handleSlashPoint(pt);
         });
-        window.addEventListener('pointerup', () => { isCutting = false; cutTrail = []; });
+
+        window.addEventListener('pointerup', () => { isCutting = false; });
 
         openGameBtn.addEventListener('click', () => {
             sfx.init();
             thornOverlay.style.display = 'flex';
             resizeThornGame();
+            vinesCutCount = 0;
+            vinesCounterEl.textContent = '0';
             thornProgressEl.style.width = '0%';
-            createVineLayers();
+            
+            activeVines = [];
+            for (let i = 0; i < 8; i++) {
+                const v = new WildThornVine();
+                v.grow = Math.random() * 0.7;
+                activeVines.push(v);
+            }
+
             isThornRunning = true;
             thornGameLoop();
         });
@@ -1738,7 +2142,7 @@
                 this.holder = null;
             }
             draw() {
-                if (this.collected && !this.holder) return;
+                if (this.collected) return;
                 const rx = this.holder ? this.holder.x : this.x;
                 const ry = this.holder ? this.holder.y - 25 : this.y;
                 ctxBerry.save();
@@ -1800,15 +2204,23 @@
 
         function berryGameLoop(now) {
             if (!isBerryRunning) return;
-            ctxBerry.fillStyle = 'rgba(8, 14, 10, 0.6)';
-            ctxBerry.fillRect(0, 0, bWidth, bHeight);
+            ctxBerry.clearRect(0, 0, bWidth, bHeight);
 
-            if (now - lastBerrySpawn > 2800 && rareBerries.filter(b => !b.collected).length < 3) {
+            speedyGnomes.forEach(g => {
+                if (g.loot && (g.x < -40 || g.x > bWidth + 40)) {
+                    const idx = rareBerries.indexOf(g.loot);
+                    if (idx !== -1) rareBerries.splice(idx, 1);
+                    g.loot = null;
+                }
+            });
+
+            const freeBerriesCount = rareBerries.filter(b => !b.collected && !b.holder).length;
+            if ((now - lastBerrySpawn > 1600 && freeBerriesCount < 3) || (freeBerriesCount === 0 && now - lastBerrySpawn > 500)) {
                 lastBerrySpawn = now;
-                rareBerries.push(new RareBerry(Math.random() * (bWidth - 120) + 60, Math.random() * (bHeight - 240) + 120));
+                rareBerries.push(new RareBerry(Math.random() * (bWidth - 140) + 70, Math.random() * (bHeight - 260) + 130));
             }
 
-            if (now - lastGnomeSpawn > 1200 && speedyGnomes.length < 5) {
+            if (now - lastGnomeSpawn > 1300 && speedyGnomes.length < 5) {
                 lastGnomeSpawn = now;
                 speedyGnomes.push(new SpeedyGnome());
             }
@@ -1824,21 +2236,30 @@
             if (!isBerryRunning) return;
             const pt = getCanvasCoord(e, berryCanvas);
 
-            let slapped = false;
             speedyGnomes.forEach(g => {
-                if (Math.hypot(g.x - pt.x, g.y - pt.y) < 38 && !g.scared) {
-                    slapped = true;
+                if (Math.hypot(g.x - pt.x, g.y - pt.y) < 45 && !g.scared) {
                     g.scared = true;
                     sfx.playGnomeBoing();
-                    if (g.loot) { g.loot.holder = null; g.loot = null; }
+                    if (g.loot) {
+                        g.loot.x = Math.max(50, Math.min(bWidth - 50, g.x));
+                        g.loot.y = Math.max(120, Math.min(bHeight - 140, g.y + 10));
+                        g.loot.holder = null;
+                        g.loot = null;
+                    }
                 }
             });
 
-            if (slapped) return;
-
-            rareBerries.forEach(b => {
-                if (!b.collected && !b.holder && Math.hypot(b.x - pt.x, b.y - pt.y) < 32) {
+            for (let i = rareBerries.length - 1; i >= 0; i--) {
+                const b = rareBerries[i];
+                const bx = b.holder ? b.holder.x : b.x;
+                const by = b.holder ? b.holder.y - 25 : b.y;
+                if (!b.collected && Math.hypot(bx - pt.x, by - pt.y) < 38) {
                     b.collected = true;
+                    if (b.holder) {
+                        b.holder.loot = null;
+                        b.holder = null;
+                    }
+                    rareBerries.splice(i, 1);
                     sfx.playPop();
                     berriesCollected++;
                     berryCounterEl.textContent = `Корзинка: ${berriesCollected} / 8 🍓`;
@@ -1852,8 +2273,9 @@
                             flipPage();
                         }, 500);
                     }
+                    break;
                 }
-            });
+            }
         });
 
         openBerryGameBtn.addEventListener('click', () => {
@@ -1871,7 +2293,7 @@
         });
 
         /* ==========================================================================
-           МИНИ-ИГРА №3: ПЕКАРНЯ
+           МИНИ-ИГРА №3: ПЕКАРНЯ (РАСКАТКА ТЕСТА ПО ВСЕМУ КРУГУ + БАЛАНС ПЕЧИ)
            ========================================================================== */
         const pieOverlay = document.getElementById('pieGameOverlay');
         const openPieGameBtn = document.getElementById('openPieGameBtn');
@@ -1879,113 +2301,237 @@
         const pieInstruction = document.getElementById('pieInstruction');
         const pieProgress = document.getElementById('pieProgress');
         const kitchenSurface = document.getElementById('kitchenSurface');
-        const pieDough = document.getElementById('pieDough');
+        const doughCanvas = document.getElementById('doughCanvas');
+        const ctxDough = doughCanvas.getContext('2d');
         const bellowsBtn = document.getElementById('bellowsBtn');
+        const ovenControlBox = document.getElementById('ovenControlBox');
+        const tempNeedle = document.getElementById('tempNeedle');
+        const tempStatus = document.getElementById('tempStatus');
+        const tempValue = document.getElementById('tempValue');
+        const burnDangerBar = document.getElementById('burnDangerBar');
+        const burnTimerText = document.getElementById('burnTimerText');
 
         let pieStage = 1;
-        let rollAmount = 0;
         let berriesPlaced = 0;
-        let ovenHeat = 0;
-        let ovenInterval = null;
 
-        function updatePieUI() {
-            if (pieStage === 1) {
-                pieStepTitle.textContent = 'Шаг 1: Раскатай тесто';
-                pieInstruction.textContent = 'Води пальцем по тесту, чтобы раскатать круглую форму!';
-                pieProgress.style.width = `${rollAmount}%`;
-                bellowsBtn.style.display = 'none';
-            } else if (pieStage === 2) {
-                pieStepTitle.textContent = 'Шаг 2: Выложи начинку';
-                pieInstruction.textContent = 'Нажимай на тесто, чтобы аккуратно разложить спелые ягоды!';
-                pieProgress.style.width = `${(berriesPlaced / 8) * 100}%`;
-                bellowsBtn.style.display = 'none';
-            } else if (pieStage === 3) {
-                pieStepTitle.textContent = 'Шаг 3: Золотая корочка';
-                pieInstruction.textContent = 'Нажимай на кнопку, чтобы поддерживать жар в печи!';
-                pieProgress.style.width = `${ovenHeat}%`;
-                bellowsBtn.style.display = 'inline-flex';
+        const DOUGH_SECTORS = 16;
+        let sectorRadii = [];
+        const MIN_RADIUS = 36;
+        const MAX_RADIUS = 122;
+
+        let ovenTemp = 58;
+        let bakeProgress = 0;
+        let burnDangerTime = 0.0;
+        const MAX_BURN_TIME = 5.0;
+        let lastBakeTime = 0;
+        let pieAnimId = null;
+
+        function drawDough() {
+            ctxDough.clearRect(0, 0, 290, 290);
+            const cx = 145, cy = 145;
+
+            ctxDough.save();
+            ctxDough.fillStyle = pieStage === 3 && bakeProgress > 60 ? '#caa165' : '#fff3d4';
+            ctxDough.strokeStyle = '#c89d52';
+            ctxDough.lineWidth = 3;
+            ctxDough.shadowColor = 'rgba(0,0,0,0.25)';
+            ctxDough.shadowBlur = 10;
+
+            ctxDough.beginPath();
+            const angleStep = (Math.PI * 2) / DOUGH_SECTORS;
+            for (let i = 0; i < DOUGH_SECTORS; i++) {
+                const ang = i * angleStep;
+                const r = sectorRadii[i];
+                const x = cx + Math.cos(ang) * r;
+                const y = cy + Math.sin(ang) * r;
+                if (i === 0) ctxDough.moveTo(x, y);
+                else ctxDough.lineTo(x, y);
             }
+            ctxDough.closePath();
+            ctxDough.fill();
+            ctxDough.stroke();
+
+            ctxDough.fillStyle = 'rgba(255,255,255,0.4)';
+            ctxDough.beginPath();
+            ctxDough.arc(cx, cy, 22, 0, Math.PI * 2);
+            ctxDough.fill();
+            ctxDough.restore();
         }
 
-        kitchenSurface.addEventListener('pointermove', e => {
-            if (pieStage !== 1) return;
-            rollAmount += 2;
-            const size = 130 + (rollAmount / 100) * 120;
-            pieDough.style.width = `${size}px`;
-            pieDough.style.height = `${size}px`;
-            pieProgress.style.width = `${Math.min(100, rollAmount)}%`;
+        function rollDoughDirection(touchX, touchY) {
+            const cx = 145, cy = 145;
+            const dx = touchX - cx;
+            const dy = touchY - cy;
+            const dist = Math.hypot(dx, dy);
+            if (dist < 15) return;
 
-            if (rollAmount >= 100) {
+            let angle = Math.atan2(dy, dx);
+            if (angle < 0) angle += Math.PI * 2;
+
+            const sectorAngle = (Math.PI * 2) / DOUGH_SECTORS;
+            const targetSector = Math.floor(angle / sectorAngle);
+
+            for (let i = -1; i <= 1; i++) {
+                const sIdx = (targetSector + i + DOUGH_SECTORS) % DOUGH_SECTORS;
+                const weight = i === 0 ? 3.8 : 2.0;
+                sectorRadii[sIdx] = Math.min(MAX_RADIUS, sectorRadii[sIdx] + weight);
+            }
+
+            drawDough();
+
+            const avgRadius = sectorRadii.reduce((a, b) => a + b, 0) / DOUGH_SECTORS;
+            const rollPct = Math.min(100, Math.round(((avgRadius - MIN_RADIUS) / (MAX_RADIUS - MIN_RADIUS)) * 100));
+            pieProgress.style.width = rollPct + '%';
+
+            const allExpanded = sectorRadii.every(r => r >= MAX_RADIUS * 0.94);
+            if (allExpanded && rollPct >= 96) {
                 pieStage = 2;
                 sfx.playVictoryChime();
                 updatePieUI();
             }
-        });
+        }
 
-        kitchenSurface.addEventListener('click', e => {
-            if (pieStage !== 2) return;
-            const rect = kitchenSurface.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
+        function updatePieUI() {
+            if (pieStage === 1) {
+                pieStepTitle.textContent = 'Шаг 1: Раскатай тесто по кругу';
+                pieInstruction.textContent = 'Раскатывай тесто пальцем из центра в разные стороны по всему кругу!';
+                bellowsBtn.style.display = 'none';
+                ovenControlBox.style.display = 'none';
+            } else if (pieStage === 2) {
+                pieStepTitle.textContent = 'Шаг 2: Выложи начинку';
+                pieInstruction.textContent = 'Нажимай на раскатанное тесто, чтобы разложить 8 ягод малины!';
+                pieProgress.style.width = `${(berriesPlaced / 8) * 100}%`;
+                bellowsBtn.style.display = 'none';
+                ovenControlBox.style.display = 'none';
+            } else if (pieStage === 3) {
+                pieStepTitle.textContent = 'Шаг 3: Выпекание в печи';
+                pieInstruction.textContent = 'Держи температуру в зелёной зоне! Вне зоны пирог сгорит ровно за 5 секунд!';
+                bellowsBtn.style.display = 'inline-flex';
+                ovenControlBox.style.display = 'flex';
+                ovenTemp = 58;
+                burnDangerTime = 0.0;
+                bakeProgress = 0.0;
+                lastBakeTime = performance.now();
+                requestAnimationFrame(pieBakeLoop);
+            }
+        }
 
-            const berry = document.createElement('div');
-            berry.style.position = 'absolute';
-            berry.style.left = `${x - 10}px`;
-            berry.style.top = `${y - 10}px`;
-            berry.style.width = '20px';
-            berry.style.height = '20px';
-            berry.style.borderRadius = '50%';
-            berry.style.background = '#a81c2e';
-            berry.style.pointerEvents = 'none';
-            kitchenSurface.appendChild(berry);
+        let isPointerRolling = false;
+        kitchenSurface.addEventListener('pointerdown', e => {
+            if (pieStage === 1) {
+                isPointerRolling = true;
+                const r = kitchenSurface.getBoundingClientRect();
+                rollDoughDirection(e.clientX - r.left, e.clientY - r.top);
+            } else if (pieStage === 2) {
+                const rect = kitchenSurface.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
 
-            berriesPlaced++;
-            sfx.playPop();
-            updatePieUI();
+                const berry = document.createElement('div');
+                berry.style.position = 'absolute';
+                berry.style.left = `${x - 10}px`;
+                berry.style.top = `${y - 10}px`;
+                berry.style.width = '20px';
+                berry.style.height = '20px';
+                berry.style.borderRadius = '50%';
+                berry.style.background = '#a81c2e';
+                berry.style.boxShadow = '0 2px 5px rgba(0,0,0,0.4)';
+                berry.style.pointerEvents = 'none';
+                kitchenSurface.appendChild(berry);
 
-            if (berriesPlaced >= 8) {
-                pieStage = 3;
-                sfx.playVictoryChime();
+                berriesPlaced++;
+                sfx.playPop();
                 updatePieUI();
 
-                ovenInterval = setInterval(() => {
-                    if (pieStage === 3 && ovenHeat > 0) {
-                        ovenHeat = Math.max(0, ovenHeat - 1.2);
-                        pieProgress.style.width = `${ovenHeat}%`;
-                    }
-                }, 100);
+                if (berriesPlaced >= 8) {
+                    pieStage = 3;
+                    sfx.playVictoryChime();
+                    updatePieUI();
+                }
             }
         });
+
+        window.addEventListener('pointermove', e => {
+            if (pieStage === 1 && isPointerRolling) {
+                const r = kitchenSurface.getBoundingClientRect();
+                rollDoughDirection(e.clientX - r.left, e.clientY - r.top);
+            }
+        });
+
+        window.addEventListener('pointerup', () => { isPointerRolling = false; });
 
         bellowsBtn.addEventListener('click', () => {
             if (pieStage !== 3) return;
             sfx.playFlamePuff();
-            ovenHeat = Math.min(100, ovenHeat + 15);
-            pieProgress.style.width = `${ovenHeat}%`;
+            ovenTemp = Math.min(100, ovenTemp + 11);
+        });
 
-            pieDough.style.background = `radial-gradient(circle, #f3c272 0%, #aa6423 ${ovenHeat}%)`;
+        function pieBakeLoop(now) {
+            if (pieStage !== 3) return;
 
-            if (ovenHeat >= 100) {
-                clearInterval(ovenInterval);
+            const dt = (now - lastBakeTime) / 1000;
+            lastBakeTime = now;
+
+            ovenTemp = Math.max(0, ovenTemp - dt * 9.5);
+
+            const isSweetSpot = ovenTemp >= 48 && ovenTemp <= 76;
+
+            if (isSweetSpot) {
+                bakeProgress = Math.min(100, bakeProgress + dt * 13.5);
+                tempStatus.textContent = 'Идеальный жар! Выпекается...';
+                tempStatus.style.color = '#4cd964';
+            } else {
+                burnDangerTime += dt;
+                if (ovenTemp > 76) {
+                    tempStatus.textContent = 'СЛИШКОМ ЖАРКО! Пирог горит!';
+                    tempStatus.style.color = '#ff3b30';
+                } else {
+                    tempStatus.textContent = 'СЛИШКОМ ХОЛОДНО! Печь остыла!';
+                    tempStatus.style.color = '#5ac8fa';
+                }
+            }
+
+            if (burnDangerTime >= MAX_BURN_TIME) {
+                sfx.playWoodCrack();
+                alert('🔥 Ой-ой! Пирог не выдержал жара и сгорел! Давай попробуем испечь его снова!');
+                burnDangerTime = 0.0;
+                bakeProgress = 0.0;
+                ovenTemp = 58;
+            }
+
+            tempNeedle.style.left = `${ovenTemp}%`;
+            tempValue.textContent = `${Math.round(ovenTemp * 2.2 + 80)}°C`;
+            const dangerPct = Math.min(100, (burnDangerTime / MAX_BURN_TIME) * 100);
+            burnDangerBar.style.width = `${dangerPct}%`;
+            burnTimerText.textContent = `${burnDangerTime.toFixed(1)} / 5.0 сек`;
+            pieProgress.style.width = `${Math.round(bakeProgress)}%`;
+
+            drawDough();
+
+            if (bakeProgress >= 100) {
+                tempStatus.textContent = 'Пирог идеально пропёкся!';
+                tempStatus.style.color = '#ffd700';
                 sfx.playVictoryChime();
                 setTimeout(() => {
                     pieOverlay.style.display = 'none';
                     flipPage();
                 }, 900);
+                return;
             }
-        });
+
+            pieAnimId = requestAnimationFrame(pieBakeLoop);
+        }
 
         openPieGameBtn.addEventListener('click', () => {
             sfx.init();
             pieOverlay.style.display = 'flex';
             pieStage = 1;
-            rollAmount = 0;
             berriesPlaced = 0;
-            ovenHeat = 0;
-            pieDough.style.width = '130px';
-            pieDough.style.height = '130px';
-            pieDough.style.background = 'radial-gradient(circle, #fff3d4 0%, #ecd497 100%)';
-            kitchenSurface.querySelectorAll('div:not(.pie-dough)').forEach(b => b.remove());
+            bakeProgress = 0;
+            burnDangerTime = 0;
+            sectorRadii = new Array(DOUGH_SECTORS).fill(MIN_RADIUS);
+            drawDough();
+            kitchenSurface.querySelectorAll('div').forEach(b => b.remove());
             updatePieUI();
         });
     </script>
