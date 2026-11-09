@@ -10,16 +10,16 @@
     
     <style>
         /* ==========================================================================
-           1. БАЗОВАЯ СИСТЕМА И ТЕМАТИЧЕСКИЕ ПЕРЕМЕННЫЕ
+           1. БАЗОВАЯ СИСТЕМА И ОПТИМИЗИРОВАННЫЕ ПЕРЕМЕННЫЕ
            ========================================================================== */
         :root {
             --gold-light: #FFF0A8;
             --gold-base: #D4AF37;
             --gold-dark: #876214;
-            --velvet-deep: #1e0205;
-            --paper-bg: #f5eedc;
-            --paper-edge: #d8c49d;
-            --ink: #201309;
+            --velvet-deep: #1a0204;
+            --paper-bg: #f7f1e1;
+            --paper-edge: #d8c39b;
+            --ink: #2b180d;
         }
 
         * {
@@ -37,7 +37,7 @@
             height: 100dvh;
             overflow: hidden;
             font-family: 'Lora', Georgia, serif;
-            background-color: #030408;
+            background-color: #050403;
             -webkit-font-smoothing: antialiased;
         }
 
@@ -46,13 +46,97 @@
             width: 100vw;
             height: 100vh;
             height: 100dvh;
-            perspective: 2600px;
+            perspective: 2000px;
             overflow: hidden;
-            background: #030408;
+            background: #050403;
         }
 
         /* ==========================================================================
-           2. ОБЛОЖКА
+           2. НАРИСОВАННЫЕ КНИЖНЫЕ КНОПКИ (ИЛЛЮСТРИРОВАННЫЙ СТИЛЬ)
+           ========================================================================== */
+        .drawn-btn {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-family: 'Playfair Display', 'Lora', serif;
+            font-weight: 700;
+            color: #3b1e09;
+            background: radial-gradient(circle at 50% 30%, #fffdf8 0%, #f7ecd7 75%, #ebd6b3 100%);
+            border: 2px solid #5a3215;
+            border-radius: 32px;
+            cursor: pointer;
+            outline: none;
+            box-shadow: 
+                0 4px 12px rgba(40, 18, 5, 0.22),
+                inset 0 0 0 2px #fff6e4,
+                inset 0 0 0 3.5px #c89c52;
+            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+            transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
+            transform: translateZ(0);
+        }
+
+        .drawn-btn:hover {
+            transform: translateY(-2px) scale(1.01);
+            background: radial-gradient(circle at 50% 30%, #ffffff 0%, #faeed7 75%, #f1dcbe 100%);
+            box-shadow: 
+                0 6px 18px rgba(40, 18, 5, 0.28),
+                inset 0 0 0 2px #ffffff,
+                inset 0 0 0 3.5px #d9aa5d;
+        }
+
+        .drawn-btn:active {
+            transform: translateY(1px) scale(0.98);
+            box-shadow: 
+                0 2px 5px rgba(40, 18, 5, 0.3),
+                inset 0 1px 3px rgba(70, 30, 0, 0.3),
+                inset 0 0 0 2px #edd0a6,
+                inset 0 0 0 3.5px #a87933;
+        }
+
+        /* Кнопка на обложке */
+        .start-btn {
+            padding: 15px 40px;
+            font-size: 15.5px;
+            letter-spacing: 2.2px;
+            border: 2.5px solid #4a240c;
+            box-shadow: 
+                0 8px 24px rgba(0, 0, 0, 0.65),
+                inset 0 0 0 2px #fff8e8,
+                inset 0 0 0 4px #caa04f;
+        }
+
+        /* Кнопки действий на страницах */
+        .action-btn {
+            align-self: center;
+            margin-top: 10px;
+            padding: 12px 24px;
+            font-size: 13.5px;
+            letter-spacing: 1.2px;
+            width: 90%;
+            max-width: 320px;
+        }
+
+        /* Кнопка «Далее» внизу экрана */
+        .next-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 120;
+            padding: 10px 24px;
+            font-size: 13.5px;
+            letter-spacing: 1.8px;
+        }
+
+        .next-btn.hidden {
+            opacity: 0;
+            pointer-events: none;
+            visibility: hidden;
+        }
+
+        /* ==========================================================================
+           3. ОБЛОЖКА (ОПТИМИЗИРОВАННАЯ)
            ========================================================================== */
         .cover-screen {
             position: absolute;
@@ -60,17 +144,17 @@
             z-index: 100;
             transform-origin: left center;
             transform-style: preserve-3d;
-            transition: transform 1.6s cubic-bezier(0.65, 0.05, 0.36, 1), opacity 1.3s ease, filter 1.3s ease;
+            transition: transform 1.3s cubic-bezier(0.65, 0.05, 0.36, 1), opacity 0.9s ease;
             display: flex;
             align-items: center;
             justify-content: center;
+            background: #170104;
         }
 
         .cover-screen.turned-cover {
-            transform: rotateY(-180deg) scale(1.1);
+            transform: rotateY(-180deg) scale(1.05);
             opacity: 0;
             pointer-events: none;
-            filter: blur(10px) brightness(1.5);
         }
 
         .cover-container {
@@ -86,11 +170,9 @@
         .cover-bg-velvet {
             position: absolute;
             inset: 0;
-            background: 
-                radial-gradient(ellipse at 50% 45%, rgba(168, 12, 33, 0.35) 0%, rgba(15, 1, 3, 0.98) 85%),
-                repeating-linear-gradient(45deg, #380208 0%, #380208 2px, #2a0105 2px, #2a0105 5px);
+            background: radial-gradient(ellipse at 50% 45%, rgba(140, 10, 26, 0.5) 0%, #150103 85%);
             z-index: 1;
-            box-shadow: inset 0 0 160px rgba(0,0,0,0.95), inset 0 0 50px rgba(0,0,0,0.8);
+            box-shadow: inset 0 0 100px rgba(0,0,0,0.9);
         }
 
         #canvas-effects {
@@ -122,22 +204,21 @@
 
         @keyframes drawSmooth { to { stroke-dashoffset: 0; } }
 
-        .cover-svg-layer.animate #stage1-seed path, .cover-svg-layer.animate #stage1-seed use { animation: drawSmooth 3s forwards; }
-        .cover-svg-layer.animate #stage2-sprout path, .cover-svg-layer.animate #stage2-sprout use { animation: drawSmooth 4s forwards; animation-delay: 2s; }
-        .cover-svg-layer.animate #stage3-bush path, .cover-svg-layer.animate #stage3-bush use { animation: drawSmooth 6s forwards; animation-delay: 4.5s; }
-        .cover-svg-layer.animate #stage3-bouquet path, .cover-svg-layer.animate #stage3-bouquet circle { animation: drawSmooth 5s forwards; animation-delay: 7s; }
-        .cover-svg-layer.animate #stage4-berries path, .cover-svg-layer.animate #stage4-berries use, .cover-svg-layer.animate #stage4-berries circle { animation: drawSmooth 4s forwards; animation-delay: 10s; }
-        .cover-svg-layer.animate #stage5-flourishes path, .cover-svg-layer.animate #stage5-flourishes use, .cover-svg-layer.animate #stage5-flourishes circle { animation: drawSmooth 6s forwards; animation-delay: 11.5s; }
+        .cover-svg-layer.animate #stage1-seed path { animation: drawSmooth 2.5s forwards; }
+        .cover-svg-layer.animate #stage2-sprout path, .cover-svg-layer.animate #stage2-sprout use { animation: drawSmooth 3s forwards; animation-delay: 1.5s; }
+        .cover-svg-layer.animate #stage3-bush path, .cover-svg-layer.animate #stage3-bush use { animation: drawSmooth 4.5s forwards; animation-delay: 3.5s; }
+        .cover-svg-layer.animate #stage3-bouquet path, .cover-svg-layer.animate #stage3-bouquet circle { animation: drawSmooth 4s forwards; animation-delay: 5.5s; }
+        .cover-svg-layer.animate #stage4-berries use { animation: drawSmooth 3s forwards; animation-delay: 8s; }
+        .cover-svg-layer.animate #stage5-flourishes path, .cover-svg-layer.animate #stage5-flourishes use { animation: drawSmooth 4s forwards; animation-delay: 9s; }
 
         .cover-text-svg {
             position: absolute;
             top: 12%;
             width: 88%;
-            max-width: 620px;
+            max-width: 600px;
             z-index: 4;
             pointer-events: none;
             color: var(--gold-base);
-            filter: drop-shadow(0 4px 15px rgba(0,0,0,0.85));
         }
 
         .cover-text-svg path {
@@ -148,13 +229,13 @@
             stroke-linejoin: round;
             stroke-dasharray: 1;
             stroke-dashoffset: 1;
-            transition: stroke-dashoffset 0.55s ease, stroke 0.4s ease, filter 0.4s ease;
+            transition: stroke-dashoffset 0.45s ease, stroke 0.3s ease;
         }
 
         .cover-text-svg path.show {
             stroke-dashoffset: 0;
             stroke: var(--gold-light);
-            filter: drop-shadow(0 0 12px rgba(255, 232, 161, 0.85));
+            filter: drop-shadow(0 0 8px rgba(255, 232, 161, 0.7));
         }
 
         .cover-bottom {
@@ -162,8 +243,8 @@
             bottom: 9%;
             z-index: 5;
             opacity: 0;
-            transform: translateY(20px);
-            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+            transform: translateY(15px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
             pointer-events: none;
         }
 
@@ -173,119 +254,19 @@
             pointer-events: auto;
         }
 
-        /* ==========================================================================
-           ДИСНЕЕВСКИЙ СТИЛЬ КНОПОК (МЯГКИЙ БЛЕСК, ЗОЛОТО, ВЕНЗЕЛЯ, СКАЗОЧНЫЙ БЛИК)
-           ========================================================================== */
-        .disney-btn {
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            font-family: 'Cinzel Decorative', 'Playfair Display', serif;
-            font-weight: 700;
-            color: #381a02;
-            background: linear-gradient(180deg, #fff7de 0%, #fbd87b 18%, #e29f1d 52%, #ad6406 82%, #7a3a02 100%);
-            border: 2px solid #5a2e02;
-            border-radius: 30px;
-            cursor: pointer;
-            text-transform: uppercase;
-            box-shadow: 
-                0 0 0 1px rgba(255, 235, 150, 0.8),
-                inset 0 1.5px 2px #ffffff,
-                inset 0 -2.5px 6px rgba(70, 30, 0, 0.65),
-                0 8px 20px rgba(0, 0, 0, 0.35);
-            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75), 0 -1px 0 rgba(90, 40, 0, 0.4);
-            transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.22s ease;
-            overflow: hidden;
-            outline: none;
-        }
-
-        .disney-btn:hover {
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: 
-                0 0 0 1px rgba(255, 245, 180, 0.95),
-                0 0 20px rgba(245, 180, 35, 0.6),
-                inset 0 1.5px 3px #ffffff,
-                inset 0 -2.5px 6px rgba(70, 30, 0, 0.6),
-                0 10px 25px rgba(0, 0, 0, 0.45);
-        }
-
-        .disney-btn:active {
-            transform: translateY(1px) scale(0.98);
-            box-shadow: 
-                0 0 0 1px rgba(255, 215, 100, 0.8),
-                inset 0 2px 5px rgba(50, 20, 0, 0.8),
-                0 4px 10px rgba(0, 0, 0, 0.3);
-        }
-
-        /* Сказочный пробегающий блик */
-        .disney-btn::after {
-            content: '';
-            position: absolute;
-            top: -30%;
-            left: -130%;
-            width: 60%;
-            height: 160%;
-            background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.65) 50%, transparent 100%);
-            transform: skewX(-25deg);
-            animation: fairySheen 4.5s infinite ease-in-out;
-            pointer-events: none;
-        }
-
-        @keyframes fairySheen {
-            0%, 65% { left: -130%; }
-            100% { left: 160%; }
-        }
-
-        /* Кнопка на обложке */
-        .start-btn {
-            padding: 16px 44px;
-            font-size: 15px;
-            letter-spacing: 2.5px;
-        }
-
-        /* Кнопки испытаний внутри страниц */
-        .action-btn {
-            align-self: center;
-            margin-top: 10px;
-            padding: 13px 26px;
-            font-size: 13.5px;
-            letter-spacing: 1.2px;
-            width: 90%;
-            max-width: 330px;
-        }
-
-        /* Кнопка «Далее» внизу экрана */
-        .next-btn {
-            position: fixed;
-            bottom: 20px;
-            right: 22px;
-            z-index: 120;
-            padding: 11px 26px;
-            font-size: 13px;
-            letter-spacing: 2px;
-        }
-
-        .next-btn.hidden {
-            opacity: 0;
-            pointer-events: none;
-            visibility: hidden;
-        }
-
         .flash-overlay {
             position: fixed;
             inset: 0;
-            background: radial-gradient(circle, #fffdf2 0%, #ecd698 100%);
+            background: #fffdf5;
             z-index: 999;
             pointer-events: none;
             opacity: 0;
-            transition: opacity 0.6s ease;
+            transition: opacity 0.5s ease;
         }
-        .flash-overlay.active { opacity: 1; }
+        .flash-overlay.active { opacity: 0.95; }
 
         /* ==========================================================================
-           3. КНИГА И СТРАНИЦЫ
+           4. КНИЖНЫЙ БЛОК (ВЫСОКОПРОИЗВОДИТЕЛЬНЫЙ)
            ========================================================================== */
         .page-screen {
             position: absolute;
@@ -300,12 +281,8 @@
         .book-container {
             position: relative;
             width: 100%;
-            max-width: 100%;
             height: 100%;
-            max-height: 100%;
             transform-style: preserve-3d;
-            box-shadow: none;
-            border-radius: 0;
         }
 
         .page {
@@ -316,8 +293,8 @@
             transform-origin: left center;
             transform: rotateY(0deg);
             transform-style: preserve-3d;
-            transition: transform 1.5s cubic-bezier(0.645, 0.045, 0.355, 1), box-shadow 1.5s ease;
-            border-radius: 0;
+            transition: transform 1.25s cubic-bezier(0.645, 0.045, 0.355, 1);
+            contain: layout style;
         }
 
         .page.turned {
@@ -325,35 +302,30 @@
         }
 
         .page.is-turning {
-            box-shadow: 20px 20px 50px rgba(0, 0, 0, 0.55);
+            will-change: transform;
         }
 
         .page-front, .page-back {
             position: absolute;
             inset: 0;
-            border-radius: 0;
             backface-visibility: hidden;
             -webkit-backface-visibility: hidden;
-            background: 
-                radial-gradient(circle at 10% 50%, rgba(68, 43, 19, 0.08) 0%, transparent 60%),
-                radial-gradient(ellipse at center, #fbf7ee 0%, var(--paper-bg) 70%, var(--paper-edge) 100%);
+            background: radial-gradient(ellipse at 50% 50%, #fbf8f0 0%, var(--paper-bg) 75%, var(--paper-edge) 100%);
             overflow-y: auto;
             overflow-x: hidden;
             scrollbar-width: none;
         }
 
-        .page-front::-webkit-scrollbar, .page-back::-webkit-scrollbar {
-            display: none;
-        }
+        .page-front::-webkit-scrollbar, .page-back::-webkit-scrollbar { display: none; }
 
         .page-front::after {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
-            width: 35px;
+            width: 30px;
             height: 100%;
-            background: linear-gradient(90deg, rgba(20, 10, 3, 0.28) 0%, rgba(20, 10, 3, 0.08) 40%, transparent 100%);
+            background: linear-gradient(90deg, rgba(30, 15, 5, 0.22) 0%, transparent 100%);
             pointer-events: none;
             z-index: 15;
         }
@@ -363,19 +335,6 @@
             background: var(--paper-edge);
         }
 
-        .dust {
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-            z-index: 4;
-            background-image: radial-gradient(#d4af37 1px, transparent 1px);
-            background-size: 70px 70px;
-            opacity: 0.12;
-            animation: dustMove 40s linear infinite;
-        }
-
-        @keyframes dustMove { to { background-position: 70px 70px; } }
-
         .page-content {
             position: relative;
             z-index: 5;
@@ -383,7 +342,7 @@
             max-width: 580px;
             margin: 0 auto;
             min-height: 100%;
-            padding: 24px 22px 85px;
+            padding: 22px 20px 80px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -392,11 +351,11 @@
         .chapter-tag {
             font-family: 'Cinzel Decorative', serif;
             font-size: 11px;
-            letter-spacing: 4px;
+            letter-spacing: 3px;
             color: var(--gold-dark);
             text-transform: uppercase;
             text-align: center;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
         }
 
         .story-title {
@@ -404,7 +363,7 @@
             font-size: 21px;
             color: var(--ink);
             text-align: center;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             font-weight: 600;
         }
 
@@ -417,11 +376,11 @@
             min-height: 280px !important;
             max-height: 280px !important;
             width: 100%;
-            margin-bottom: 14px;
-            border-radius: 8px;
+            margin-bottom: 12px;
+            border-radius: 6px;
             overflow: hidden;
-            border: 2.5px solid var(--gold-base);
-            box-shadow: 0 8px 25px rgba(45, 29, 12, 0.25);
+            border: 2px solid #5a3416;
+            box-shadow: 0 6px 18px rgba(45, 25, 10, 0.22);
             background: #e2d7c0;
             display: flex;
             align-items: center;
@@ -437,19 +396,18 @@
             font-size: 13px;
         }
 
-        /* ПОЛНОЕ УДАЛЕНИЕ ВОДЯНОГО ЗНАКА ДЛЯ ПОРТРЕТА */
+        /* ЧИСТЫЙ ПОРТРЕТ БЕЗ ВОДЯНОГО ЗНАКА */
         .image-wrapper.portrait-frame::before {
             display: none !important;
             content: none !important;
         }
 
         .image-wrapper.portrait-frame {
-            background: #faf3e6;
-            border: 2.5px solid var(--gold-base);
-            box-shadow: inset 0 0 25px rgba(212, 175, 55, 0.25), 0 10px 30px rgba(45, 29, 12, 0.25);
+            background: #faf4e8;
+            border: 2px solid #5a3416;
+            box-shadow: inset 0 0 20px rgba(180, 140, 50, 0.15), 0 6px 18px rgba(45, 25, 10, 0.2);
         }
 
-        /* КАРТИНКА СТРОГО 100% ШИРИНЫ И ВЫСОТЫ РАМКИ */
         .scene-image {
             width: 100% !important;
             height: 100% !important;
@@ -467,8 +425,8 @@
         }
 
         .story-text {
-            font-size: 15.5px;
-            line-height: 1.6;
+            font-size: 15px;
+            line-height: 1.58;
             color: var(--ink);
             text-align: justify;
             hyphens: auto;
@@ -476,21 +434,19 @@
 
         .dropcap::first-letter {
             font-family: 'Cinzel Decorative', serif;
-            font-size: 3.5em;
+            font-size: 3.3em;
             float: left;
             line-height: 0.8;
-            margin-right: 10px;
-            margin-top: 4px;
-            color: #b38318;
-            text-shadow: 2px 2px 0px rgba(255, 255, 255, 0.8), 3px 3px 6px rgba(0,0,0,0.2);
+            margin-right: 9px;
+            margin-top: 3px;
+            color: #9c6c10;
         }
 
         .divider {
             text-align: center;
-            color: var(--gold-base);
-            margin: 8px 0;
-            font-size: 18px;
-            opacity: 0.8;
+            color: #caa04f;
+            margin: 6px 0;
+            font-size: 16px;
         }
 
         /* SVG ПОРТРЕТ */
@@ -507,52 +463,42 @@
         .sketch-svg-wrapper svg {
             width: 100%;
             height: 100%;
-            padding: 10px;
+            padding: 8px;
         }
 
         .sketch-svg-wrapper path,
-        .sketch-svg-wrapper circle,
-        .sketch-svg-wrapper ellipse {
+        .sketch-svg-wrapper circle {
             fill: none;
-            stroke: #4a2d19;
+            stroke: #452410;
             stroke-width: 1.8;
             stroke-linecap: round;
             stroke-linejoin: round;
             stroke-dasharray: 1;
             stroke-dashoffset: 1;
-            animation: drawSmooth 4s forwards cubic-bezier(0.4, 0, 0.2, 1);
+            animation: drawSmooth 3.5s forwards cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .sketch-svg-wrapper .sketch-dandelion {
-            stroke: #d49a15;
+            stroke: #c98e10;
             stroke-width: 1.8;
         }
 
         /* ==========================================================================
-           ОФОРМЛЕНИЕ ПИСЬМА ВОЛШЕБНИЦЫ (СТРАНИЦА 11)
+           ПИСЬМО ВОЛШЕБНИЦЫ (СТРАНИЦА 11)
            ========================================================================== */
         .fairy-letter-box {
             position: relative;
-            background: linear-gradient(145deg, rgba(255, 253, 248, 0.98) 0%, rgba(248, 239, 222, 0.98) 100%);
-            border: 2px solid #caa34d;
-            border-radius: 12px;
-            padding: 22px 18px 18px;
+            background: #fffcf5;
+            border: 2px solid #5a3416;
+            border-radius: 10px;
+            padding: 20px 16px 16px;
             margin: auto 0;
             box-shadow: 
-                0 0 25px rgba(212, 175, 55, 0.2),
-                inset 0 0 35px rgba(180, 138, 40, 0.12),
-                0 14px 40px rgba(45, 29, 12, 0.2);
+                0 6px 20px rgba(45, 20, 8, 0.16),
+                inset 0 0 0 3px #fff8e8,
+                inset 0 0 0 4.5px #c89c52;
             text-align: center;
             cursor: pointer;
-        }
-
-        .fairy-letter-box::before {
-            content: '';
-            position: absolute;
-            inset: 5px;
-            border: 1px solid rgba(212, 175, 55, 0.45);
-            border-radius: 8px;
-            pointer-events: none;
         }
 
         .letter-wax-seal {
@@ -560,103 +506,83 @@
             top: -14px;
             left: 50%;
             transform: translateX(-50%);
-            width: 32px;
-            height: 32px;
-            background: radial-gradient(circle at 35% 35%, #e52d43 0%, #8c0a1a 85%);
+            width: 30px;
+            height: 30px;
+            background: #961220;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px;
-            color: #ffd700;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), inset 0 0 5px rgba(255, 255, 255, 0.4);
-            border: 1px solid #ffd700;
+            font-size: 15px;
+            color: #ffe699;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.35);
+            border: 1.5px solid #d4af37;
             z-index: 10;
         }
 
         .letter-vines-top {
-            font-size: 14px;
-            color: #b8860b;
-            letter-spacing: 5px;
-            margin-bottom: 8px;
-            user-select: none;
+            font-size: 13px;
+            color: #a67c33;
+            letter-spacing: 4px;
+            margin-bottom: 6px;
         }
 
         .poem-dynamic-container {
             font-family: 'Playfair Display', serif;
-            font-size: 14.8px;
-            line-height: 1.6;
-            color: #241408;
+            font-size: 14.5px;
+            line-height: 1.55;
+            color: #261407;
             font-style: italic;
-            min-height: 250px;
+            min-height: 240px;
         }
 
-        .poem-stanza-block {
-            margin-bottom: 12px;
-        }
-        .poem-stanza-block:last-child {
-            margin-bottom: 0;
-        }
+        .poem-stanza-block { margin-bottom: 10px; }
+        .poem-stanza-block:last-child { margin-bottom: 0; }
 
         .poem-leaf-sep {
-            color: #caa34d;
-            font-size: 16px;
-            margin: 6px 0;
-            opacity: 0.85;
-            user-select: none;
+            color: #bfa05d;
+            font-size: 15px;
+            margin: 4px 0;
         }
 
         .fade-char {
             display: inline-block;
             opacity: 0;
-            filter: blur(5px);
-            transform: translateY(2px) scale(0.92);
-            color: #d4af37;
-            text-shadow: 0 0 12px rgba(255, 225, 100, 0.9);
-            transition: 
-                opacity 0.45s ease-out, 
-                filter 0.45s ease-out, 
-                transform 0.45s ease-out, 
-                color 0.5s ease-out, 
-                text-shadow 0.5s ease-out;
+            color: #c99324;
+            transition: opacity 0.3s ease, color 0.4s ease;
             white-space: pre-wrap;
         }
 
         .fade-char.revealed {
             opacity: 1;
-            filter: blur(0);
-            transform: translateY(0) scale(1);
-            color: #241408;
-            text-shadow: none;
+            color: #261407;
         }
 
         .fade-char.name-glow {
-            color: #a81c2e !important;
+            color: #9e1424 !important;
             font-weight: 700;
-            text-shadow: 0 0 8px rgba(168, 28, 46, 0.35) !important;
         }
 
         .letter-signature {
             font-family: 'Lora', serif;
-            font-size: 12px;
-            color: #8c6832;
+            font-size: 11.5px;
+            color: #855f28;
             margin-top: 10px;
-            letter-spacing: 1.5px;
+            letter-spacing: 1.2px;
             text-transform: uppercase;
             font-style: normal;
         }
 
         .letter-hint {
             font-size: 11px;
-            color: #aa8649;
-            margin-top: 8px;
+            color: #9e793e;
+            margin-top: 6px;
             font-style: normal;
-            opacity: 0.65;
-            user-select: none;
+            opacity: 0.7;
         }
 
         /* ==========================================================================
-           4. ПОЛНОЭКРАННЫЕ МИНИ-ИГРЫ
+           5. ПОЛНОЭКРАННЫЕ МИНИ-ИГРЫ
            ========================================================================== */
         .fullscreen-game-overlay {
             position: fixed;
@@ -666,7 +592,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: #020509;
+            background: #060907;
             overflow: hidden;
             touch-action: none;
         }
@@ -682,7 +608,7 @@
             position: absolute;
             top: 25px;
             width: 90%;
-            max-width: 600px;
+            max-width: 550px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -693,59 +619,50 @@
         .game-title-hud {
             font-family: 'Cinzel Decorative', serif;
             color: var(--gold-light);
-            font-size: 20px;
+            font-size: 19px;
             letter-spacing: 2px;
-            margin-bottom: 10px;
-            text-shadow: 0 0 10px rgba(212, 175, 55, 0.8), 0 2px 4px #000;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px #000;
         }
 
         .progress-bar-container {
             width: 100%;
-            height: 14px;
-            background: rgba(0, 0, 0, 0.7);
-            border: 1.5px solid var(--gold-base);
-            border-radius: 10px;
+            height: 12px;
+            background: rgba(0, 0, 0, 0.75);
+            border: 1.5px solid #a87933;
+            border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 0 20px rgba(0,0,0,0.9);
         }
 
         .progress-bar-fill {
             height: 100%;
             width: 0%;
             background: linear-gradient(90deg, #d44d18, #f5a623, #ffdf79);
-            box-shadow: 0 0 15px #f5a623;
-            transition: width 0.3s ease-out;
+            transition: width 0.25s ease-out;
         }
 
         .berry-counter-box {
-            font-family: 'Lora', serif;
+            font-family: 'Playfair Display', serif;
             color: #fff;
-            font-size: 17px;
-            background: rgba(90, 20, 20, 0.85);
-            border: 1.5px solid var(--gold-base);
-            padding: 8px 22px;
-            border-radius: 25px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+            font-size: 16px;
+            background: rgba(80, 15, 20, 0.9);
+            border: 1.5px solid #c89c52;
+            padding: 7px 20px;
+            border-radius: 20px;
         }
 
         .game-instruction {
             position: absolute;
-            bottom: 30px;
-            color: #d7e0ea;
+            bottom: 25px;
+            color: #edd8b4;
             font-family: 'Lora', serif;
-            font-size: 15px;
+            font-size: 14.5px;
             font-style: italic;
             pointer-events: none;
             z-index: 1010;
-            text-shadow: 0 2px 6px #000;
-            animation: pulseHint 2s infinite ease-in-out;
+            text-shadow: 0 2px 5px #000;
             text-align: center;
             padding: 0 20px;
-        }
-
-        @keyframes pulseHint {
-            0%, 100% { opacity: 0.6; transform: scale(0.98); }
-            50% { opacity: 1; transform: scale(1.02); }
         }
 
         /* ИГРА №3: ПЕКАРНЯ */
@@ -757,17 +674,17 @@
             align-items: center;
             justify-content: center;
             width: 100%;
-            max-width: 480px;
-            padding: 20px;
+            max-width: 450px;
+            padding: 15px;
         }
 
         .kitchen-surface {
-            width: 310px;
-            height: 310px;
-            background: radial-gradient(circle, #e2cca6 0%, #aa8454 100%);
-            border: 6px solid #5a3c1e;
+            width: 290px;
+            height: 290px;
+            background: radial-gradient(circle, #e8d5b5 0%, #a47e4c 100%);
+            border: 5px solid #4a2d12;
             border-radius: 50%;
-            box-shadow: inset 0 0 30px rgba(0,0,0,0.5), 0 15px 35px rgba(0,0,0,0.8);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.8);
             position: relative;
             display: flex;
             align-items: center;
@@ -778,22 +695,19 @@
         }
 
         .pie-dough {
-            width: 140px;
-            height: 140px;
-            background: radial-gradient(circle, #fff3cf 0%, #eed599 100%);
+            width: 130px;
+            height: 130px;
+            background: radial-gradient(circle, #fff3d4 0%, #ecd497 100%);
             border-radius: 50%;
-            box-shadow: 0 8px 18px rgba(0,0,0,0.3);
-            transition: width 0.15s ease, height 0.15s ease, transform 0.1s ease;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.25);
+            transition: width 0.12s ease, height 0.12s ease;
             position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
         .bellows-btn {
-            margin-top: 22px;
-            padding: 13px 30px;
-            font-size: 14px;
+            margin-top: 18px;
+            padding: 12px 26px;
+            font-size: 13.5px;
         }
     </style>
 </head>
@@ -813,16 +727,15 @@
                 <svg class="cover-svg-layer" id="coverSvgLayer" viewBox="0 0 100 200" preserveAspectRatio="none">
                     <defs> 
                         <g id="leaf" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"> 
-                            <path pathLength="1" d="M0 0 C3.5 -0.8 5.6 -3.8 7.5 -8.5 L9.2 -6.2 C11.2 -12.4 16 -15 20.6 -13.1 L20.8 -9.2 C26 -10.1 30.1 -6.6 31.2 -2.6 L27.5 -0.4 L30.8 1.8 C28.1 6.8 24 8.6 19.8 7 L18.2 10.5 C13.1 11.4 9.2 8.2 7.2 4.3 L4.3 6.1 C2.3 4.4 1.1 2.4 0 0 Z" fill="none" stroke="currentColor" stroke-width="0.2"/> 
-                            <path pathLength="1" d="M1 0 C10 -0.5 20 -0.8 29.6 -0.2 M8 -0.5 C8 -3.2 7.8 -5.5 7.6 -7.8 M13 -0.8 C13.5 -4.3 15 -8.1 17 -12 M19 -0.8 C21 -4 23 -6.5 26 -8.5 M8 0 C8 1.5 7.8 2.8 7.4 3.8 M14 -0.4 C14 2.4 15.3 5.3 17.5 7.8 M21 -0.5 C22 2.3 24 4.5 27.6 5.5" fill="none" stroke="currentColor" stroke-width="0.1"/> 
+                            <path pathLength="1" d="M0 0 C3.5 -0.8 5.6 -3.8 7.5 -8.5 L9.2 -6.2 C11.2 -12.4 16 -15 20.6 -13.1 L20.8 -9.2 C26 -10.1 30.1 -6.6 31.2 -2.6 L27.5 -0.4 L30.8 1.8 C28.1 6.8 24 8.6 19.8 7 L18.2 10.5 C13.1 11.4 9.2 8.2 7.2 4.3 L4.3 6.1 C2.3 4.4 1.1 2.4 0 0 Z" stroke-width="0.2"/> 
                         </g>
                         <g id="raspberryCluster" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-                            <circle pathLength="1" cx="0" cy="3.6" r="1.35" stroke-width="0.2"/>
-                            <circle pathLength="1" cx="-1.35" cy="5.3" r="1.35" stroke-width="0.2"/>
-                            <circle pathLength="1" cx="1.35" cy="5.3" r="1.35" stroke-width="0.2"/>
-                            <circle pathLength="1" cx="0" cy="7.2" r="1.35" stroke-width="0.2"/>
-                            <circle pathLength="1" cx="-1.35" cy="9.1" r="1.2" stroke-width="0.2"/>
-                            <circle pathLength="1" cx="1.35" cy="9.1" r="1.2" stroke-width="0.2"/>
+                            <circle pathLength="1" cx="0" cy="3.6" r="1.3" stroke-width="0.2"/>
+                            <circle pathLength="1" cx="-1.3" cy="5.3" r="1.3" stroke-width="0.2"/>
+                            <circle pathLength="1" cx="1.3" cy="5.3" r="1.3" stroke-width="0.2"/>
+                            <circle pathLength="1" cx="0" cy="7.2" r="1.3" stroke-width="0.2"/>
+                            <circle pathLength="1" cx="-1.3" cy="9.1" r="1.2" stroke-width="0.2"/>
+                            <circle pathLength="1" cx="1.3" cy="9.1" r="1.2" stroke-width="0.2"/>
                             <circle pathLength="1" cx="0" cy="10.8" r="1" stroke-width="0.2"/>
                         </g>
                         <g id="cornerScroll" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
@@ -851,7 +764,6 @@
                         <!-- Стебли букета -->
                         <path pathLength="1" d="M52 85 L51 72 M50 85 L44 70 M54 85 L59 70" stroke-width="0.22" />
                         <path pathLength="1" d="M49 84 C46 80 46 87 51 84 C56 87 56 80 53 84 Z" stroke-width="0.22" />
-                        <path pathLength="1" d="M49 85 L46 90 M53 85 L56 90" stroke-width="0.18" />
 
                         <!-- Центральное солнышко -->
                         <circle pathLength="1" cx="51" cy="67" r="1.6" stroke-width="0.22" />
@@ -861,12 +773,9 @@
                         <circle pathLength="1" cx="43" cy="66" r="1.1" stroke-width="0.2" />
                         <path pathLength="1" d="M43 65 L43 61 M42 65.2 L39 63 M43.8 65.2 L47 63 M42 66 L38.5 66 M44 66 L47.5 66 M42.2 66.8 L39.2 68.8 M43.8 66.8 L46.8 68.8" stroke-width="0.18" />
 
-                        <!-- Правое солнышко (симметричное левому) -->
+                        <!-- Правое солнышко -->
                         <circle pathLength="1" cx="59" cy="66" r="1.1" stroke-width="0.2" />
                         <path pathLength="1" d="M59 65 L59 61 M58 65.2 L55 63 M59.8 65.2 L63 63 M58 66 L54.5 66 M60 66 L63.5 66 M58.2 66.8 L55.2 68.8 M59.8 66.8 L62.8 68.8" stroke-width="0.18" />
-
-                        <path pathLength="1" d="M50 83 Q40 80 33 73 M37 77 L35 74 M41 80 L39 76" stroke-width="0.18" />
-                        <path pathLength="1" d="M54 83 Q64 80 71 73 M67 77 L69 74 M63 80 L65 76" stroke-width="0.18" />
                     </g>
 
                     <g id="stage4-berries" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"> 
@@ -899,7 +808,7 @@
                 </svg>
 
                 <div class="cover-bottom" id="coverBottom">
-                    <button class="disney-btn start-btn" id="startBtn">
+                    <button class="drawn-btn start-btn" id="startBtn">
                         <span>❦</span>
                         <span>ОТКРЫТЬ СКАЗКУ</span>
                         <span>❧</span>
@@ -912,10 +821,9 @@
         <div class="page-screen">
             <div class="book-container" id="bookContainer">
                 
-                <!-- Стр. 1: Рождение Дарьи (Кроватка) -->
+                <!-- Стр. 1: Рождение Дарьи -->
                 <div class="page" id="page1">
                     <div class="page-front">
-                        <div class="dust"></div>
                         <div class="page-content">
                             <div>
                                 <div class="chapter-tag">Глава I</div>
@@ -932,10 +840,9 @@
                     <div class="page-back"></div>
                 </div>
 
-                <!-- Стр. 2: Утро Дня Рождения (Календарь) -->
+                <!-- Стр. 2: Утро Дня Рождения -->
                 <div class="page" id="page2">
                     <div class="page-front">
-                        <div class="dust"></div>
                         <div class="page-content">
                             <div>
                                 <div class="chapter-tag">Глава II</div>
@@ -955,7 +862,6 @@
                 <!-- Стр. 3: Поход в лес + Игра №1 (Терновник) -->
                 <div class="page" id="page3">
                     <div class="page-front">
-                        <div class="dust"></div>
                         <div class="page-content">
                             <div>
                                 <div class="chapter-tag">Глава III • Испытание</div>
@@ -966,7 +872,7 @@
                             </div>
                             <div class="text-wrapper" style="align-items: center;">
                                 <p class="story-text">Взяв корзинку, Даша смело отправилась в глубь Зачарованного Леса. Но древняя чаща ощетинилась мощными слоями терновника, закрывая путь к заветной поляне!</p>
-                                <button class="disney-btn action-btn" id="openGameBtn">
+                                <button class="drawn-btn action-btn" id="openGameBtn">
                                     <span>✂️</span>
                                     <span>ПРОРУБИТЬ ТРОПУ</span>
                                     <span>✂️</span>
@@ -980,7 +886,6 @@
                 <!-- Стр. 4: Поляна + Игра №2 (Гномики и малина) -->
                 <div class="page" id="page4">
                     <div class="page-front">
-                        <div class="dust"></div>
                         <div class="page-content">
                             <div>
                                 <div class="chapter-tag">Глава IV • Испытание</div>
@@ -991,7 +896,7 @@
                             </div>
                             <div class="text-wrapper" style="align-items: center;">
                                 <p class="story-text">Тропа свободна! Но спелых ягод на полянке совсем немного, а лесные воришки-гномики несутся со всех ног, пытаясь утащить каждую малинку в свои норки!</p>
-                                <button class="disney-btn action-btn" id="openBerryGameBtn">
+                                <button class="drawn-btn action-btn" id="openBerryGameBtn">
                                     <span>🧺</span>
                                     <span>СОБРАТЬ МАЛИНКУ</span>
                                     <span>🍓</span>
@@ -1005,7 +910,6 @@
                 <!-- Стр. 5: Встреча со злым кустом -->
                 <div class="page" id="page5">
                     <div class="page-front">
-                        <div class="dust"></div>
                         <div class="page-content">
                             <div>
                                 <div class="chapter-tag">Глава V</div>
@@ -1025,7 +929,6 @@
                 <!-- Стр. 6: Победа над кустом -->
                 <div class="page" id="page6">
                     <div class="page-front">
-                        <div class="dust"></div>
                         <div class="page-content">
                             <div>
                                 <div class="chapter-tag">Глава VI</div>
@@ -1045,7 +948,6 @@
                 <!-- Стр. 7: Пришла домой с ягодами -->
                 <div class="page" id="page7">
                     <div class="page-front">
-                        <div class="dust"></div>
                         <div class="page-content">
                             <div>
                                 <div class="chapter-tag">Глава VII</div>
@@ -1065,16 +967,15 @@
                 <!-- Стр. 8: ИГРА №3 (ГОТОВИМ ПИРОГ) -->
                 <div class="page" id="page8">
                     <div class="page-front">
-                        <div class="dust"></div>
                         <div class="page-content" style="justify-content: center; align-items: center; text-align: center;">
                             <div class="text-wrapper" style="align-items: center;">
                                 <div class="chapter-tag">Именинная Пекарня</div>
-                                <h2 style="font-family:'Cinzel Decorative'; color: #b38318; font-size: 22px; margin-bottom: 12px;">Время Чудес</h2>
+                                <h2 style="font-family:'Cinzel Decorative'; color: #9c6c10; font-size: 22px; margin-bottom: 12px;">Время Чудес</h2>
                                 <p class="story-text" style="text-align: center;">Мука просеяна, сладкая малина блестит рубинами, а печь уже разогрета жаркими искрами!</p>
-                                <p class="story-text" style="text-align: center; font-style: italic; margin-top: 14px; color: #735932;">
+                                <p class="story-text" style="text-align: center; font-style: italic; margin-top: 14px; color: #6a4a26;">
                                     Раскатай пышное тесто, укрась его лесными ягодами и доведи выпечку до золотистой корочки!
                                 </p>
-                                <button class="disney-btn action-btn" id="openPieGameBtn" style="margin-top: 24px;">
+                                <button class="drawn-btn action-btn" id="openPieGameBtn" style="margin-top: 24px;">
                                     <span>🥧</span>
                                     <span>ИСПЕЧЬ ПИРОГ</span>
                                     <span>✨</span>
@@ -1088,7 +989,6 @@
                 <!-- Стр. 9: Именинный пирог готов! -->
                 <div class="page" id="page9">
                     <div class="page-front">
-                        <div class="dust"></div>
                         <div class="page-content">
                             <div>
                                 <div class="chapter-tag">Глава VIII</div>
@@ -1105,29 +1005,27 @@
                     <div class="page-back"></div>
                 </div>
 
-                <!-- Стр. 10: Подарок Волшебницы (ТОЛЬКО ЧИСТЫЙ SVG-ПОРТРЕТ) -->
+                <!-- Стр. 10: Подарок Волшебницы (ЧИСТЫЙ SVG-ПОРТРЕТ) -->
                 <div class="page" id="page10">
                     <div class="page-front">
-                        <div class="dust"></div>
                         <div class="page-content">
                             <div>
                                 <div class="chapter-tag">Подарок Волшебницы</div>
                                 <div class="story-title">Маленькая Художница</div>
                             </div>
 
-                            <p style="font-size: 14.5px; font-style: italic; color: #5c381c; text-align: center; margin-bottom: 12px; line-height: 1.6;">
+                            <p style="font-size: 14px; font-style: italic; color: #523014; text-align: center; margin-bottom: 10px; line-height: 1.5;">
                                 Маленькая девочка из сказки тоже поздравляет тебя с днём рождения, и в подарок нарисовала тебе твой портрет, по нашей фотографии ✨
                             </p>
 
-                            <!-- Векторный Disney SVG портрет Даши (БЕЗ надписи "Иллюстрация сказки") -->
                             <div class="image-wrapper portrait-frame">
                                 <div class="sketch-svg-wrapper">
                                     <svg viewBox="0 0 220 220">
                                         <path pathLength="1" d="M 180 10 Q 168 110 176 215 M 202 10 Q 192 120 196 215" />
                                         <path pathLength="1" d="M 85 86 Q 85 116 105 120 Q 126 116 128 86" />
                                         <path pathLength="1" d="M 94 92 Q 99 89 104 92 M 111 92 Q 116 89 121 92" />
-                                        <circle cx="99" cy="93" r="1.6" fill="#4a2d19" />
-                                        <circle cx="116" cy="93" r="1.6" fill="#4a2d19" />
+                                        <circle cx="99" cy="93" r="1.6" fill="#452410" />
+                                        <circle cx="116" cy="93" r="1.6" fill="#452410" />
                                         <path pathLength="1" d="M 108 97 Q 110 102 106 103" />
                                         <path pathLength="1" d="M 100 108 Q 107 113 115 108" />
                                         <path pathLength="1" d="M 84 84 Q 106 80 128 82" />
@@ -1137,8 +1035,8 @@
                                         <path class="sketch-dandelion" pathLength="1" d="M 116 48 L 116 44 M 119 50 L 123 47 M 120 54 L 124 57 M 112 54 L 108 57 M 112 50 L 108 47" />
                                         <path pathLength="1" d="M 88 135 L 80 166 L 92 168 L 98 138 Z" />
                                         <path pathLength="1" d="M 122 138 L 118 168 L 130 166 L 131 135 Z" />
-                                        <circle cx="85" cy="163" r="1.8" fill="#4a2d19" />
-                                        <circle cx="124" cy="163" r="1.8" fill="#4a2d19" />
+                                        <circle cx="85" cy="163" r="1.8" fill="#452410" />
+                                        <circle cx="124" cy="163" r="1.8" fill="#452410" />
                                         <path pathLength="1" d="M 80 166 L 130 166 L 133 205 L 77 205 Z" />
                                         <path pathLength="1" d="M 94 175 L 116 175 L 113 190 L 97 190 Z" />
                                         <path pathLength="1" d="M 132 142 Q 152 152 172 148" />
@@ -1150,7 +1048,7 @@
                                 </div>
                             </div>
 
-                            <p style="font-size: 13.5px; font-style: italic; color: #7f6848; text-align: center; margin-top: 10px;">
+                            <p style="font-size: 13.5px; font-style: italic; color: #73502d; text-align: center; margin-top: 8px;">
                                 Она очень старалась передать твои добрые глаза и улыбку...<br>Переверни страницу, чтобы прочесть её послание для тебя ✨
                             </p>
                         </div>
@@ -1158,23 +1056,20 @@
                     <div class="page-back"></div>
                 </div>
 
-                <!-- Стр. 11: СТИХ ВОЛШЕБНИЦЫ (ПОБУКВЕННОЕ ПРОЯВЛЕНИЕ) -->
+                <!-- Стр. 11: СТИХ ВОЛШЕБНИЦЫ -->
                 <div class="page" id="page11">
                     <div class="page-front">
-                        <div class="dust"></div>
                         <div class="page-content" style="justify-content: center;">
                             <div>
                                 <div class="chapter-tag">Искренние строки</div>
-                                <div class="story-title" style="margin-bottom: 16px;">Письмо Маленькой Волшебницы</div>
+                                <div class="story-title" style="margin-bottom: 14px;">Письмо Маленькой Волшебницы</div>
                             </div>
 
                             <div class="fairy-letter-box" id="fairyLetterBox" title="Нажми, чтобы показать весь текст">
                                 <div class="letter-wax-seal">🍓</div>
                                 <div class="letter-vines-top">❦ ❖ ❦</div>
 
-                                <div class="poem-dynamic-container" id="poemDynamicContainer">
-                                    <!-- Буквы рождаются с перезвоном -->
-                                </div>
+                                <div class="poem-dynamic-container" id="poemDynamicContainer"></div>
 
                                 <div class="letter-signature">
                                     ✦ С любовью от лесной подружки 🍓 ✦
@@ -1189,17 +1084,16 @@
                 <!-- Стр. 12 (Финал) -->
                 <div class="page" id="page12">
                     <div class="page-front">
-                        <div class="dust"></div>
                         <div class="page-content" style="justify-content: center; text-align: center;">
                             <div class="text-wrapper" style="justify-content: center;">
-                                <p class="story-text" style="text-align: center; font-size: 17.5px;">И помни: настоящая магия — это не зачарованный лес.</p>
-                                <p class="story-text" style="text-align: center; font-size: 17.5px; margin-top: 10px;">Настоящее волшебство — это когда после любых дорог тебя встречают с искренней любовью.</p>
+                                <p class="story-text" style="text-align: center; font-size: 17px;">И помни: настоящая магия — это не зачарованный лес.</p>
+                                <p class="story-text" style="text-align: center; font-size: 17px; margin-top: 10px;">Настоящее волшебство — это когда после любых дорог тебя встречают с искренней любовью.</p>
                                 <div class="divider">❦</div>
-                                <p style="font-family:'Cinzel Decorative'; font-size: 22px; color: #b38318; line-height: 1.5; margin: 15px 0;">
+                                <p style="font-family:'Cinzel Decorative'; font-size: 21px; color: #9c6c10; line-height: 1.5; margin: 15px 0;">
                                     С Днём Рождения, Дарья!<br>
                                     Твой праздник только начинается.
                                 </p>
-                                <p style="font-style: italic; color: #7f6848; font-size: 14.5px;">(Подними глаза от экрана... ✨)</p>
+                                <p style="font-style: italic; color: #73502d; font-size: 14px;">(Подними глаза от экрана... ✨)</p>
                             </div>
                         </div>
                     </div>
@@ -1209,13 +1103,13 @@
             </div>
         </div>
 
-        <button class="disney-btn next-btn hidden" id="nextBtn">
+        <button class="drawn-btn next-btn hidden" id="nextBtn">
             <span>Далее</span>
             <span>›</span>
         </button>
     </div>
 
-    <!-- ================= МИНИ-ИГРА №1: МНОГОСЛОЙНЫЙ ТЕРНОВНИК ================= -->
+    <!-- МИНИ-ИГРА №1 -->
     <div class="fullscreen-game-overlay" id="thornGameOverlay">
         <canvas class="game-canvas" id="thornCanvas"></canvas>
         <div class="game-hud">
@@ -1224,20 +1118,20 @@
                 <div class="progress-bar-fill" id="thornProgress"></div>
             </div>
         </div>
-        <div class="game-instruction">Руби переднюю светящуюся лиану! Задние заблокированы, пока не срежешь эту!</div>
+        <div class="game-instruction">Руби переднюю светящуюся лиану!</div>
     </div>
 
-    <!-- ================= МИНИ-ИГРА №2: МАЛИНА И БЫСТРЫЕ ГНОМИКИ ================= -->
+    <!-- МИНИ-ИГРА №2 -->
     <div class="fullscreen-game-overlay" id="berryGameOverlay">
         <canvas class="game-canvas" id="berryCanvas"></canvas>
         <div class="game-hud">
             <div class="game-title-hud">Малиновый Дозор</div>
             <div class="berry-counter-box" id="berryCounter">Корзинка: 0 / 8 🍓</div>
         </div>
-        <div class="game-instruction">Ягодки созревают редко! Шлёпай гномов, чтобы они не утащили урожай!</div>
+        <div class="game-instruction">Шлёпай гномов, чтобы они не утащили спелые ягодки!</div>
     </div>
 
-    <!-- ================= МИНИ-ИГРА №3: ВОЛШЕБНАЯ ПЕКАРНЯ ================= -->
+    <!-- МИНИ-ИГРА №3 -->
     <div class="fullscreen-game-overlay" id="pieGameOverlay">
         <canvas class="game-canvas" id="pieCanvasFx"></canvas>
         <div class="game-hud">
@@ -1251,7 +1145,7 @@
             <div class="kitchen-surface" id="kitchenSurface">
                 <div class="pie-dough" id="pieDough"></div>
             </div>
-            <button class="disney-btn bellows-btn" id="bellowsBtn" style="display: none;">
+            <button class="drawn-btn bellows-btn" id="bellowsBtn" style="display: none;">
                 <span>💨</span>
                 <span>Раздуть пламя печи</span>
                 <span>🔥</span>
@@ -1263,13 +1157,20 @@
 
     <script>
         /* ==========================================================================
-           СИСТЕМА ГОЛОСОВОЙ ОЗВУЧКИ СТРАНИЦ (page1.mp3 ... page12.mp3)
+           НАСТРОЙКА СКОРОСТИ ЧТЕНИЯ ОЗВУЧКИ (VOICEOVER SPEED)
+           1.0  = Обычная скорость записи
+           1.15 = Чуть быстрее, звучит очень живо и естественно (рекомендуется)
+           1.25 = Бодрый, динамичный темп
+           ========================================================================== */
+        const VOICE_PLAYBACK_SPEED = 1.4; // <--- МЕНЯЙТЕ ЭТО ЗНАЧЕНИЕ ДЛЯ ВСЕХ СТРАНИЦ!
+
+        /* ==========================================================================
+           СИСТЕМА ГОЛОСОВОЙ ОЗВУЧКИ СТРАНИЦ
            ========================================================================== */
         let currentVoiceAudio = null;
         const voiceAudioCache = {};
 
         function playPageVoice(pageNumber) {
-            // Останавливаем предыдущую дорожку при перелистывании
             if (currentVoiceAudio) {
                 currentVoiceAudio.pause();
                 currentVoiceAudio.currentTime = 0;
@@ -1277,18 +1178,21 @@
 
             const fileName = `page${pageNumber}.mp3`;
             if (!voiceAudioCache[fileName]) {
-                voiceAudioCache[fileName] = new Audio(fileName);
+                const aud = new Audio(fileName);
+                aud.playbackRate = VOICE_PLAYBACK_SPEED;
+                aud.defaultPlaybackRate = VOICE_PLAYBACK_SPEED;
+                voiceAudioCache[fileName] = aud;
             }
 
             currentVoiceAudio = voiceAudioCache[fileName];
-            currentVoiceAudio.play().catch(e => {
-                // Если файл ещё не добавлен в папку, браузер просто продолжит работу без ошибок
-                console.log(`Ожидается аудиофайл: ${fileName}`);
-            });
+            // Гарантированно применяем текущую скорость перед воспроизведением
+            currentVoiceAudio.playbackRate = VOICE_PLAYBACK_SPEED;
+            currentVoiceAudio.defaultPlaybackRate = VOICE_PLAYBACK_SPEED;
+            currentVoiceAudio.play().catch(() => {});
         }
 
         /* ==========================================================================
-           ЗВУКОВОЙ ДВИЖОК ЭФФЕКТОВ (СИНТЕЗАТОР)
+           ЗВУКОВОЙ ДВИЖОК ЭФФЕКТОВ
            ========================================================================== */
         class SoundFX {
             constructor() { this.ctx = null; }
@@ -1303,86 +1207,65 @@
                 if (!this.ctx) return;
                 const osc = this.ctx.createOscillator();
                 const gain = this.ctx.createGain();
-                const filter = this.ctx.createBiquadFilter();
                 osc.type = 'sawtooth';
                 const st = this.ctx.currentTime;
-                osc.frequency.setValueAtTime(340, st);
-                osc.frequency.exponentialRampToValueAtTime(60, st + 0.12);
-                filter.type = 'lowpass';
-                filter.frequency.setValueAtTime(2800, st);
-                filter.frequency.exponentialRampToValueAtTime(180, st + 0.12);
-                gain.gain.setValueAtTime(0.4, st);
-                gain.gain.linearRampToValueAtTime(0.01, st + 0.12);
-                osc.connect(filter); filter.connect(gain); gain.connect(this.ctx.destination);
-                osc.start(); osc.stop(st + 0.13);
+                osc.frequency.setValueAtTime(320, st);
+                osc.frequency.exponentialRampToValueAtTime(70, st + 0.1);
+                gain.gain.setValueAtTime(0.35, st);
+                gain.gain.linearRampToValueAtTime(0.01, st + 0.1);
+                osc.connect(gain); gain.connect(this.ctx.destination);
+                osc.start(); osc.stop(st + 0.11);
             }
             playWoodCrack() {
                 if (!this.ctx) return;
-                const buf = this.ctx.createBuffer(1, this.ctx.sampleRate * 0.12, this.ctx.sampleRate);
-                const data = buf.getChannelData(0);
-                for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (data.length * 0.22));
-                const noise = this.ctx.createBufferSource();
-                noise.buffer = buf;
-                const filter = this.ctx.createBiquadFilter();
-                filter.type = 'bandpass'; filter.frequency.value = 520; filter.Q.value = 2.2;
+                const osc = this.ctx.createOscillator();
                 const gain = this.ctx.createGain();
-                gain.gain.setValueAtTime(0.85, this.ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.12);
-                noise.connect(filter); filter.connect(gain); gain.connect(this.ctx.destination);
-                noise.start();
+                osc.type = 'square';
+                const st = this.ctx.currentTime;
+                osc.frequency.setValueAtTime(140, st);
+                osc.frequency.exponentialRampToValueAtTime(40, st + 0.12);
+                gain.gain.setValueAtTime(0.4, st);
+                gain.gain.linearRampToValueAtTime(0.01, st + 0.12);
+                osc.connect(gain); gain.connect(this.ctx.destination);
+                osc.start(); osc.stop(st + 0.13);
             }
             playPageTurn() {
                 if (!this.ctx) return;
-                const buf = this.ctx.createBuffer(1, this.ctx.sampleRate * 0.3, this.ctx.sampleRate);
-                const data = buf.getChannelData(0);
-                for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1);
-                const noise = this.ctx.createBufferSource();
-                noise.buffer = buf;
-                const filter = this.ctx.createBiquadFilter();
-                filter.type = 'lowpass';
-                filter.frequency.setValueAtTime(1100, this.ctx.currentTime);
-                filter.frequency.linearRampToValueAtTime(200, this.ctx.currentTime + 0.3);
+                const osc = this.ctx.createOscillator();
                 const gain = this.ctx.createGain();
-                gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
-                gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.3);
-                noise.connect(filter); filter.connect(gain); gain.connect(this.ctx.destination);
-                noise.start();
+                osc.type = 'sine';
+                const st = this.ctx.currentTime;
+                osc.frequency.setValueAtTime(260, st);
+                osc.frequency.linearRampToValueAtTime(90, st + 0.2);
+                gain.gain.setValueAtTime(0.15, st);
+                gain.gain.linearRampToValueAtTime(0.01, st + 0.2);
+                osc.connect(gain); gain.connect(this.ctx.destination);
+                osc.start(); osc.stop(st + 0.2);
             }
             playPop() {
                 if (!this.ctx) return;
                 const osc = this.ctx.createOscillator();
                 const gain = this.ctx.createGain();
                 osc.type = 'sine';
-                osc.frequency.setValueAtTime(500, this.ctx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(1100, this.ctx.currentTime + 0.11);
-                gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.11);
+                osc.frequency.setValueAtTime(520, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1050, this.ctx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.25, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.1);
                 osc.connect(gain); gain.connect(this.ctx.destination);
-                osc.start(); osc.stop(this.ctx.currentTime + 0.11);
+                osc.start(); osc.stop(this.ctx.currentTime + 0.1);
             }
             playGnomeBoing() {
                 if (!this.ctx) return;
                 const osc = this.ctx.createOscillator();
                 const gain = this.ctx.createGain();
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(140, this.ctx.currentTime);
-                osc.frequency.linearRampToValueAtTime(540, this.ctx.currentTime + 0.08);
-                osc.frequency.linearRampToValueAtTime(110, this.ctx.currentTime + 0.2);
-                gain.gain.setValueAtTime(0.25, this.ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.2);
-                osc.connect(gain); gain.connect(this.ctx.destination);
-                osc.start(); osc.stop(this.ctx.currentTime + 0.2);
-            }
-            playChime(note = 600) {
-                if (!this.ctx) return;
-                const osc = this.ctx.createOscillator();
-                const gain = this.ctx.createGain();
                 osc.type = 'triangle';
-                osc.frequency.setValueAtTime(note, this.ctx.currentTime);
+                osc.frequency.setValueAtTime(180, this.ctx.currentTime);
+                osc.frequency.linearRampToValueAtTime(520, this.ctx.currentTime + 0.08);
+                osc.frequency.linearRampToValueAtTime(120, this.ctx.currentTime + 0.18);
                 gain.gain.setValueAtTime(0.25, this.ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.6);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.18);
                 osc.connect(gain); gain.connect(this.ctx.destination);
-                osc.start(); osc.stop(this.ctx.currentTime + 0.6);
+                osc.start(); osc.stop(this.ctx.currentTime + 0.18);
             }
             playLetterChime(note = 800) {
                 if (!this.ctx) return;
@@ -1390,43 +1273,43 @@
                 const gain = this.ctx.createGain();
                 osc.type = 'sine';
                 osc.frequency.setValueAtTime(note, this.ctx.currentTime);
-                gain.gain.setValueAtTime(0.035, this.ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.03, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.18);
                 osc.connect(gain); gain.connect(this.ctx.destination);
-                osc.start(); osc.stop(this.ctx.currentTime + 0.22);
+                osc.start(); osc.stop(this.ctx.currentTime + 0.19);
             }
             playFlamePuff() {
                 if (!this.ctx) return;
                 const osc = this.ctx.createOscillator();
                 const gain = this.ctx.createGain();
                 osc.type = 'sine';
-                osc.frequency.setValueAtTime(110, this.ctx.currentTime);
-                osc.frequency.linearRampToValueAtTime(260, this.ctx.currentTime + 0.15);
-                gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
-                gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.2);
+                osc.frequency.setValueAtTime(120, this.ctx.currentTime);
+                osc.frequency.linearRampToValueAtTime(240, this.ctx.currentTime + 0.12);
+                gain.gain.setValueAtTime(0.25, this.ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.15);
                 osc.connect(gain); gain.connect(this.ctx.destination);
-                osc.start(); osc.stop(this.ctx.currentTime + 0.2);
+                osc.start(); osc.stop(this.ctx.currentTime + 0.15);
             }
             playVictoryChime() {
                 if (!this.ctx) return;
-                const notes = [523.25, 659.25, 783.99, 1046.50];
+                const notes = [523, 659, 784, 1046];
                 notes.forEach((freq, idx) => {
                     const osc = this.ctx.createOscillator();
                     const gain = this.ctx.createGain();
-                    const start = this.ctx.currentTime + idx * 0.12;
+                    const start = this.ctx.currentTime + idx * 0.1;
                     osc.type = 'sine';
                     osc.frequency.setValueAtTime(freq, start);
-                    gain.gain.setValueAtTime(0.3, start);
-                    gain.gain.exponentialRampToValueAtTime(0.001, start + 1.2);
+                    gain.gain.setValueAtTime(0.25, start);
+                    gain.gain.exponentialRampToValueAtTime(0.001, start + 0.8);
                     osc.connect(gain); gain.connect(this.ctx.destination);
-                    osc.start(start); osc.stop(start + 1.3);
+                    osc.start(start); osc.stop(start + 0.85);
                 });
             }
         }
         const sfx = new SoundFX();
 
         /* ==========================================================================
-           ОБЛОЖКА И КНИЖНЫЙ БЛОК
+           ОБЛОЖКА И ОПТИМИЗИРОВАННЫЙ ХОЛСТ
            ========================================================================== */
         const coverScreen = document.getElementById('coverScreen');
         const coverSvgLayer = document.getElementById('coverSvgLayer');
@@ -1435,7 +1318,7 @@
         const btnContainer = document.getElementById('coverBottom');
         const startBtn = document.getElementById('startBtn');
 
-        setTimeout(() => coverSvgLayer.classList.add('animate'), 400);
+        setTimeout(() => coverSvgLayer.classList.add('animate'), 300);
 
         setTimeout(() => {
             let i = 0;
@@ -1443,17 +1326,18 @@
                 if (i < coverPaths.length) {
                     coverPaths[i].classList.add('show');
                     i++;
-                    setTimeout(showNextLetter, 120);
+                    setTimeout(showNextLetter, 100);
                 } else {
-                    setTimeout(() => btnContainer.classList.add('show'), 600);
+                    setTimeout(() => btnContainer.classList.add('show'), 400);
                 }
             }
             showNextLetter();
-        }, 13500);
+        }, 11500);
 
         const canvasFx = document.getElementById('canvas-effects');
         const ctxFx = canvasFx.getContext('2d');
         let widthFx, heightFx;
+        let fxAnimId = null;
 
         function resizeFx() {
             widthFx = canvasFx.width = window.innerWidth;
@@ -1467,17 +1351,17 @@
             reset() {
                 this.x = Math.random() * widthFx;
                 this.y = heightFx + 10;
-                this.size = Math.random() * 2.5 + 1;
+                this.size = Math.random() * 2 + 1;
                 this.color = Math.random() > 0.4 ? 'rgba(255, 232, 161,' : 'rgba(212, 175, 55,';
-                this.vy = -(Math.random() * 0.9 + 0.4);
-                this.vx = (Math.random() - 0.5) * 0.6;
+                this.vy = -(Math.random() * 0.8 + 0.4);
+                this.vx = (Math.random() - 0.5) * 0.5;
                 this.alpha = 0;
                 this.maxAlpha = Math.random() * 0.6 + 0.3;
             }
             update() {
                 this.x += this.vx; this.y += this.vy;
                 if (this.y < heightFx * 0.8 && this.alpha < this.maxAlpha) this.alpha += 0.02;
-                if (this.y < heightFx * 0.2) this.alpha -= 0.01;
+                if (this.y < heightFx * 0.2) this.alpha -= 0.015;
                 if (this.y < -10 || this.alpha <= 0) this.reset();
             }
             draw() {
@@ -1485,16 +1369,16 @@
                 ctxFx.beginPath(); ctxFx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctxFx.fill();
             }
         }
-        const sparks = Array.from({ length: 30 }, () => new Spark());
+        const sparks = Array.from({ length: 24 }, () => new Spark());
         function loopFx() {
             ctxFx.clearRect(0, 0, widthFx, heightFx);
             sparks.forEach(s => { s.update(); s.draw(); });
-            requestAnimationFrame(loopFx);
+            fxAnimId = requestAnimationFrame(loopFx);
         }
         loopFx();
 
         /* ==========================================================================
-           СТИХ ВОЛШЕБНИЦЫ (АНИМАЦИЯ ПО БУКВАМ)
+           СТИХ ВОЛШЕБНИЦЫ (СТРАНИЦА 11)
            ========================================================================== */
         const poemStanzas = [
             [
@@ -1572,14 +1456,12 @@
                 }
 
                 poemCharElements[charIndex].classList.add('revealed');
-
-                if (charIndex % 6 === 0) {
-                    const notes = [659, 784, 880, 988, 1046, 1175];
+                if (charIndex % 7 === 0) {
+                    const notes = [659, 784, 880, 988, 1046];
                     sfx.playLetterChime(notes[Math.floor(Math.random() * notes.length)]);
                 }
-
                 charIndex++;
-            }, 28);
+            }, 30);
         }
 
         function revealEntirePoem() {
@@ -1588,10 +1470,11 @@
             isPoemRevealed = true;
             sfx.playVictoryChime();
         }
-
         document.getElementById('fairyLetterBox').addEventListener('click', revealEntirePoem);
 
-        /* НАВИГАЦИЯ КНИГИ */
+        /* ==========================================================================
+           НАВИГАЦИЯ КНИГИ С ПОЛНОЙ ОПТИМИЗАЦИЕЙ СЛОЕВ
+           ========================================================================== */
         const flashOverlay = document.getElementById("flashOverlay");
         const pages = Array.from(document.querySelectorAll(".page"));
         const nextBtn = document.getElementById("nextBtn");
@@ -1603,15 +1486,21 @@
         startBtn.addEventListener("click", () => {
             sfx.init();
             sfx.playPageTurn();
+            
+            if (fxAnimId) cancelAnimationFrame(fxAnimId);
+
             flashOverlay.classList.add("active");
             setTimeout(() => {
                 coverScreen.classList.add("turned-cover");
                 flashOverlay.classList.remove("active");
                 nextBtn.classList.remove("hidden");
                 updateNav();
-                // Автоматический запуск озвучки страницы 1
                 playPageVoice(1);
-            }, 500);
+
+                setTimeout(() => {
+                    coverScreen.style.display = 'none';
+                }, 1300);
+            }, 400);
         });
 
         function updateNav() {
@@ -1637,24 +1526,26 @@
             setTimeout(() => {
                 cur.style.zIndex = "1";
                 cur.classList.remove("is-turning");
+                
+                cur.style.visibility = "hidden";
+
                 currentPageIndex++;
                 isFlipping = false;
                 updateNav();
 
-                // Автоматический запуск озвучки открытой страницы (1..12)
                 playPageVoice(currentPageIndex + 1);
 
                 if (currentPageIndex === 10) {
                     startPoemAnimation();
                 }
-            }, 1450);
+            }, 1250);
 
             cur.classList.add("turned");
         }
         nextBtn.addEventListener("click", flipPage);
 
         /* ==========================================================================
-           МИНИ-ИГРА №1: ТЕРНОВНИК (ПОСЛОЙНЫЙ СЛЕШЕР)
+           МИНИ-ИГРА №1: ТЕРНОВНИК (ОПТИМИЗИРОВАННЫЙ РЕНДЕР)
            ========================================================================== */
         const thornOverlay = document.getElementById('thornGameOverlay');
         const thornCanvas = document.getElementById('thornCanvas');
@@ -1666,10 +1557,9 @@
         let isThornRunning = false;
         let isCutting = false;
         let cutTrail = [];
-        let woodChips = [];
         let vineLayers = [];
         let currentVineIdx = 0;
-        let screenShake = 0;
+        let thornAnimId = null;
 
         function resizeThornGame() {
             tWidth = thornCanvas.width = window.innerWidth;
@@ -1679,102 +1569,39 @@
 
         class LayeredVine {
             constructor(p1, p2, thickness, angleOffset) {
-                this.p1 = p1;
-                this.p2 = p2;
+                this.p1 = p1; this.p2 = p2;
                 this.thickness = thickness;
                 this.angleOffset = angleOffset;
-                this.cuts = [];
                 this.totalDamage = 0;
                 this.maxHealth = 100;
                 this.broken = false;
-                this.brokenParts = [];
             }
 
             draw(isActive, layerDepth) {
+                if (this.broken) return;
                 ctxThorn.save();
-                
-                if (this.broken) {
-                    this.brokenParts.forEach(bp => {
-                        ctxThorn.save();
-                        ctxThorn.translate(bp.x, bp.y);
-                        ctxThorn.rotate(bp.rot);
-                        ctxThorn.globalAlpha = bp.opacity;
-                        ctxThorn.fillStyle = '#221208';
-                        ctxThorn.fillRect(-bp.len / 2, -this.thickness / 2, bp.len, this.thickness);
-                        ctxThorn.restore();
-                    });
-                    ctxThorn.restore();
-                    return;
-                }
-
-                if (!isActive) {
-                    ctxThorn.globalAlpha = Math.max(0.25, 0.6 - layerDepth * 0.12);
-                    ctxThorn.strokeStyle = '#120b06';
-                } else {
-                    ctxThorn.globalAlpha = 1.0;
-                    ctxThorn.strokeStyle = '#3d2212';
-                    ctxThorn.shadowColor = '#d4af37';
-                    ctxThorn.shadowBlur = 12;
-                }
-
+                ctxThorn.globalAlpha = isActive ? 1.0 : Math.max(0.3, 0.6 - layerDepth * 0.12);
+                ctxThorn.strokeStyle = isActive ? '#4a2512' : '#140c07';
                 ctxThorn.lineWidth = this.thickness;
                 ctxThorn.lineCap = 'round';
                 ctxThorn.beginPath();
                 ctxThorn.moveTo(this.p1.x, this.p1.y);
-                const midX = (this.p1.x + this.p2.x) / 2 + Math.cos(this.angleOffset) * 45;
-                const midY = (this.p1.y + this.p2.y) / 2 + Math.sin(this.angleOffset) * 45;
+                const midX = (this.p1.x + this.p2.x) / 2 + Math.cos(this.angleOffset) * 35;
+                const midY = (this.p1.y + this.p2.y) / 2 + Math.sin(this.angleOffset) * 35;
                 ctxThorn.quadraticCurveTo(midX, midY, this.p2.x, this.p2.y);
                 ctxThorn.stroke();
 
-                ctxThorn.fillStyle = isActive ? '#a81c2e' : '#22110b';
-                for (let i = 0.2; i <= 0.8; i += 0.2) {
-                    const tx = this.p1.x + (this.p2.x - this.p1.x) * i;
-                    const ty = this.p1.y + (this.p2.y - this.p1.y) * i;
-                    ctxThorn.beginPath();
-                    ctxThorn.arc(tx + 8, ty - 8, 4, 0, Math.PI * 2);
-                    ctxThorn.fill();
-                }
-
                 if (isActive) {
-                    this.cuts.forEach(cut => {
-                        ctxThorn.save();
-                        ctxThorn.fillStyle = '#ffe8a1';
-                        ctxThorn.shadowColor = '#ffaa00';
-                        ctxThorn.shadowBlur = 10;
+                    ctxThorn.fillStyle = '#a62428';
+                    for (let i = 0.2; i <= 0.8; i += 0.2) {
+                        const tx = this.p1.x + (this.p2.x - this.p1.x) * i;
+                        const ty = this.p1.y + (this.p2.y - this.p1.y) * i;
                         ctxThorn.beginPath();
-                        ctxThorn.arc(cut.x, cut.y, cut.depth * 3.5, 0, Math.PI * 2);
+                        ctxThorn.arc(tx + 6, ty - 6, 3.5, 0, Math.PI * 2);
                         ctxThorn.fill();
-                        ctxThorn.restore();
-                    });
-                } else {
-                    ctxThorn.fillStyle = 'rgba(212, 175, 55, 0.4)';
-                    ctxThorn.font = '16px serif';
-                    ctxThorn.fillText('🔒', (this.p1.x + this.p2.x)/2 - 8, (this.p1.y + this.p2.y)/2);
+                    }
                 }
-
                 ctxThorn.restore();
-            }
-
-            snapBreak() {
-                this.broken = true;
-                const midX = (this.p1.x + this.p2.x) / 2;
-                const midY = (this.p1.y + this.p2.y) / 2;
-                this.brokenParts = [
-                    { x: this.p1.x, y: this.p1.y, vx: -3, vy: -2, rot: 0, vRot: -0.05, len: 150, opacity: 1 },
-                    { x: midX, y: midY, vx: 3, vy: 2, rot: 0, vRot: 0.06, len: 150, opacity: 1 }
-                ];
-            }
-
-            update() {
-                if (this.broken) {
-                    this.brokenParts.forEach(bp => {
-                        bp.x += bp.vx;
-                        bp.y += bp.vy;
-                        bp.vy += 0.8;
-                        bp.rot += bp.vRot;
-                        bp.opacity -= 0.02;
-                    });
-                }
             }
         }
 
@@ -1784,52 +1611,30 @@
             const numLayers = 5;
             for (let i = 0; i < numLayers; i++) {
                 const isDiagonal = i % 2 === 0;
-                let p1, p2;
-                if (isDiagonal) {
-                    p1 = { x: -40, y: (tHeight / numLayers) * i + 80 };
-                    p2 = { x: tWidth + 40, y: tHeight - (tHeight / numLayers) * i - 80 };
-                } else {
-                    p1 = { x: (tWidth / numLayers) * i + 60, y: -40 };
-                    p2 = { x: tWidth - (tWidth / numLayers) * i - 60, y: tHeight + 40 };
-                }
-                vineLayers.push(new LayeredVine(p1, p2, 28 - i * 2, i * 1.5));
+                let p1 = isDiagonal 
+                    ? { x: -30, y: (tHeight / numLayers) * i + 80 }
+                    : { x: (tWidth / numLayers) * i + 60, y: -30 };
+                let p2 = isDiagonal 
+                    ? { x: tWidth + 30, y: tHeight - (tHeight / numLayers) * i - 80 }
+                    : { x: tWidth - (tWidth / numLayers) * i - 60, y: tHeight + 30 };
+                vineLayers.push(new LayeredVine(p1, p2, 26 - i * 2, i * 1.5));
             }
         }
 
         function distToSegment(p, v, w) {
             const l2 = (w.x - v.x) ** 2 + (w.y - v.y) ** 2;
             if (l2 === 0) return Math.hypot(p.x - v.x, p.y - v.y);
-            let t = ((p.x - v.x) * (w.x - v.x) + (p.y - v.y) * (w.y - v.y)) / l2;
-            t = Math.max(0, Math.min(1, t));
+            let t = Math.max(0, Math.min(1, ((p.x - v.x) * (w.x - v.x) + (p.y - v.y) * (w.y - v.y)) / l2));
             return Math.hypot(p.x - (v.x + t * (w.x - v.x)), p.y - (v.y + t * (w.y - v.y)));
         }
 
         function thornGameLoop() {
             if (!isThornRunning) return;
-
-            ctxThorn.save();
-            if (screenShake > 0) {
-                const sx = (Math.random() - 0.5) * screenShake;
-                const sy = (Math.random() - 0.5) * screenShake;
-                ctxThorn.translate(sx, sy);
-                screenShake *= 0.85;
-            }
-
             ctxThorn.fillStyle = '#080d0a';
             ctxThorn.fillRect(0, 0, tWidth, tHeight);
 
             for (let i = vineLayers.length - 1; i >= 0; i--) {
-                const vine = vineLayers[i];
-                vine.update();
-                vine.draw(i === currentVineIdx, i - currentVineIdx);
-            }
-
-            for (let i = woodChips.length - 1; i >= 0; i--) {
-                const chip = woodChips[i];
-                chip.x += chip.vx; chip.y += chip.vy; chip.vy += 0.5; chip.life -= 0.03;
-                ctxThorn.fillStyle = chip.color;
-                ctxThorn.fillRect(chip.x, chip.y, chip.size, chip.size);
-                if (chip.life <= 0) woodChips.splice(i, 1);
+                vineLayers[i].draw(i === currentVineIdx, i - currentVineIdx);
             }
 
             if (cutTrail.length > 1) {
@@ -1837,14 +1642,11 @@
                 ctxThorn.moveTo(cutTrail[0].x, cutTrail[0].y);
                 for (let i = 1; i < cutTrail.length; i++) ctxThorn.lineTo(cutTrail[i].x, cutTrail[i].y);
                 ctxThorn.strokeStyle = '#FFE8A1';
-                ctxThorn.lineWidth = 6;
-                ctxThorn.shadowColor = '#FFA500';
-                ctxThorn.shadowBlur = 15;
+                ctxThorn.lineWidth = 4;
                 ctxThorn.stroke();
             }
 
-            ctxThorn.restore();
-            requestAnimationFrame(thornGameLoop);
+            thornAnimId = requestAnimationFrame(thornGameLoop);
         }
 
         function handleSlashPoint(p) {
@@ -1852,40 +1654,24 @@
             const targetVine = vineLayers[currentVineIdx];
             if (targetVine.broken) return;
 
-            const dist = distToSegment(p, targetVine.p1, targetVine.p2);
-            if (dist < targetVine.thickness + 12) {
+            if (distToSegment(p, targetVine.p1, targetVine.p2) < targetVine.thickness + 15) {
                 sfx.playSlash();
-                screenShake = 12;
-
-                targetVine.cuts.push({ x: p.x, y: p.y, depth: Math.min(6, targetVine.cuts.length + 1) });
-                targetVine.totalDamage += 18;
-
-                for (let i = 0; i < 9; i++) {
-                    woodChips.push({
-                        x: p.x, y: p.y,
-                        vx: (Math.random() - 0.5) * 10,
-                        vy: (Math.random() - 0.5) * 10 - 3,
-                        size: Math.random() * 6 + 3,
-                        color: Math.random() > 0.4 ? '#8B4513' : '#d4af37',
-                        life: 1
-                    });
-                }
+                targetVine.totalDamage += 25;
 
                 if (targetVine.totalDamage >= targetVine.maxHealth) {
-                    targetVine.snapBreak();
+                    targetVine.broken = true;
                     sfx.playWoodCrack();
-                    screenShake = 22;
                     currentVineIdx++;
-                    const progress = (currentVineIdx / vineLayers.length) * 100;
-                    thornProgressEl.style.width = `${progress}%`;
+                    thornProgressEl.style.width = `${(currentVineIdx / vineLayers.length) * 100}%`;
 
                     if (currentVineIdx >= vineLayers.length) {
                         isThornRunning = false;
+                        if (thornAnimId) cancelAnimationFrame(thornAnimId);
                         sfx.playVictoryChime();
                         setTimeout(() => {
                             thornOverlay.style.display = 'none';
                             flipPage();
-                        }, 900);
+                        }, 700);
                     }
                 }
             }
@@ -1898,31 +1684,18 @@
             return { x: cx - r.left, y: cy - r.top };
         }
 
-        thornCanvas.addEventListener('mousedown', e => {
+        thornCanvas.addEventListener('pointerdown', e => {
             if (!isThornRunning) return;
             isCutting = true; cutTrail = [getCanvasCoord(e, thornCanvas)];
         });
-        thornCanvas.addEventListener('mousemove', e => {
+        thornCanvas.addEventListener('pointermove', e => {
             if (!isThornRunning || !isCutting) return;
             const pt = getCanvasCoord(e, thornCanvas);
             cutTrail.push(pt);
-            if (cutTrail.length > 5) cutTrail.shift();
+            if (cutTrail.length > 4) cutTrail.shift();
             handleSlashPoint(pt);
         });
-        window.addEventListener('mouseup', () => { isCutting = false; cutTrail = []; });
-
-        thornCanvas.addEventListener('touchstart', e => {
-            if (!isThornRunning) return;
-            isCutting = true; cutTrail = [getCanvasCoord(e, thornCanvas)];
-        }, { passive: true });
-        thornCanvas.addEventListener('touchmove', e => {
-            if (!isThornRunning || !isCutting) return;
-            const pt = getCanvasCoord(e, thornCanvas);
-            cutTrail.push(pt);
-            if (cutTrail.length > 5) cutTrail.shift();
-            handleSlashPoint(pt);
-        }, { passive: true });
-        window.addEventListener('touchend', () => { isCutting = false; cutTrail = []; });
+        window.addEventListener('pointerup', () => { isCutting = false; cutTrail = []; });
 
         openGameBtn.addEventListener('click', () => {
             sfx.init();
@@ -1935,7 +1708,7 @@
         });
 
         /* ==========================================================================
-           МИНИ-ИГРА №2: МАЛИНА И СВЕРХБЫСТРЫЕ ГНОМИКИ
+           МИНИ-ИГРА №2: МАЛИНОВЫЙ ДОЗОР
            ========================================================================== */
         const berryOverlay = document.getElementById('berryGameOverlay');
         const berryCanvas = document.getElementById('berryCanvas');
@@ -1950,6 +1723,7 @@
         let speedyGnomes = [];
         let lastBerrySpawn = 0;
         let lastGnomeSpawn = 0;
+        let berryAnimId = null;
 
         function resizeBerryGame() {
             bWidth = berryCanvas.width = window.innerWidth;
@@ -1965,59 +1739,44 @@
             }
             draw() {
                 if (this.collected && !this.holder) return;
-                ctxBerry.save();
                 const rx = this.holder ? this.holder.x : this.x;
-                const ry = this.holder ? this.holder.y - 30 : this.y;
+                const ry = this.holder ? this.holder.y - 25 : this.y;
+                ctxBerry.save();
                 ctxBerry.translate(rx, ry);
-
-                const clusters = [[-5,-5],[5,-5],[-7,2],[0,2],[7,2],[-4,9],[4,9],[0,13]];
-                clusters.forEach(([dx, dy]) => {
-                    ctxBerry.beginPath();
-                    ctxBerry.arc(dx, dy, 5.5, 0, Math.PI * 2);
-                    ctxBerry.fillStyle = '#b8142c'; ctxBerry.fill();
-                    ctxBerry.beginPath();
-                    ctxBerry.arc(dx-1.5, dy-1.5, 1.8, 0, Math.PI * 2);
-                    ctxBerry.fillStyle = 'rgba(255,200,210,0.8)'; ctxBerry.fill();
-                });
+                ctxBerry.fillStyle = '#b8142c';
+                ctxBerry.beginPath(); ctxBerry.arc(0, 0, 11, 0, Math.PI * 2); ctxBerry.fill();
+                ctxBerry.fillStyle = '#ffd1d9';
+                ctxBerry.beginPath(); ctxBerry.arc(-3, -3, 3, 0, Math.PI * 2); ctxBerry.fill();
                 ctxBerry.restore();
             }
         }
 
         class SpeedyGnome {
             constructor() {
-                this.x = Math.random() < 0.5 ? -40 : bWidth + 40;
-                this.y = Math.random() * (bHeight - 260) + 130;
-                this.speed = Math.random() * 1.8 + 2.8;
+                this.x = Math.random() < 0.5 ? -30 : bWidth + 30;
+                this.y = Math.random() * (bHeight - 240) + 120;
+                this.speed = Math.random() * 1.5 + 2.8;
                 this.scared = false;
                 this.loot = null;
-                this.wobble = Math.random() * 5;
             }
-
             update() {
-                this.wobble += 0.35;
-
                 if (this.scared) {
-                    this.x += (this.x > bWidth / 2 ? 1 : -1) * 9;
+                    this.x += (this.x > bWidth / 2 ? 1 : -1) * 8;
                     return;
                 }
-
                 if (this.loot) {
-                    this.x += (this.x > bWidth / 2 ? 1 : -1) * (this.speed * 1.5);
+                    this.x += (this.x > bWidth / 2 ? 1 : -1) * (this.speed * 1.4);
                     return;
                 }
-
-                let target = null;
-                let minDist = Infinity;
+                let target = null, minDist = Infinity;
                 rareBerries.forEach(b => {
                     if (!b.collected && !b.holder) {
                         const d = Math.hypot(b.x - this.x, b.y - this.y);
                         if (d < minDist) { minDist = d; target = b; }
                     }
                 });
-
                 if (target) {
-                    const dx = target.x - this.x;
-                    const dy = target.y - this.y;
+                    const dx = target.x - this.x, dy = target.y - this.y;
                     const dist = Math.hypot(dx, dy);
                     if (dist > 18) {
                         this.x += (dx / dist) * this.speed;
@@ -2028,44 +1787,25 @@
                     }
                 }
             }
-
             draw() {
                 ctxBerry.save();
                 ctxBerry.translate(this.x, this.y);
-                const stepBob = Math.sin(this.wobble) * 6;
-                ctxBerry.translate(0, stepBob);
-
-                ctxBerry.fillStyle = this.scared ? '#e65100' : '#283593';
-                ctxBerry.beginPath();
-                ctxBerry.moveTo(-14, 0); ctxBerry.lineTo(14, 0); ctxBerry.lineTo(-4, -36); ctxBerry.fill();
-
-                ctxBerry.fillStyle = '#f5f5f5';
-                ctxBerry.beginPath(); ctxBerry.arc(0, 8, 10, 0, Math.PI); ctxBerry.fill();
-
-                ctxBerry.fillStyle = '#ffab91';
-                ctxBerry.beginPath(); ctxBerry.arc(0, 2, 5, 0, Math.PI * 2); ctxBerry.fill();
-
-                ctxBerry.fillStyle = '#4e342e';
-                const footOffset = Math.sin(this.wobble) * 4;
-                ctxBerry.fillRect(-10, 12 + footOffset, 6, 5);
-                ctxBerry.fillRect(4, 12 - footOffset, 6, 5);
-
+                ctxBerry.fillStyle = this.scared ? '#d84315' : '#1e3a8a';
+                ctxBerry.beginPath(); ctxBerry.moveTo(-12, 0); ctxBerry.lineTo(12, 0); ctxBerry.lineTo(0, -30); ctxBerry.fill();
+                ctxBerry.fillStyle = '#ffcc80';
+                ctxBerry.beginPath(); ctxBerry.arc(0, 4, 6, 0, Math.PI * 2); ctxBerry.fill();
                 ctxBerry.restore();
             }
         }
 
         function berryGameLoop(now) {
             if (!isBerryRunning) return;
-            ctxBerry.clearRect(0, 0, bWidth, bHeight);
-            ctxBerry.fillStyle = 'rgba(10, 20, 12, 0.6)';
+            ctxBerry.fillStyle = 'rgba(8, 14, 10, 0.6)';
             ctxBerry.fillRect(0, 0, bWidth, bHeight);
 
-            if (now - lastBerrySpawn > 3500 && rareBerries.filter(b => !b.collected).length < 3) {
+            if (now - lastBerrySpawn > 2800 && rareBerries.filter(b => !b.collected).length < 3) {
                 lastBerrySpawn = now;
-                rareBerries.push(new RareBerry(
-                    Math.random() * (bWidth - 140) + 70,
-                    Math.random() * (bHeight - 260) + 130
-                ));
+                rareBerries.push(new RareBerry(Math.random() * (bWidth - 120) + 60, Math.random() * (bHeight - 240) + 120));
             }
 
             if (now - lastGnomeSpawn > 1200 && speedyGnomes.length < 5) {
@@ -2075,9 +1815,9 @@
 
             rareBerries.forEach(b => b.draw());
             speedyGnomes.forEach(g => { g.update(); g.draw(); });
+            speedyGnomes = speedyGnomes.filter(g => g.x > -60 && g.x < bWidth + 60);
 
-            speedyGnomes = speedyGnomes.filter(g => g.x > -80 && g.x < bWidth + 80);
-            requestAnimationFrame(berryGameLoop);
+            berryAnimId = requestAnimationFrame(berryGameLoop);
         }
 
         berryCanvas.addEventListener('pointerdown', e => {
@@ -2086,35 +1826,31 @@
 
             let slapped = false;
             speedyGnomes.forEach(g => {
-                if (Math.hypot(g.x - pt.x, g.y - pt.y) < 42 && !g.scared) {
+                if (Math.hypot(g.x - pt.x, g.y - pt.y) < 38 && !g.scared) {
                     slapped = true;
                     g.scared = true;
                     sfx.playGnomeBoing();
-                    if (g.loot) {
-                        g.loot.holder = null;
-                        g.loot = null;
-                    }
+                    if (g.loot) { g.loot.holder = null; g.loot = null; }
                 }
             });
 
             if (slapped) return;
 
             rareBerries.forEach(b => {
-                if (!b.collected && !b.holder) {
-                    if (Math.hypot(b.x - pt.x, b.y - pt.y) < 35) {
-                        b.collected = true;
-                        sfx.playPop();
-                        berriesCollected++;
-                        berryCounterEl.textContent = `Корзинка: ${berriesCollected} / 8 🍓`;
+                if (!b.collected && !b.holder && Math.hypot(b.x - pt.x, b.y - pt.y) < 32) {
+                    b.collected = true;
+                    sfx.playPop();
+                    berriesCollected++;
+                    berryCounterEl.textContent = `Корзинка: ${berriesCollected} / 8 🍓`;
 
-                        if (berriesCollected >= 8) {
-                            setTimeout(() => {
-                                isBerryRunning = false;
-                                sfx.playVictoryChime();
-                                berryOverlay.style.display = 'none';
-                                flipPage();
-                            }, 500);
-                        }
+                    if (berriesCollected >= 8) {
+                        isBerryRunning = false;
+                        if (berryAnimId) cancelAnimationFrame(berryAnimId);
+                        sfx.playVictoryChime();
+                        setTimeout(() => {
+                            berryOverlay.style.display = 'none';
+                            flipPage();
+                        }, 500);
                     }
                 }
             });
@@ -2131,11 +1867,11 @@
             lastBerrySpawn = performance.now();
             lastGnomeSpawn = performance.now();
             isBerryRunning = true;
-            requestAnimationFrame(berryGameLoop);
+            berryAnimId = requestAnimationFrame(berryGameLoop);
         });
 
         /* ==========================================================================
-           МИНИ-ИГРА №3: ПЕКАРНЯ (3 ЭТАПА)
+           МИНИ-ИГРА №3: ПЕКАРНЯ
            ========================================================================== */
         const pieOverlay = document.getElementById('pieGameOverlay');
         const openPieGameBtn = document.getElementById('openPieGameBtn');
@@ -2173,9 +1909,8 @@
 
         kitchenSurface.addEventListener('pointermove', e => {
             if (pieStage !== 1) return;
-            rollAmount += 1.8;
-            sfx.playChime(300 + rollAmount * 2);
-            const size = 140 + (rollAmount / 100) * 120;
+            rollAmount += 2;
+            const size = 130 + (rollAmount / 100) * 120;
             pieDough.style.width = `${size}px`;
             pieDough.style.height = `${size}px`;
             pieProgress.style.width = `${Math.min(100, rollAmount)}%`;
@@ -2195,13 +1930,12 @@
 
             const berry = document.createElement('div');
             berry.style.position = 'absolute';
-            berry.style.left = `${x - 12}px`;
-            berry.style.top = `${y - 12}px`;
-            berry.style.width = '24px';
-            berry.style.height = '24px';
+            berry.style.left = `${x - 10}px`;
+            berry.style.top = `${y - 10}px`;
+            berry.style.width = '20px';
+            berry.style.height = '20px';
             berry.style.borderRadius = '50%';
-            berry.style.background = 'radial-gradient(circle, #ff2a4b, #93081e)';
-            berry.style.boxShadow = '0 3px 6px rgba(0,0,0,0.4)';
+            berry.style.background = '#a81c2e';
             berry.style.pointerEvents = 'none';
             kitchenSurface.appendChild(berry);
 
@@ -2226,7 +1960,7 @@
         bellowsBtn.addEventListener('click', () => {
             if (pieStage !== 3) return;
             sfx.playFlamePuff();
-            ovenHeat = Math.min(100, ovenHeat + 14);
+            ovenHeat = Math.min(100, ovenHeat + 15);
             pieProgress.style.width = `${ovenHeat}%`;
 
             pieDough.style.background = `radial-gradient(circle, #f3c272 0%, #aa6423 ${ovenHeat}%)`;
@@ -2234,12 +1968,10 @@
             if (ovenHeat >= 100) {
                 clearInterval(ovenInterval);
                 sfx.playVictoryChime();
-                pieStepTitle.textContent = 'Шедевр готов!';
-                pieInstruction.textContent = 'Именинный пирог испёкся идеально!';
                 setTimeout(() => {
                     pieOverlay.style.display = 'none';
                     flipPage();
-                }, 1200);
+                }, 900);
             }
         });
 
@@ -2250,9 +1982,9 @@
             rollAmount = 0;
             berriesPlaced = 0;
             ovenHeat = 0;
-            pieDough.style.width = '140px';
-            pieDough.style.height = '140px';
-            pieDough.style.background = 'radial-gradient(circle, #fff3cf 0%, #eed599 100%)';
+            pieDough.style.width = '130px';
+            pieDough.style.height = '130px';
+            pieDough.style.background = 'radial-gradient(circle, #fff3d4 0%, #ecd497 100%)';
             kitchenSurface.querySelectorAll('div:not(.pie-dough)').forEach(b => b.remove());
             updatePieUI();
         });
