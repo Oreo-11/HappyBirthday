@@ -845,6 +845,170 @@
             stroke-dashoffset: 1;
             opacity: 0;
         }
+                /* ================= РОСЧЕРК ПОД ЗАГОЛОВКОМ И СВЕЧА ЖЕЛАНИЙ ================= */
+        #pagePullSvgOverlay {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9999;
+            overflow: visible;
+            color: #e5c158;
+            filter: drop-shadow(0 0 4px rgba(229, 193, 88, 0.55));
+        }
+
+        #title-flourish-path,
+#title-climb-path {
+    transition: opacity 0.45s ease;
+}
+
+@keyframes starPulseGlow {
+    0%, 100% { transform: scale(1); opacity: 0.9; }
+    50% { transform: scale(1.35); opacity: 1; }
+}
+
+.title-star-resting {
+    transform-origin: center;
+    transform-box: fill-box;
+    animation: starPulseGlow 2.6s ease-in-out infinite;
+}
+
+/* Плавное исчезновение всего лишнего текста на 12 странице при клике на свечу */
+.page12-vanish {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transition: opacity 0.75s ease !important;
+}
+
+/* Контейнер ритуала со свечой и феей на 12 странице */
+.wish-ritual-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    margin: 4px auto;
+    position: relative;
+    width: 100%;
+    max-width: 340px;
+    min-height: 250px;
+}
+
+.wish-prompt-text {
+    font-style: italic;
+    font-size: 14px;
+    line-height: 1.45;
+    color: #5a3518;
+    margin-bottom: 4px;
+    transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.wish-prompt-text.hidden-prompt {
+    opacity: 0;
+    transform: translateY(-8px);
+    pointer-events: none;
+}
+
+.wish-candle-svg {
+    width: 230px;
+    height: 240px;
+    overflow: visible;
+    color: #c5962e;
+    filter: drop-shadow(0 2px 6px rgba(197, 150, 46, 0.3));
+}
+
+#candleBodyLines {
+    transition: opacity 0.9s ease;
+}
+
+/* Живое покачивание огонька свечи */
+@keyframes candleFlameSway {
+    0%, 100% { transform: rotate(-2deg) scale(1, 1); }
+    25% { transform: rotate(2.5deg) scale(0.97, 1.05); }
+    50% { transform: rotate(-1.5deg) scale(1.03, 0.98); }
+    75% { transform: rotate(3deg) scale(0.98, 1.04); }
+}
+
+@keyframes auraBreath {
+    0%, 100% { opacity: 0.35; r: 18px; }
+    50% { opacity: 0.65; r: 23px; }
+}
+
+#candleFlameHitbox {
+    cursor: pointer;
+    transform-origin: 120px 102px;
+    animation: candleFlameSway 3.2s ease-in-out infinite;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+#candleFlameHitbox:hover {
+    filter: drop-shadow(0 0 10px rgba(255, 200, 50, 0.9));
+}
+
+.flame-aura-circle {
+    animation: auraBreath 2.4s ease-in-out infinite;
+}
+
+/* Анимация крылышек Феи и взмаха волшебной палочкой */
+@keyframes fairyWingFlutter {
+    0%, 100% { transform: rotate(0deg) scaleX(1); }
+    50% { transform: rotate(6deg) scaleX(0.72); }
+}
+
+@keyframes fairyHoverFloat {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-5px); }
+}
+
+#fairyWingsGroup {
+    transform-origin: 106px 78px;
+    animation: fairyWingFlutter 0.38s ease-in-out infinite;
+}
+
+#fairyHoverWrap {
+    animation: fairyHoverFloat 2.6s ease-in-out infinite;
+}
+
+#fairyWandArm {
+    transform-origin: 116px 74px;
+    transition: transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.wish-ritual-box {
+    transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Финальная золотая надпись строго по центру со шрифтом кнопки обложки */
+.wish-fulfilled-banner {
+    position: absolute;
+    top: 68%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.92);
+    width: 100%;
+    max-width: 320px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.45;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #7a2613;
+    text-shadow: 0 0 14px rgba(229, 193, 88, 0.95), 0 1px 2px rgba(255, 255, 255, 0.95);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1.2s ease, transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+    z-index: 10;
+}
+
+.wish-fulfilled-banner.revealed {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
     </style>
 </head>
 <body>
@@ -965,7 +1129,16 @@
                 </div>
             </div>
         </div>
-
+                <!-- СЛОЙ ПУТЕВОДНОЙ НИТИ ДЛЯ ПЕРЕЛИСТЫВАНИЯ СТРАНИЦ -->
+                <!-- СЛОЙ ПУТЕВОДНОЙ НИТИ ДЛЯ ПЕРЕЛИСТЫВАНИЯ И ПОДЧЁРКИВАНИЯ ЗАГОЛОВКОВ -->
+        <svg id="pagePullSvgOverlay" xmlns="http://www.w3.org/2000/svg">
+            <path id="page-pull-path" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" pathLength="1" style="stroke-dasharray: 1 2; stroke-dashoffset: 1; opacity: 0;" />
+            <path id="title-climb-path" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" pathLength="1" style="stroke-dasharray: 0.35 2; stroke-dashoffset: 0.35; opacity: 0;" />
+            <path id="title-flourish-path" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" pathLength="1" style="stroke-dasharray: 1 2; stroke-dashoffset: 1; opacity: 0;" />
+            <path id="title-resting-star" class="title-star-resting" fill="#fffdf2" stroke="currentColor" stroke-width="0.8" d="M 0 -5 Q 0 0 5 0 Q 0 0 0 5 Q 0 0 -5 0 Q 0 0 0 -5 Z" style="opacity: 0;" />
+            <circle id="pull-spark-glow" cx="-20" cy="-20" r="5.5" fill="currentColor" opacity="0" />
+            <circle id="pull-spark-core" cx="-20" cy="-20" r="2" fill="#ffffff" opacity="0" />
+        </svg>
         <!-- ================= СТРАНИЦЫ КНИГИ ================= -->
         <div class="page-screen">
             <div class="book-container" id="bookContainer">
@@ -1415,9 +1588,109 @@
                                 </p>
                                 <p style="font-style: italic; color: #73502d; font-size: 14px;">(Подними глаза от экрана... ✨)</p>
                             </div>
+                            <!-- РИТУАЛ НА 12 СТРАНИЦЕ: ЗАГАДАЙ ЖЕЛАНИЕ И ЗАДУЙ СВЕЧУ -->
+                            <!-- РИТУАЛ НА 12 СТРАНИЦЕ: СВЕЧА, ПОЛЁТ ФЕИ И ВОЛШЕБНАЯ ПАЛОЧКА -->
+<div class="wish-ritual-box" id="wishRitualBox">
+    <p class="wish-prompt-text" id="wishPromptText">
+        На секунду закрой глаза, загадай самое заветное желание и коснись огонька свечи…
+    </p>
+
+    <svg class="wish-candle-svg" id="wishCandleSvg" viewBox="0 0 240 240">
+        <defs>
+            <radialGradient id="flameGoldGrad" cx="50%" cy="65%" r="50%">
+                <stop offset="0%" stop-color="#ffffff" />
+                <stop offset="35%" stop-color="#ffe875" />
+                <stop offset="75%" stop-color="#f59e0b" />
+                <stop offset="100%" stop-color="#d97706" stop-opacity="0" />
+            </radialGradient>
+            <radialGradient id="flameAuraGrad" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#fde047" stop-opacity="0.65" />
+                <stop offset="100%" stop-color="#ca8a04" stop-opacity="0" />
+            </radialGradient>
+        </defs>
+
+        <!-- 1. Подсвечник и витая свеча -->
+        <g id="candleBodyLines" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+            <path pathLength="1" d="M 75 202 C 90 212, 150 212, 165 202 C 172 198, 168 193, 158 195 C 135 199, 105 199, 82 195 C 72 193, 68 198, 75 202 Z" />
+            <path pathLength="1" d="M 102 197 C 104 190, 136 190, 138 197" />
+            <path pathLength="1" d="M 162 198 C 178 196, 186 182, 174 175 C 166 171, 162 180, 169 183" />
+            <path pathLength="1" d="M 108 192 L 108 114 C 114 117, 126 117, 132 114 L 132 192" />
+            <path pathLength="1" d="M 108 114 C 114 110, 126 110, 132 114" />
+            <path pathLength="1" d="M 112 116 C 112 128, 110 136, 113 140 C 115 142, 116 136, 115 125" />
+            <path pathLength="1" d="M 127 116 C 127 124, 129 130, 126 132" />
+            <path pathLength="1" d="M 108 138 C 116 144, 124 144, 132 138 M 108 160 C 116 166, 124 166, 132 160 M 108 180 C 116 186, 124 186, 132 180" stroke-width="0.9" opacity="0.65" />
+            <path pathLength="1" d="M 120 113 Q 119 106 120 102" stroke="#3d2210" stroke-width="1.5" />
+        </g>
+
+        <!-- 2. Живой огонёк свечи -->
+        <g id="candleFlameHitbox" title="Коснись огонька, когда загадаешь желание">
+            <circle class="flame-aura-circle" cx="120" cy="86" r="20" fill="url(#flameAuraGrad)" />
+            <path d="M 120 101 C 111 94, 110 80, 120 64 C 130 80, 129 94, 120 101 Z" fill="url(#flameGoldGrad)" stroke="#d97706" stroke-width="0.8" />
+            <path d="M 120 100 C 116 95, 116 86, 120 76 C 124 86, 124 95, 120 100 Z" fill="#ffffff" opacity="0.9" />
+            <circle cx="120" cy="85" r="26" fill="transparent" />
+        </g>
+
+        <!-- 3. Тонкая золотая нить-дымок, взмывающая вверх -->
+        <path id="wishSmokeThread" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" pathLength="1"
+            style="stroke-dasharray: 0.42 2; stroke-dashoffset: 0.42; opacity: 0;"
+            d="M 120 102 C 118 88, 128 76, 114 62 C 98 48, 138 36, 118 22 C 102 10, 88 24, 104 34" />
+
+        <!-- 4. ВОЛШЕБНАЯ ФЕЯ (прилетает и взмахивает палочкой) -->
+        <g id="wishFairyFlightGroup" style="opacity: 0; transform: translate(-75px, -30px) scale(0.45) rotate(14deg);">
+            <g id="fairyHoverWrap" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round">
+                
+                <!-- Трепещущие крылышки Феи за спиной -->
+                <g id="fairyWingsGroup">
+                    <path d="M 106 75 C 82 48, 46 42, 44 64 C 42 79, 72 86, 105 81 Z" fill=" rgba(254, 240, 138, 0.16)" />
+                    <path d="M 104 77 C 84 62, 62 58, 53 67" stroke-width="0.85" opacity="0.75" />
+                    <path d="M 105 82 C 80 83, 60 96, 66 110 C 72 120, 94 106, 106 87 Z" fill="rgba(254, 240, 138, 0.12)" />
+                </g>
+
+                <!-- Головка, корона, локоны и улыбка Феи -->
+                <circle cx="114" cy="57" r="8.2" fill="#fffdf7" />
+                <path d="M 110 49 L 112 43 L 115 47 L 118 42 L 119 49" stroke-width="1.1" />
+                <path d="M 107 52 C 94 47, 80 54, 73 64 C 83 63, 94 59, 105 57" />
+                <path d="M 106 57 C 93 59, 82 68, 78 78" />
+                <path d="M 116 56 Q 118 58 120 56" stroke-width="1.1" />
+                <path d="M 117.5 61 Q 119.5 62.5 121 60.5" stroke-width="1.1" />
+
+                <!-- Стан, платье-лепесток и ножки -->
+                <path d="M 107 71 C 105 81, 106 89, 107 95 L 117 95 C 118 88, 118 80, 116 71 Z" fill="rgba(254, 240, 138, 0.15)" />
+                <path d="M 107 95 C 94 108, 85 124, 81 140 C 93 136, 102 142, 112 137 C 120 142, 128 137, 134 140 C 130 123, 123 107, 117 95 Z" fill="rgba(254, 240, 138, 0.18)" />
+                <path d="M 109 95 C 102 111, 98 124, 96 137" stroke-width="0.95" opacity="0.8" />
+                <path d="M 114 95 C 116 111, 119 124, 121 137" stroke-width="0.95" opacity="0.8" />
+                <path d="M 108 138 C 104 152, 99 163, 93 172" />
+                <path d="M 116 138 C 113 150, 105 158, 98 163" />
+                <path d="M 107 73 C 98 77, 90 83, 84 91" />
+
+                <!-- Правая ручка с Волшебной Палочкой -->
+                <g id="fairyWandArm">
+                    <path d="M 116 73 C 126 75, 134 73, 142 68" />
+                    <line x1="140" y1="69" x2="170" y2="48" stroke="#92400e" stroke-width="1.5" />
+                    <circle id="wandTipGlow" cx="172" cy="46" r="10" fill="url(#flameAuraGrad)" opacity="0.8" />
+                    <path id="wandTipStar" d="M 172 37 Q 172 46 181 46 Q 172 46 172 55 Q 172 46 163 46 Q 172 46 172 37 Z" fill="#ffffff" stroke="#d4af37" stroke-width="0.9" />
+                </g>
+            </g>
+        </g>
+
+        <!-- 5. Сияющая золотая дуга от взмаха волшебной палочки -->
+        <path id="fairyWandArc" fill="none" stroke="#fde047" stroke-width="2" stroke-linecap="round" pathLength="1"
+            style="stroke-dasharray: 1 2; stroke-dashoffset: 1; opacity: 0; filter: drop-shadow(0 0 6px #f59e0b);"
+            d="M 156 22 C 196 38, 204 82, 162 110" />
+
+        <!-- 6. Контейнер для золотого звездопада -->
+        <g id="wishFallingStarsGroup"></g>
+    </svg>
+
+    <div class="wish-fulfilled-banner" id="wishFulfilledBanner">
+        <span>✦ Да будет так! ✦</span>
+        <span>С Днём Рождения!</span>
+    </div>
+</div>
                         </div>
                     </div>
                     <div class="page-back"></div>
+
                 </div>
 
             </div>
@@ -1931,6 +2204,7 @@
                         nextBtn.classList.remove("hidden");
                         updateNav();
                         playPageVoice(1);
+                setTimeout(playTitleUnderlineFlourish, 500); // <--- ДОБАВИТЬ ЭТО
 
                         setTimeout(() => {
                             coverScreen.style.display = 'none';
@@ -1954,8 +2228,584 @@
                 nextBtn.classList.remove('hidden');
             }
         }
+                /* ==========================================================================
+           АНИМАЦИЯ ЗОЛОТОЙ НИТИ (ПЕРЕТЯГИВАНИЕ СТРАНИЦЫ)
+           ========================================================================== */
+                let isThreadPullingPage = false;
+        let titleFlourishAnimId = null;
 
+        function playGentleMagicChime(isCandleBlow = false) {
+            try {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                const ctx = (typeof sfx !== "undefined" && sfx.ctx) ? sfx.ctx : new AudioCtx();
+                if (ctx.state === "suspended") ctx.resume();
+
+                if (isCandleBlow) {
+                    const bufSize = ctx.sampleRate * 0.45;
+                    const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+                    const data = buf.getChannelData(0);
+                    for (let i = 0; i < bufSize; i++) {
+                        data[i] = (Math.random() * 2 - 1) * Math.sin((i / bufSize) * Math.PI);
+                    }
+                    const noise = ctx.createBufferSource();
+                    noise.buffer = buf;
+                    const filter = ctx.createBiquadFilter();
+                    filter.type = "lowpass";
+                    filter.frequency.setValueAtTime(520, ctx.currentTime);
+                    const nGain = ctx.createGain();
+                    nGain.gain.setValueAtTime(0.12, ctx.currentTime); // ✅ ИСПРАВЛЕНО: было ctx.ctx ? ctx.currentTime : 0
+                    nGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.45);
+                    noise.connect(filter);
+                    filter.connect(nGain);
+                    nGain.connect(ctx.destination);
+                    noise.start();
+                }
+
+                const notes = isCandleBlow ? [523.25, 659.25, 783.99, 1046.5, 1318.5] : [783.99, 1046.5];
+                notes.forEach((freq, idx) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = "sine";
+                    const startT = ctx.currentTime + idx * 0.11;
+                    osc.frequency.setValueAtTime(freq, startT);
+                    gain.gain.setValueAtTime(0.06, startT);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, startT + 0.9);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(startT);
+                    osc.stop(startT + 0.95);
+                });
+            } catch (e) {}
+        }
+
+        // Находит текущую открытую страницу, на которую сейчас смотрит читатель
+        function getCurrentVisiblePageElement(bookRect) {
+            if (typeof currentPage !== "undefined") {
+                const byId = document.getElementById(`page${currentPage}`) ||
+                             document.getElementById(`page-${currentPage}`) ||
+                             document.querySelector(`[data-page="${currentPage}"]`);
+                if (byId) return byId;
+            }
+            const probeX = bookRect.left + bookRect.width * 0.5;
+            const probeY = bookRect.top + bookRect.height * 0.5;
+            const hitEl = document.elementFromPoint(probeX, probeY);
+            if (hitEl) {
+                const pageContainer = hitEl.closest(".page, .page-side, .book-page, [id^='page']");
+                if (pageContainer) return pageContainer;
+            }
+            return null;
+        }
+
+        function playTitleUnderlineFlourish() {
+            const climbPath = document.getElementById("title-climb-path");
+            const flourishPath = document.getElementById("title-flourish-path");
+            const restingStar = document.getElementById("title-resting-star");
+            const sparkGlow = document.getElementById("pull-spark-glow");
+            const sparkCore = document.getElementById("pull-spark-core");
+
+            if (!climbPath || !flourishPath) return;
+
+            const bookEl = document.querySelector(".book, .book-container, .pages, #book") || coverScreen;
+            const bookRect = bookEl.getBoundingClientRect();
+            const activePage = getCurrentVisiblePageElement(bookRect);
+
+            const isLastPage =
+                (typeof currentPage !== "undefined" && currentPage >= 12) ||
+                (activePage && activePage.querySelector("#wishRitualBox")) ||
+                (nextBtn && (nextBtn.classList.contains("hidden") || nextBtn.disabled || window.getComputedStyle(nextBtn).display === "none"));
+
+            if (isLastPage) {
+                hideTitleFlourish();
+                return;
+            }
+
+            const searchRoot = activePage || bookEl;
+            const headings = Array.from(searchRoot.querySelectorAll("h1, h2, h3, .page-title, .chapter-title"));
+            let targetRect = null;
+
+            for (const h of headings) {
+                if (h.closest("#coverScreen") || h.closest(".game-win-overlay, .win-overlay, .modal")) continue;
+                const style = window.getComputedStyle(h);
+                if (style.display === "none" || style.visibility === "hidden" || parseFloat(style.opacity) < 0.2) continue;
+
+                const r = h.getBoundingClientRect();
+                if (r.width > 20 && r.height > 8 &&
+                    r.top >= bookRect.top && r.bottom <= bookRect.bottom &&
+                    r.left >= bookRect.left - 10 && r.right <= bookRect.right + 10) {
+                    targetRect = r;
+                    break;
+                }
+            }
+
+            if (!targetRect) {
+                hideTitleFlourish();
+                return;
+            }
+
+            const startX = bookRect.left + 14;
+            const startY = bookRect.bottom - 14;
+
+            const cx = targetRect.left + targetRect.width / 2;
+            const cy = targetRect.bottom + 6;
+            const halfW = Math.min(Math.max(targetRect.width * 0.55, 50), 130);
+
+            const leftTitleX = cx - halfW;
+            const rightTitleX = cx + halfW;
+
+            const dClimb = [
+                `M ${startX} ${startY}`,
+                `C ${startX - 8} ${startY - (startY - cy) * 0.45},`,
+                `${startX + 12} ${cy + (startY - cy) * 0.25},`,
+                `${leftTitleX} ${cy}`
+            ].join(" ");
+
+            const dFlourish = [
+                `M ${leftTitleX} ${cy}`,
+                `C ${cx - halfW * 0.3} ${cy + 5}, ${cx + halfW * 0.3} ${cy - 4}, ${rightTitleX} ${cy}`,
+                `C ${rightTitleX + 12} ${cy + 2}, ${rightTitleX + 6} ${cy + 11}, ${cx + 28} ${cy + 9}`,
+                `C ${cx} ${cy + 8}, ${cx - 28} ${cy + 8}, ${cx - 34} ${cy + 12}`,
+                `C ${cx - 38} ${cy + 15}, ${cx - 18} ${cy + 17}, ${cx} ${cy + 9}`
+            ].join(" ");
+
+            climbPath.setAttribute("d", dClimb);
+            flourishPath.setAttribute("d", dFlourish);
+
+            const climbLen = climbPath.getTotalLength();
+            const flourishLen = flourishPath.getTotalLength();
+
+            const tClimbDuration = 1100;
+            const tFlourishDuration = 1400;
+            const totalDuration = tClimbDuration + tFlourishDuration;
+
+            climbPath.style.strokeDasharray = "0.35 2";
+            climbPath.style.strokeDashoffset = "0.35";
+            climbPath.style.opacity = "0.85";
+
+            flourishPath.style.strokeDasharray = "1 2";
+            flourishPath.style.strokeDashoffset = "1";
+            flourishPath.style.opacity = "0";
+
+            if (restingStar) restingStar.style.opacity = "0";
+
+            const t0 = performance.now();
+            function easeOutCubic(x) { return 1 - Math.pow(1 - x, 3); }
+            function easeInOutSine(x) { return -(Math.cos(Math.PI * x) - 1) / 2; }
+
+            function stepFlourish(now) {
+                const elapsed = now - t0;
+
+                if (elapsed <= tClimbDuration) {
+                    const p = easeInOutSine(Math.min(elapsed / tClimbDuration, 1));
+                    const offset = 0.35 - p * 1.35;
+                    climbPath.style.strokeDashoffset = String(offset);
+
+                    const pt = climbPath.getPointAtLength(Math.min(p * 1.15, 1) * climbLen);
+                    sparkGlow.setAttribute("cx", pt.x);
+                    sparkGlow.setAttribute("cy", pt.y);
+                    sparkCore.setAttribute("cx", pt.x);
+                    sparkCore.setAttribute("cy", pt.y);
+                    sparkGlow.style.opacity = "0.55";
+                    sparkCore.style.opacity = "0.9";
+                } else {
+                    const fRaw = Math.min((elapsed - tClimbDuration) / tFlourishDuration, 1);
+                    const p = easeOutCubic(fRaw);
+
+                    climbPath.style.opacity = String(Math.max(0, 0.85 * (1 - fRaw * 2.5)));
+                    flourishPath.style.opacity = "0.9";
+                    flourishPath.style.strokeDashoffset = String(1 - p);
+
+                    const pt = flourishPath.getPointAtLength(p * flourishLen);
+                    sparkGlow.setAttribute("cx", pt.x);
+                    sparkGlow.setAttribute("cy", pt.y);
+                    sparkCore.setAttribute("cx", pt.x);
+                    sparkCore.setAttribute("cy", pt.y);
+
+                    if (fRaw > 0.75 && restingStar) {
+                        const starAlpha = (fRaw - 0.75) / 0.25;
+                        restingStar.setAttribute("transform", `translate(${cx}, ${cy + 9})`);
+                        restingStar.style.opacity = String(starAlpha);
+                    }
+                }
+
+                if (elapsed < totalDuration) {
+                    titleFlourishAnimId = requestAnimationFrame(stepFlourish);
+                } else {
+                    climbPath.style.opacity = "0";
+                    sparkGlow.style.opacity = "0";
+                    sparkCore.style.opacity = "0";
+                    playGentleMagicChime(false);
+                }
+            }
+
+            if (titleFlourishAnimId) cancelAnimationFrame(titleFlourishAnimId);
+            titleFlourishAnimId = requestAnimationFrame(stepFlourish);
+        }
+
+        function hideTitleFlourish() {
+            if (titleFlourishAnimId) cancelAnimationFrame(titleFlourishAnimId);
+            const climbPath = document.getElementById("title-climb-path");
+            const flourishPath = document.getElementById("title-flourish-path");
+            const restingStar = document.getElementById("title-resting-star");
+            if (climbPath) climbPath.style.opacity = "0";
+            if (flourishPath) flourishPath.style.opacity = "0";
+            if (restingStar) restingStar.style.opacity = "0";
+        }
+
+        if (typeof prevBtn !== "undefined" && prevBtn) {
+            prevBtn.addEventListener("click", hideTitleFlourish);
+        }
+
+        function playThreadPagePull(onPullTriggerPageTurn) {
+            if (isThreadPullingPage) return;
+            isThreadPullingPage = true;
+
+            hideTitleFlourish();
+
+            const pathEl = document.getElementById("page-pull-path");
+            const sparkGlow = document.getElementById("pull-spark-glow");
+            const sparkCore = document.getElementById("pull-spark-core");
+
+            const btnRect = nextBtn.getBoundingClientRect();
+            const bx = btnRect.left + btnRect.width / 2;
+            const by = btnRect.top + btnRect.height / 2;
+            const baseRx = btnRect.width / 2 + 9;
+            const baseRy = btnRect.height / 2 + 8;
+
+            const bookEl = document.querySelector(".book, .book-container, .pages, #book") || coverScreen;
+            const bookRect = bookEl.getBoundingClientRect();
+
+            const startX = bookRect.left + 12;
+            const startY = bookRect.bottom - 12;
+            const rightEdgeX = bookRect.right - 6;
+            const pageMidY   = bookRect.top + bookRect.height * 0.46;
+
+            function buildDynamicPath(strain, tremor, whip) {
+                const rx = baseRx - strain * 5;
+                const ry = baseRy - strain * 4;
+                const loopShiftX = -strain * 14 - whip * 120;
+
+                const hookX = (rightEdgeX - strain * 24) * (1 - whip) + (startX + 40) * whip;
+                const hookY = (pageMidY + strain * 8) * (1 - whip) + (startY - 30) * whip;
+
+                const pullBendX = -strain * 165 + tremor;
+                const pullBendY = strain * 42 - tremor * 0.6;
+
+                return [
+                    `M ${startX} ${startY}`,
+                    `C ${startX + (bx - startX) * 0.35} ${startY - 35 - strain * 45}, ` +
+                      `${startX + (bx - startX) * 0.7 + pullBendX * 0.3} ${by + ry + 35 - strain * 30}, ` +
+                      `${bx + loopShiftX} ${by + ry}`,
+                    `C ${bx + rx + loopShiftX} ${by + ry}, ${bx + rx + loopShiftX} ${by - ry}, ${bx + loopShiftX} ${by - ry}`,
+                    `C ${bx - rx + loopShiftX} ${by - ry}, ${bx - rx + loopShiftX} ${by + ry}, ${bx + loopShiftX} ${by + ry}`,
+                    `C ${bx + rx * 0.8 + loopShiftX} ${by + ry}, ${bx + rx + loopShiftX} ${by}, ${bx + loopShiftX} ${by - ry}`,
+                    `C ${bx + 35 + pullBendX * 1.15} ${by - ry - 55 + pullBendY}, ` +
+                      `${hookX + 25 + pullBendX * 0.85} ${hookY + 65 - pullBendY}, ` +
+                      `${hookX} ${hookY}`,
+                    `C ${hookX - 12} ${hookY - 10}, ${hookX + 6} ${hookY - 18}, ${hookX - 5} ${hookY - 3}`
+                ].join(" ");
+            }
+
+            const tDrawEnd   = 1850;
+            const tStrainEnd = 3200;
+            const tTotalEnd  = 3900;
+
+            let pageTurnTriggered = false;
+            const t0 = performance.now();
+
+            pathEl.style.opacity = "1";
+            pathEl.style.strokeDasharray = "1 2";
+            pathEl.style.strokeDashoffset = "1";
+
+            function easeInOutSine(x) {
+                return -(Math.cos(Math.PI * x) - 1) / 2;
+            }
+
+            function step(now) {
+                const elapsed = now - t0;
+
+                if (elapsed <= tDrawEnd) {
+                    const p = easeInOutSine(Math.min(elapsed / tDrawEnd, 1));
+                    const d = buildDynamicPath(0, 0, 0);
+                    pathEl.setAttribute("d", d);
+                    pathEl.style.strokeDashoffset = String(1 - p);
+
+                    const totalLen = pathEl.getTotalLength();
+                    const pt = pathEl.getPointAtLength(p * totalLen);
+                    sparkGlow.setAttribute("cx", pt.x);
+                    sparkGlow.setAttribute("cy", pt.y);
+                    sparkCore.setAttribute("cx", pt.x);
+                    sparkCore.setAttribute("cy", pt.y);
+                    sparkGlow.style.opacity = "0.6";
+                    sparkCore.style.opacity = "0.95";
+                }
+                else if (elapsed <= tStrainEnd) {
+                    const sRaw = (elapsed - tDrawEnd) / (tStrainEnd - tDrawEnd);
+                    let strain;
+                    if (sRaw < 0.35) {
+                        strain = Math.sin((sRaw / 0.35) * Math.PI * 0.75) * 0.55;
+                    } else {
+                        const s2 = (sRaw - 0.35) / 0.65;
+                        strain = 0.38 + easeInOutSine(s2) * 0.62;
+                    }
+
+                    const tremor = Math.sin(now * 0.055) * (strain * 7.5);
+                    const d = buildDynamicPath(strain, tremor, 0);
+                    pathEl.setAttribute("d", d);
+                    pathEl.style.strokeDashoffset = "0";
+
+                    const totalLen = pathEl.getTotalLength();
+                    const pt = pathEl.getPointAtLength(totalLen);
+                    sparkGlow.setAttribute("cx", pt.x);
+                    sparkGlow.setAttribute("cy", pt.y);
+                    sparkGlow.setAttribute("r", String(5.5 + strain * 3.5));
+                    sparkCore.setAttribute("cx", pt.x);
+                    sparkCore.setAttribute("cy", pt.y);
+                }
+                else if (elapsed <= tTotalEnd) {
+                    if (!pageTurnTriggered) {
+                        pageTurnTriggered = true;
+                        if (onPullTriggerPageTurn) onPullTriggerPageTurn();
+                    }
+
+                    const wRaw = Math.min((elapsed - tStrainEnd) / (tTotalEnd - tStrainEnd), 1);
+                    const whip = 1 - Math.pow(1 - wRaw, 3.5);
+
+                    const d = buildDynamicPath(1 - whip * 0.8, 0, whip);
+                    pathEl.setAttribute("d", d);
+                    pathEl.style.strokeDashoffset = String(whip);
+                    pathEl.style.opacity = String(1 - wRaw * 0.85);
+
+                    const totalLen = pathEl.getTotalLength();
+                    const pt = pathEl.getPointAtLength((1 - whip) * totalLen);
+                    sparkGlow.setAttribute("cx", pt.x);
+                    sparkGlow.setAttribute("cy", pt.y);
+                    sparkGlow.setAttribute("r", "5.5");
+                    sparkCore.setAttribute("cx", pt.x);
+                    sparkCore.setAttribute("cy", pt.y);
+                    sparkGlow.style.opacity = String(0.6 * (1 - wRaw));
+                    sparkCore.style.opacity = String(0.95 * (1 - wRaw));
+                }
+
+                if (elapsed < tTotalEnd) {
+                    requestAnimationFrame(step);
+                } else {
+                    pathEl.style.opacity = "0";
+                    sparkGlow.style.opacity = "0";
+                    sparkCore.style.opacity = "0";
+                    isThreadPullingPage = false;
+
+                    // Ждём 550 мс, чтобы страница полностью улеглась после 3D-переворота, и рисуем росчерк!
+                    setTimeout(() => {
+                        playTitleUnderlineFlourish();
+                    }, 550);
+                }
+            }
+
+            requestAnimationFrame(step);
+        }
+
+        // ================= РИТУАЛ СВЕЧИ И ПРИЛЁТА ФЕИ НА 12 СТРАНИЦЕ =================
+        (function initWishCandleRitual() {
+            const ritualBox   = document.getElementById("wishRitualBox");
+            const flameHitbox = document.getElementById("candleFlameHitbox");
+            const candleBody  = document.getElementById("candleBodyLines");
+            const smokeThread = document.getElementById("wishSmokeThread");
+            const fairyFlight = document.getElementById("wishFairyFlightGroup");
+            const wandArm     = document.getElementById("fairyWandArm");
+            const wandArc     = document.getElementById("fairyWandArc");
+            const starsGroup  = document.getElementById("wishFallingStarsGroup");
+            const promptText  = document.getElementById("wishPromptText");
+            const bannerText  = document.getElementById("wishFulfilledBanner");
+
+            if (!flameHitbox || !smokeThread || !starsGroup) return;
+
+            let isCandleBlown = false;
+
+            // Автоматически копируем точный шрифт с кнопки "ОТКРЫТЬ СКАЗКУ" (#startBtn)
+            const coverStartBtn = document.getElementById("startBtn");
+            if (coverStartBtn && bannerText) {
+                const btnStyles = window.getComputedStyle(coverStartBtn);
+                bannerText.style.fontFamily = btnStyles.fontFamily;
+            }
+
+            flameHitbox.addEventListener("click", (e) => {
+                e.stopPropagation();
+                if (isCandleBlown) return;
+                isCandleBlown = true;
+
+                // 1. Убираем золотую линию заголовка
+                hideTitleFlourish();
+
+                // 2. ПЛАВНО СКРЫВАЕМ ВООБЩЕ ВСЕ ОСТАЛЬНЫЕ ЭЛЕМЕНТЫ НА 12 СТРАНИЦЕ (включая вензель ❦)
+                // И ПЕРЕМЕЩАЕМ СЦЕНУ С ФЕЕЙ И ТЕКСТОМ РОВНО В ЦЕНТР СТРАНИЦЫ
+                if (promptText) promptText.classList.add("hidden-prompt");
+                const page12Container = ritualBox ? ritualBox.closest(".page, .page-side, .book-page, [id^='page']") : null;
+                if (page12Container) {
+                    const allNodes = page12Container.querySelectorAll("*");
+                    allNodes.forEach(el => {
+                        if (!ritualBox.contains(el) && !el.contains(ritualBox)) {
+                            el.classList.add("page12-vanish");
+                        }
+                    });
+
+                    // Вычисляем расстояние до геометрического центра страницы и плавно поднимаем блок туда
+                    const pageRect = page12Container.getBoundingClientRect();
+                    const boxRect  = ritualBox.getBoundingClientRect();
+                    const deltaY   = (pageRect.top + pageRect.height / 2) - (boxRect.top + boxRect.height / 2);
+                    ritualBox.style.transform = `translateY(${deltaY.toFixed(1)}px)`;
+                }
+
+                playGentleMagicChime(true);
+                flameHitbox.style.transform = "scale(0.2, 1.8) translateY(-12px)";
+                flameHitbox.style.opacity = "0";
+                flameHitbox.style.pointerEvents = "none";
+
+                smokeThread.style.opacity = "1";
+                setTimeout(() => {
+                    if (candleBody) candleBody.style.opacity = "0";
+                }, 450);
+
+                const smokeDuration = 1400;
+                const t0 = performance.now();
+
+                function animateSmoke(now) {
+                    const rawP = Math.min((now - t0) / smokeDuration, 1);
+                    const p = -(Math.cos(Math.PI * rawP) - 1) / 2;
+                    smokeThread.style.strokeDashoffset = String(0.42 - p * 1.42);
+
+                    if (rawP < 1) {
+                        requestAnimationFrame(animateSmoke);
+                    } else {
+                        smokeThread.style.opacity = "0";
+                    }
+                }
+                requestAnimationFrame(animateSmoke);
+
+                setTimeout(() => {
+                    animateFairyArrivalAndWandWave();
+                }, 850);
+            });
+
+            function animateFairyArrivalAndWandWave() {
+                if (!fairyFlight) return;
+                const flyDuration = 1550;
+                const tStart = performance.now();
+
+                if (wandArm) wandArm.style.transform = "rotate(-10deg)";
+
+                function stepFly(now) {
+                    const rawP = Math.min((now - tStart) / flyDuration, 1);
+                    const ease = 1 - Math.pow(1 - rawP, 3);
+
+                    const x = -75 * (1 - ease);
+                    const y = -30 * (1 - ease) - Math.sin(rawP * Math.PI) * 18;
+                    const scale = 0.45 + 0.55 * ease;
+                    const rot = 14 * (1 - ease) - Math.sin(rawP * Math.PI) * 8;
+
+                    fairyFlight.style.opacity = String(Math.min(rawP * 1.8, 1));
+                    fairyFlight.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) scale(${scale.toFixed(3)}) rotate(${rot.toFixed(1)}deg)`;
+
+                    if (rawP < 1) {
+                        requestAnimationFrame(stepFly);
+                    } else {
+                        performWandWave();
+                    }
+                }
+                requestAnimationFrame(stepFly);
+            }
+
+            function performWandWave() {
+                if (wandArm) wandArm.style.transform = "rotate(-32deg)";
+
+                setTimeout(() => {
+                    if (wandArm) wandArm.style.transform = "rotate(26deg)";
+                    playGentleMagicChime(false);
+
+                    if (wandArc) {
+                        wandArc.style.opacity = "1";
+                        const arcDur = 650;
+                        const tArc = performance.now();
+                        function stepArc(now) {
+                            const p = Math.min((now - tArc) / arcDur, 1);
+                            wandArc.style.strokeDashoffset = String(1 - p);
+                            if (p < 1) {
+                                requestAnimationFrame(stepArc);
+                            } else {
+                                wandArc.style.transition = "opacity 0.6s ease";
+                                wandArc.style.opacity = "0";
+                            }
+                        }
+                        requestAnimationFrame(stepArc);
+                    }
+
+                    spawnFallingWishStars(starsGroup, 168, 56);
+
+                    setTimeout(() => {
+                        if (wandArm) wandArm.style.transform = "rotate(0deg)";
+                        if (bannerText) bannerText.classList.add("revealed");
+                    }, 280);
+                }, 380);
+            }
+
+            function spawnFallingWishStars(container, originX = 120, originY = 40) {
+                container.innerHTML = "";
+                const stars = [];
+                const starCount = 38;
+
+                for (let i = 0; i < starCount; i++) {
+                    const isFourRay = i % 3 === 0;
+                    const el = document.createElementNS("http://www.w3.org/2000/svg", isFourRay ? "path" : "circle");
+
+                    if (isFourRay) {
+                        el.setAttribute("d", "M 0 -4.5 Q 0 0 4.5 0 Q 0 0 0 4.5 Q 0 0 -4.5 0 Q 0 0 0 -4.5 Z");
+                        el.setAttribute("fill", "#fffbeb");
+                        el.setAttribute("stroke", "#d4af37");
+                        el.setAttribute("stroke-width", "0.5");
+                    } else {
+                        el.setAttribute("r", String(Math.random() * 1.8 + 1));
+                        el.setAttribute("fill", Math.random() > 0.4 ? "#fde047" : "#ffffff");
+                    }
+
+                    container.appendChild(el);
+
+                    stars.push({
+                        el,
+                        x: originX + (Math.random() - 0.5) * 34,
+                        y: originY + (Math.random() - 0.5) * 30,
+                        vx: (Math.random() - 0.65) * 1.6,
+                        vy: Math.random() * 0.6 + 0.22,
+                        swayAmp: Math.random() * 0.6 + 0.2,
+                        swaySpeed: Math.random() * 0.004 + 0.002,
+                        phase: Math.random() * Math.PI * 2,
+                        alpha: 1,
+                        decay: Math.random() * 0.0028 + 0.002
+                    });
+                }
+
+                function tickStars(now) {
+                    let alive = false;
+                    stars.forEach(s => {
+                        if (s.alpha <= 0) return;
+                        alive = true;
+                        s.x += s.vx + Math.sin(now * s.swaySpeed + s.phase) * s.swayAmp;
+                        s.y += s.vy;
+                        s.vx *= 0.985;
+                        s.alpha -= s.decay;
+
+                        const flicker = 0.75 + 0.25 * Math.sin(now * 0.012 + s.phase);
+                        s.el.style.opacity = String(Math.max(0, s.alpha * flicker));
+                        s.el.setAttribute("transform", `translate(${s.x.toFixed(1)}, ${s.y.toFixed(1)})`);
+                    });
+
+                    if (alive) {
+                        requestAnimationFrame(tickStars);
+                    }
+                }
+                requestAnimationFrame(tickStars);
+            }
+        })();
         function flipPage() {
+            hideTitleFlourish();
             if (isFlipping || currentPageIndex >= pages.length - 1) return;
             isFlipping = true;
             sfx.init();
@@ -1986,7 +2836,13 @@
 
             cur.classList.add("turned");
         }
-        nextBtn.addEventListener("click", flipPage);
+                nextBtn.addEventListener("click", () => {
+            if (isFlipping || currentPageIndex >= pages.length - 1) return;
+            
+            playThreadPagePull(() => {
+                flipPage();
+            });
+        });
 
         /* ==========================================================================
            МИНИ-ИГРА №1: ТЕРНОВНИК (ДИНАМИЧНАЯ РЕЗКА, x10 ЛОЗ, СВАЙП ПАЛЬЦЕМ)
