@@ -832,6 +832,19 @@
             background: linear-gradient(90deg, #ff9900, #ff1e00);
             transition: width 0.1s linear;
         }
+
+        /* Плавное растворение элементов обложки перед началом сказочной нити */
+        .cover-fade-out {
+            opacity: 0 !important;
+            pointer-events: none !important;
+            transition: opacity 0.65s ease !important;
+        }
+
+        #stage-prelude-story path {
+            stroke-dasharray: 1 2;
+            stroke-dashoffset: 1;
+            opacity: 0;
+        }
     </style>
 </head>
 <body>
@@ -901,13 +914,30 @@
                         <use href="#raspberryCluster" transform="translate(27 110) scale(0.85)"/> 
                         <use href="#raspberryCluster" transform="translate(73 110) scale(0.85)"/> 
                     </g> 
-                    <g id="stage5-flourishes" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"> 
+                                    <g id="stage5-flourishes" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"> 
                         <path pathLength="1" d="M5 24 V176 C5 187 13 195 24 195 H76 C87 195 95 187 95 176 V24 C95 13 87 5 76 5 H24 C13 5 5 13 5 24 Z" stroke-width="0.2"/> 
                         <use href="#cornerScroll" transform="translate(2 2)"/>
                         <use href="#cornerScroll" transform="translate(98 2) scale(-1 1)"/>
                         <use href="#cornerScroll" transform="translate(2 198) scale(1 -1)"/>
                         <use href="#cornerScroll" transform="translate(98 198) scale(-1 -1)"/>
                     </g> 
+
+                    <!-- ПУТЕВОДНАЯ НИТЬ (ОТ НЕЙРОСЕТИ) -->
+                    <g id="stage-prelude-story" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                        <!-- 1. Из центра цветка в колючие лозы терновника с шипами -->
+                        <path id="prelude-path-thorns" pathLength="1" stroke-width="0.25" d="M 51 67 C 51 61, 45 58, 40 63 C 34 69, 24 73, 22 83 L 18 81 L 22 85 C 24 94, 36 96, 46 92 L 48 87 L 48 92 C 56 89, 68 89, 75 98 L 79 95 L 76 100 C 80 108, 74 117, 67 113 C 63 110, 66 104, 70 107 C 64 116, 52 120, 42 116 L 40 121 L 40 115 C 32 112, 26 104, 34 98 L 31 94 L 35 97 C 38 95, 42 95, 45 97" />
+                        <!-- 2. Из лозы в резной листик и гроздь ягод малины -->
+                        <path id="prelude-path-berries" pathLength="1" stroke-width="0.25" d="M 45 97 C 42 88, 34 84, 29 88 C 32 94, 39 96, 45 97 C 49 93, 53 91, 50 99 L 46 96 L 49 100 L 50 95 L 51 100 L 54 96 L 50 101 C 45 100, 42 105, 46 108 C 41 109, 41 115, 46 117 C 43 119, 45 125, 49 124 C 49 127, 52 127, 52 124 C 56 125, 58 119, 55 117 C 60 115, 60 109, 55 108 C 59 105, 56 100, 51 101 C 47 104, 47 110, 51 110 C 55 110, 55 104, 51 104 C 47 111, 47 118, 51 118 C 55 118, 55 111, 51 111 C 54 98, 53 88, 48 82" />
+                        <!-- 3. Из ягодки в силуэт Малинового Гномика в колпачке -->
+                        <path id="prelude-path-gnome" pathLength="1" stroke-width="0.25" d="M 48 82 L 38 82 C 41 68, 46 54, 53 46 C 55 42, 59 44, 58 48 C 57 52, 53 50, 54 47 C 56 58, 59 70, 62 82 L 38 82 C 42 84, 46 84, 47 88 C 47 93, 53 93, 53 88 C 54 84, 58 84, 62 82 C 64 88, 63 95, 59 98 C 63 103, 60 111, 55 114 C 54 120, 46 120, 45 114 C 40 111, 37 103, 41 98 C 37 95, 36 88, 38 82 C 42 92, 47 94, 50 92 C 53 94, 58 92, 60 95 C 65 102, 66 114, 61 124 L 39 124 L 38 134 C 33 134, 33 129, 36 129 L 48 134 L 52 134 L 62 134 C 67 134, 67 129, 64 129 C 54 126, 42 124, 36 118" />
+                        <!-- 4. От Гномика в горячий Малиновый Пирог с паром -->
+                        <path id="prelude-path-pie" pathLength="1" stroke-width="0.25" d="M 36 118 C 31 118, 27 120, 26 122 L 32 142 C 42 146, 58 146, 68 142 L 74 122 C 70 117, 66 125, 62 120 C 58 115, 54 125, 50 120 C 46 115, 42 125, 38 120 C 34 115, 30 125, 26 122 C 32 106, 68 106, 74 122 C 64 114, 44 114, 34 121 C 42 110, 58 110, 66 121 C 58 112, 53 108, 50 107 C 47 104, 53 100, 50 96 C 43 86, 57 76, 49 64 C 42 52, 58 42, 50 30 C 47 26, 49 23, 50 22" />
+                        <!-- 5. Из струйки пара в прямоугольный контур страницы книги -->
+                        <path id="prelude-path-page" pathLength="1" stroke-width="0.28" d="M 50 22 C 47 16, 48 10, 53 10 H 88 C 92 10, 94 13, 94 18 V 184 C 94 189, 92 192, 88 192 H 12 C 8 192, 6 189, 6 184 V 18 C 6 13, 8 10, 12 10 H 50" />
+                        <!-- Искорка на кончике -->
+                        <circle id="prelude-spark-glow" cx="51" cy="67" r="1.4" fill="currentColor" opacity="0" stroke="none" />
+                        <circle id="prelude-spark-core" cx="51" cy="67" r="0.55" fill="#ffffff" opacity="0" stroke="none" />
+                    </g>
                 </svg>
 
                 <!-- КАЛЛИГРАФИЧЕСКИЙ ТЕКСТ «Сказка о Дарье» -->
@@ -1792,24 +1822,124 @@
 
         pages.forEach((page, index) => { page.style.zIndex = String(pages.length - index); });
 
-        startBtn.addEventListener("click", () => {
+                startBtn.addEventListener("click", () => {
+            if (startBtn.dataset.animating === "true") return;
+            startBtn.dataset.animating = "true";
+
             sfx.init();
-            sfx.playPageTurn();
-            
-            if (fxAnimId) cancelAnimationFrame(fxAnimId);
 
-            flashOverlay.classList.add("active");
+            // 1. Плавно убираем текст, кнопку и лишние украшения
+            const toFadeImmediately = [
+                document.getElementById("coverTextSvg"),
+                document.getElementById("coverBottom"),
+                document.getElementById("stage1-seed"),
+                document.getElementById("stage2-sprout"),
+                document.getElementById("stage4-berries"),
+                document.getElementById("stage5-flourishes")
+            ];
+            toFadeImmediately.forEach(el => { if (el) el.classList.add("cover-fade-out"); });
+
+            // Растворяем куст и цветок чуть позже
             setTimeout(() => {
-                coverScreen.classList.add("turned-cover");
-                flashOverlay.classList.remove("active");
-                nextBtn.classList.remove("hidden");
-                updateNav();
-                playPageVoice(1);
+                const bush = document.getElementById("stage3-bush");
+                const bouquet = document.getElementById("stage3-bouquet");
+                if (bush) bush.classList.add("cover-fade-out");
+                if (bouquet) bouquet.classList.add("cover-fade-out");
+            }, 900);
 
-                setTimeout(() => {
-                    coverScreen.style.display = 'none';
-                }, 1300);
-            }, 400);
+            // 2. Тайминги для 5 сцен нити
+            const chapters = [
+                { el: document.getElementById("prelude-path-thorns"),  drawMs: 1700, holdMs: 350, eraseMs: 1100 },
+                { el: document.getElementById("prelude-path-berries"), drawMs: 1750, holdMs: 350, eraseMs: 1100 },
+                { el: document.getElementById("prelude-path-gnome"),   drawMs: 1950, holdMs: 400, eraseMs: 1150 },
+                { el: document.getElementById("prelude-path-pie"),     drawMs: 1900, holdMs: 350, eraseMs: 1050 },
+                { el: document.getElementById("prelude-path-page"),    drawMs: 1350, holdMs: 150, eraseMs: 400  }
+            ];
+
+            const sparkGlow = document.getElementById("prelude-spark-glow");
+            const sparkCore = document.getElementById("prelude-spark-core");
+
+            let cursorTime = 350;
+            chapters.forEach((ch, idx) => {
+                ch.startTime = cursorTime;
+                ch.endDrawTime = ch.startTime + ch.drawMs;
+                ch.startEraseTime = ch.endDrawTime + ch.holdMs;
+                ch.endEraseTime = ch.startEraseTime + ch.eraseMs;
+                ch.totalLen = ch.el.getTotalLength();
+                cursorTime = ch.startEraseTime;
+            });
+
+            const totalAnimTime = chapters[chapters.length - 1].endDrawTime + 150;
+            const t0 = performance.now();
+
+            function easeInOutSine(x) {
+                return -(Math.cos(Math.PI * x) - 1) / 2;
+            }
+
+            function animateStoryThread(now) {
+                const elapsed = now - t0;
+                let activeTipPoint = null;
+
+                chapters.forEach((ch, idx) => {
+                    const path = ch.el;
+
+                    if (elapsed < ch.startTime || elapsed > ch.endEraseTime) {
+                        path.style.opacity = "0";
+                        return;
+                    }
+
+                    if (elapsed <= ch.endDrawTime) {
+                        const rawP = (elapsed - ch.startTime) / ch.drawMs;
+                        const p = easeInOutSine(Math.max(0, Math.min(1, rawP)));
+                        path.style.opacity = "1";
+                        path.style.strokeDashoffset = String(1 - p);
+                        activeTipPoint = path.getPointAtLength(p * ch.totalLen);
+                    } else if (elapsed <= ch.startEraseTime) {
+                        path.style.opacity = "1";
+                        path.style.strokeDashoffset = "0";
+                        activeTipPoint = path.getPointAtLength(ch.totalLen);
+                    } else {
+                        const rawE = (elapsed - ch.startEraseTime) / ch.eraseMs;
+                        const e = easeInOutSine(Math.max(0, Math.min(1, rawE)));
+                        path.style.strokeDashoffset = String(-e);
+                        path.style.opacity = String(1 - e * 0.85);
+                    }
+                });
+
+                if (activeTipPoint && sparkGlow && sparkCore) {
+                    sparkGlow.setAttribute("cx", activeTipPoint.x);
+                    sparkGlow.setAttribute("cy", activeTipPoint.y);
+                    sparkCore.setAttribute("cx", activeTipPoint.x);
+                    sparkCore.setAttribute("cy", activeTipPoint.y);
+                    sparkGlow.style.opacity = "0.55";
+                    sparkCore.style.opacity = "0.95";
+                }
+
+                if (elapsed < totalAnimTime) {
+                    requestAnimationFrame(animateStoryThread);
+                } else {
+                    if (sparkGlow) sparkGlow.style.opacity = "0";
+                    if (sparkCore) sparkCore.style.opacity = "0";
+
+                    sfx.playPageTurn();
+                    if (fxAnimId) cancelAnimationFrame(fxAnimId);
+
+                    flashOverlay.classList.add("active");
+                    setTimeout(() => {
+                        coverScreen.classList.add("turned-cover");
+                        flashOverlay.classList.remove("active");
+                        nextBtn.classList.remove("hidden");
+                        updateNav();
+                        playPageVoice(1);
+
+                        setTimeout(() => {
+                            coverScreen.style.display = 'none';
+                        }, 1300);
+                    }, 400);
+                }
+            }
+
+            requestAnimationFrame(animateStoryThread);
         });
 
                 function updateNav() {
